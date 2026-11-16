@@ -1,0 +1,54 @@
+# ==========================================
+# 🔒 Notas privadas del equipo (No subir a Git)
+# ==========================================
+Docs nosotros/
+Docs\ nosotros/
+
+# ==========================================
+# 📦 Dependencias y Build (Vite / React / Node)
+# ==========================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+
+# ==========================================
+# 🛡️ Variables de Entorno y Secretos (Supabase)
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# 📱 Empaquetado Móvil (Capacitor / Android)
+# ==========================================
+.capacitor/
+android/app/build/
+android/.gradle/
+android/local.properties
+*.apk
+*.aab
+
+# ==========================================
+# 💻 Sistema Operativo y Editores
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# 📋 Logs de depuración
+# ==========================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
