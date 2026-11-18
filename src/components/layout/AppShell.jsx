@@ -1,11 +1,14 @@
 import { Outlet, Link } from 'react-router-dom'
 import { Zap, Flame, ShieldAlert } from 'lucide-react'
 import BottomNav from './BottomNav'
+import { useGameStore } from '../../store/useGameStore'
 
 /**
  * Main mobile-first application shell with top status bar and persistent BottomNav.
  */
 export default function AppShell() {
+  const user = useGameStore((state) => state.user)
+
   return (
     <div className="bg-pcb-grid min-h-[100dvh] text-slate-100">
       <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col border-x border-pcb-trace/40 bg-pcb-base/80">
@@ -23,15 +26,15 @@ export default function AppShell() {
           <div className="flex items-center gap-3 font-mono text-xs font-semibold">
             <div className="flex items-center gap-1 rounded-lg border border-pcb-trace bg-pcb-elevated px-2 py-1 text-neon-amp">
               <Flame className="h-3.5 w-3.5" />
-              <span>1d</span>
+              <span>{user?.streakDays ?? 1}d</span>
             </div>
             <div className="flex items-center gap-1 rounded-lg border border-pcb-trace bg-pcb-elevated px-2 py-1 text-neon-volt">
               <Zap className="h-3.5 w-3.5" />
-              <span>0 W</span>
+              <span>{user?.totalWattsXp ?? 0} W</span>
             </div>
             <div className="flex items-center gap-1 rounded-lg border border-pcb-trace bg-pcb-elevated px-2 py-1 text-neon-watt">
               <ShieldAlert className="h-3.5 w-3.5" />
-              <span>5/5</span>
+              <span>{user?.currentFuses ?? 5}/5</span>
             </div>
           </div>
         </header>
