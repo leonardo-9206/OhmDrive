@@ -7,6 +7,7 @@ import CodexPage from './pages/CodexPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import LessonRunnerPage from './pages/LessonRunnerPage'
 import LoginPage from './pages/LoginPage'
+import CircuitGallery from './components/circuit-svg/CircuitGallery'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         </Route>
         <Route path="/lesson/:lessonId" element={<LessonRunnerPage />} />
         <Route path="/login" element={<LoginPage />} />
+        {import.meta.env.DEV && <Route path="/dev/circuits" element={<CircuitGallery />} />}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
