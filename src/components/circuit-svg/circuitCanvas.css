@@ -1,0 +1,74 @@
+/* OhmDrive — animaciones del motor SVG de circuitos (US-04) */
+
+/* Flujo de electrones: el patrón "6 10" mide 16px, así que avanzar 16px = un ciclo sin saltos. */
+.ohm-flow {
+  animation-name: ohm-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes ohm-flow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -16; }
+}
+
+/* Slot vacío que invita a hacer tap */
+.ohm-slot-pulse {
+  animation: ohm-slot-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ohm-slot-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Destello de cortocircuito / componente quemado */
+.ohm-fault-flash {
+  animation: ohm-fault-flash 0.3s steps(2, jump-none) infinite;
+}
+@keyframes ohm-fault-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0.25; }
+}
+
+/* Halo del LED encendido */
+.ohm-led-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ohm-led-halo 1.8s ease-in-out infinite;
+}
+@keyframes ohm-led-halo {
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* Chispas en nodos durante un cortocircuito */
+.ohm-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ohm-spark 0.5s ease-out infinite;
+}
+@keyframes ohm-spark {
+  0% { opacity: 1; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+.ohm-tappable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ohm-tappable:focus-visible {
+  outline: none;
+}
+.ohm-tappable:focus-visible .ohm-focus-ring {
+  stroke: #00f0ff;
+  stroke-width: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ohm-flow,
+  .ohm-slot-pulse,
+  .ohm-fault-flash,
+  .ohm-led-halo,
+  .ohm-spark {
+    animation: none;
+  }
+}

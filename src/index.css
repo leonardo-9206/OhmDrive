@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    background-color: #090D16;
+    color: #F1F5F9;
+    font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* Subtle PCB dot grid background utility */
+.bg-pcb-grid {
+  background-color: #090D16;
+  background-image: radial-gradient(#1E293B 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Custom thin dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090D16;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00F0FF;
+}
