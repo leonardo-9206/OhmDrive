@@ -448,7 +448,7 @@ export function parseEngineering(input) {
 }
 
 // ============================================================================
-// 9. FUNCIONES DE EXPANSIÓN (TRANSITORIOS RC/RL Y THÉVENIN - UNIDADES II-IV)
+// 9. FUNCIONES DE EXPANSIÓN (TRANSITORIOS RC/RL, THÉVENIN Y POTENCIA EN CA - UNIDADES II-V)
 // ============================================================================
 
 /**
@@ -481,6 +481,93 @@ export function calcRLTau(inductanceHenrys, resistanceOhms) {
 export function calcTheveninResistance(openCircuitVoltage, shortCircuitCurrent) {
   if (Math.abs(shortCircuitCurrent) < EPSILON) return Infinity
   return Math.abs(openCircuitVoltage / shortCircuitCurrent)
+}
+
+/**
+ * Teorema de Máxima Transferencia de Potencia: Pmax = (Vth^2) / (4 * Rth) cuando RL = Rth.
+ * @param {number} vThevenin - Voltaje de Thévenin (V)
+ * @param {number} rThevenin - Resistencia de Thévenin (Ω)
+ * @returns {number} Potencia máxima disipada en la carga en Watts (W)
+ */
+export function calcMaxPowerTransfer(vThevenin, rThevenin) {
+  if (Math.abs(rThevenin) < EPSILON) return Infinity
+  return Math.pow(vThevenin, 2) / (4 * rThevenin)
+}
+
+/**
+ * Convierte un valor pico senoidal a su valor eficaz (RMS): Vrms = Vm / sqrt(2).
+ * @param {number} peakValue - Valor pico
+ * @returns {number} Valor eficaz RMS
+ */
+export function calcRMS(peakValue) {
+  return peakValue / Math.SQRT2
+}
+
+/**
+ * Convierte un valor eficaz (RMS) a su valor pico senoidal: Vm = Vrms * sqrt(2).
+ * @param {number} rmsValue - Valor eficaz RMS
+ * @returns {number} Valor pico
+ */
+export function calcPeak(rmsValue) {
+  return rmsValue * Math.SQRT2
+}
+
+/**
+ * Calcula la reactancia inductiva: XL = omega * L = 2 * pi * f * L.
+ * @param {number} freqOrOmega - Frecuencia en Hz o frecuencia angular en rad/s
+ * @param {number} inductanceHenrys - Inductancia en Henrys (H)
+ * @param {boolean} [isAngular=false] - True si freqOrOmega es omega (rad/s), false si es f (Hz)
+ * @returns {number} Reactancia inductiva XL en Ohms (Ω)
+ */
+export function calcInductiveReactance(freqOrOmega, inductanceHenrys, isAngular = false) {
+  const omega = isAngular ? freqOrOmega : 2 * Math.PI * freqOrOmega
+  return omega * Math.max(0, inductanceHenrys)
+}
+
+/**
+ * Calcula la reactancia capacitiva: XC = 1 / (omega * C) = 1 / (2 * pi * f * C).
+ * @param {number} freqOrOmega - Frecuencia en Hz o frecuencia angular en rad/s
+ * @param {number} capacitanceFarads - Capacitancia en Faradios (F)
+ * @param {boolean} [isAngular=false] - True si freqOrOmega es omega (rad/s), false si es f (Hz)
+ * @returns {number} Reactancia capacitiva XC en Ohms (Ω)
+ */
+export function calcCapacitiveReactance(freqOrOmega, capacitanceFarads, isAngular = false) {
+  const omega = isAngular ? freqOrOmega : 2 * Math.PI * freqOrOmega
+  const denom = omega * Math.max(0, capacitanceFarads)
+  if (Math.abs(denom) < EPSILON) return Infinity
+  return 1 / denom
+}
+
+/**
+ * Calcula la magnitud de la impedancia total en serie: |Z| = sqrt(R^2 + (XL - XC)^2).
+ * @param {number} resistanceOhms - Resistencia en Ohms (Ω)
+ * @param {number} [reactanceOhms=0] - Reactancia neta X = XL - XC en Ohms (Ω)
+ * @returns {number} Magnitud de la impedancia |Z| en Ohms (Ω)
+ */
+export function calcImpedanceMagnitude(resistanceOhms, reactanceOhms = 0) {
+  return Math.hypot(resistanceOhms, reactanceOhms)
+}
+
+/**
+ * Calcula la Potencia Aparente S en CA: S = sqrt(P^2 + Q^2).
+ * @param {number} pWatts - Potencia activa o real en Watts (W)
+ * @param {number} qVars - Potencia reactiva en VAR (Volt-Amperes Reactivos)
+ * @returns {number} Potencia aparente S en Volt-Amperes (VA)
+ */
+export function calcApparentPower(pWatts, qVars) {
+  return Math.hypot(pWatts, qVars)
+}
+
+/**
+ * Calcula el Factor de Potencia (FP = cos(theta) = P / S).
+ * @param {number} pWatts - Potencia activa en Watts (W)
+ * @param {number} sVA - Potencia aparente en Volt-Amperes (VA)
+ * @returns {number} Factor de potencia adimensional entre 0 y 1
+ */
+export function calcPowerFactor(pWatts, sVA) {
+  if (Math.abs(sVA) < EPSILON) return 1.0
+  const fp = Math.abs(pWatts / sVA)
+  return Math.min(1.0, Number(fp.toFixed(4)))
 }
 
 // ============================================================================
@@ -527,7 +614,17 @@ const circuitSolver = {
   // Transitorios y Thévenin
   calcRCTau,
   calcRLTau,
-  calcTheveninResistance
+  calcTheveninResistance,
+  calcMaxPowerTransfer,
+
+  // Potencia y Fasores en CA
+  calcRMS,
+  calcPeak,
+  calcInductiveReactance,
+  calcCapacitiveReactance,
+  calcImpedanceMagnitude,
+  calcApparentPower,
+  calcPowerFactor
 }
 
 export default circuitSolver
