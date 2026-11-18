@@ -68,7 +68,7 @@ function RichEngineeringText({ content, className = '' }) {
             </h3>
           )
         }
-        return <p key={idx}>{renderInlineBold(line, idx)}</p>
+        return <div key={idx}>{renderInlineBold(line, idx)}</div>
       })}
     </div>
   )
