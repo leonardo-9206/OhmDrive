@@ -1,0 +1,570 @@
+{
+  "sector_id": 2,
+  "sector_order": 2,
+  "slug": "nodos-kirchhoff",
+  "title": "Sector 2: Nodos de Kirchhoff",
+  "uaa_unit_ref": "Unidad I: Leyes Experimentales y Circuitos Simples (Temas 1.4 - 1.10)",
+  "lore_description": "¡La red troncal de Neo-Aguascalientes presenta caídas de tensión críticas y bifurcaciones inestables! Acompaña a K-1L0 para dominar las conexiones serie/paralelo, las Leyes de Kirchhoff (LCK y LVK) y estabilizar los divisores de tensión y corriente.",
+  "accent_color_hex": "#FFB800",
+  "lessons": [
+    {
+      "lesson_id": 5,
+      "sector_id": 2,
+      "node_order": 1,
+      "title": "Resistencias en Serie & Paralelo (Req)",
+      "topic_tag": "series_parallel",
+      "theory_markdown": "# 🔗 Resistencias en Serie y Paralelo\n\nPara simplificar redes eléctricas complejas, agrupamos resistencias en su valor equivalente ($R_{eq}$):\n\n### 1. Conexión en Serie\nLos componentes comparten un solo nodo sin bifurcación. **La misma corriente ($I$) circula por todos**:\n$$R_{eq} = R_1 + R_2 + R_3 + \\dots + R_n$$\n*La resistencia equivalente siempre es mayor que la mayor de las resistencias.*\n\n### 2. Conexión en Paralelo\nLos componentes están conectados entre el mismo par de nodos comunes. **El mismo voltaje ($V$) cae en todos**:\n$$\\frac{1}{R_{eq}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\dots + \\frac{1}{R_n}$$\n*Para 2 resistencias:* $$R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2}$$\n*La resistencia equivalente siempre es menor que la menor de las resistencias.*",
+      "xp_reward": 80,
+      "is_boss_level": false,
+      "challenges": [
+        {
+          "challenge_id": "S2-L5-C01",
+          "lesson_id": 5,
+          "topic_tag": "series_parallel",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Tres módulos de filtrado óptico están conectados en una sola pista en serie! Sus valores son 220 Ω, 330 Ω y 470 Ω. ¿Cuál es la resistencia equivalente total?",
+          "prompt_text": "Calcula la resistencia equivalente (R_eq) de tres resistencias conectadas en serie: R1 = 220 Ω, R2 = 330 Ω y R3 = 470 Ω.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.01,
+            "nodes": [
+              { "id": "N1", "x": 50, "y": 60, "label": "A" },
+              { "id": "N2", "x": 140, "y": 60, "label": "B" },
+              { "id": "N3", "x": 230, "y": 60, "label": "C" },
+              { "id": "N4", "x": 310, "y": 60, "label": "D" },
+              { "id": "N_GND", "x": 50, "y": 180, "label": "GND", "is_ground": true },
+              { "id": "N_BOT", "x": 310, "y": 180, "label": "E" }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 10 V", "value": 10, "unit": "V" },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "220 Ω", "value": 220, "unit": "Ω" },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "330 Ω", "value": 330, "unit": "Ω" },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "470 Ω", "value": 470, "unit": "Ω" },
+              { "id": "W1", "type": "wire", "from": "N4", "to": "N_BOT" },
+              { "id": "W2", "type": "wire", "from": "N_BOT", "to": "N_GND" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1020", "label": "1,020 Ω (1.02 kΩ)", "numeric_value": 1020, "causes_overheat": false },
+            { "id": "opt_550", "label": "550 Ω", "numeric_value": 550, "causes_overheat": false },
+            { "id": "opt_800", "label": "800 Ω", "numeric_value": 800, "causes_overheat": false },
+            { "id": "opt_94", "label": "94.2 Ω", "numeric_value": 94.2, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1020",
+            "target_numeric_value": 1020,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.0098,
+            "resulting_power_watts": 0.098
+          },
+          "explanation_markdown": "Para resistencias en serie, simplemente sumamos sus valores:\n$$R_{eq} = R_1 + R_2 + R_3 = 220\\text{ }\\Omega + 330\\text{ }\\Omega + 470\\text{ }\\Omega = 1,020\\text{ }\\Omega = 1.02\\text{ k}\\Omega$$\nLa corriente total del lazo con $10\\text{ V}$ será de aproximadamente $9.8\\text{ mA}$."
+        },
+        {
+          "challenge_id": "S2-L5-C02",
+          "lesson_id": 5,
+          "topic_tag": "series_parallel",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "happy",
+          "kilo_dialogue": "Dos ramas de dispersión térmica están conectadas en paralelo: una de 300 Ω y otra de 600 Ω. ¿Cuál es su resistencia equivalente combinada?",
+          "prompt_text": "Determina la resistencia equivalente (R_eq) de dos resistencias conectadas en paralelo: R1 = 300 Ω y R2 = 600 Ω.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.06,
+            "nodes": [
+              { "id": "N_TOP", "x": 120, "y": 60, "label": "Nodo A" },
+              { "id": "N_R1_T", "x": 200, "y": 60, "label": "R1+" },
+              { "id": "N_R2_T", "x": 280, "y": 60, "label": "R2+" },
+              { "id": "N_BOT", "x": 120, "y": 180, "label": "Nodo B" },
+              { "id": "N_R1_B", "x": 200, "y": 180, "label": "R1-" },
+              { "id": "N_R2_B", "x": 280, "y": 180, "label": "R2-" }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_BOT", "to": "N_TOP", "label": "Vs = 12 V", "value": 12, "unit": "V" },
+              { "id": "W_T1", "type": "wire", "from": "N_TOP", "to": "N_R1_T" },
+              { "id": "W_T2", "type": "wire", "from": "N_R1_T", "to": "N_R2_T" },
+              { "id": "R1", "type": "resistor", "from": "N_R1_T", "to": "N_R1_B", "label": "R1 = 300 Ω", "value": 300, "unit": "Ω" },
+              { "id": "R2", "type": "resistor", "from": "N_R2_T", "to": "N_R2_B", "label": "R2 = 600 Ω", "value": 600, "unit": "Ω" },
+              { "id": "W_B1", "type": "wire", "from": "N_R2_B", "to": "N_R1_B" },
+              { "id": "W_B2", "type": "wire", "from": "N_R1_B", "to": "N_BOT" }
+            ]
+          },
+          "options": [
+            { "id": "opt_200", "label": "200 Ω", "numeric_value": 200, "causes_overheat": false },
+            { "id": "opt_900", "label": "900 Ω", "numeric_value": 900, "causes_overheat": false },
+            { "id": "opt_450", "label": "450 Ω", "numeric_value": 450, "causes_overheat": false },
+            { "id": "opt_150", "label": "150 Ω", "numeric_value": 150, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_200",
+            "target_numeric_value": 200,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.06,
+            "resulting_power_watts": 0.72
+          },
+          "explanation_markdown": "Aplicamos la fórmula directa para dos resistencias en paralelo:\n$$R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2} = \\frac{300 \\times 600}{300 + 600} = \\frac{180,000}{900} = 200\\text{ }\\Omega$$\nFíjate en la regla: $200\\text{ }\\Omega$ es menor que la menor de las ramas ($300\\text{ }\\Omega$)."
+        },
+        {
+          "challenge_id": "S2-L5-C03",
+          "lesson_id": 5,
+          "topic_tag": "series_parallel",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Circuito mixto detectado! R1 = 100 Ω está en serie con un bloque en paralelo formado por dos resistencias idénticas de 200 Ω cada una. ¿Cuál es la resistencia total vista por la fuente?",
+          "prompt_text": "Calcula la resistencia equivalente total de un circuito mixto donde R1 = 100 Ω está en serie con el paralelo de R2 = 200 Ω y R3 = 200 Ω.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.05,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+" },
+              { "id": "N2", "x": 160, "y": 60, "label": "Nodo Medio" },
+              { "id": "N3A", "x": 260, "y": 60, "label": "Paralelo+" },
+              { "id": "N4", "x": 260, "y": 180, "label": "Paralelo-" },
+              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 10 V", "value": 10, "unit": "V" },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1 = 100 Ω", "value": 100, "unit": "Ω" },
+              { "id": "R2_PAR", "type": "resistor", "from": "N2", "to": "N3A", "label": "R2 = 200 Ω", "value": 200, "unit": "Ω" },
+              { "id": "R3_PAR", "type": "resistor", "from": "N3A", "to": "N4", "label": "R3 = 200 Ω", "value": 200, "unit": "Ω" },
+              { "id": "W1", "type": "wire", "from": "N4", "to": "N_GND" }
+            ]
+          },
+          "options": [
+            { "id": "opt_200m", "label": "200 Ω", "numeric_value": 200, "causes_overheat": false },
+            { "id": "opt_500m", "label": "500 Ω", "numeric_value": 500, "causes_overheat": false },
+            { "id": "opt_150m", "label": "150 Ω", "numeric_value": 150, "causes_overheat": false },
+            { "id": "opt_300m", "label": "300 Ω", "numeric_value": 300, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_200m",
+            "target_numeric_value": 200,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.05,
+            "resulting_power_watts": 0.5
+          },
+          "explanation_markdown": "Resolvemos primero el bloque en paralelo:\n$$R_{2\\parallel 3} = \\frac{200 \\times 200}{200 + 200} = 100\\text{ }\\Omega$$\nLuego sumamos la resistencia en serie $R_1$:\n$$R_{eq} = R_1 + R_{2\\parallel 3} = 100\\text{ }\\Omega + 100\\text{ }\\Omega = 200\\text{ }\\Omega$$\nLa corriente total del circuito con una fuente de $10\\text{ V}$ es $I = 10 / 200 = 50\\text{ mA}$."
+        }
+      ]
+    },
+    {
+      "lesson_id": 6,
+      "sector_id": 2,
+      "node_order": 2,
+      "title": "Ley de Corrientes de Kirchhoff (LCK)",
+      "topic_tag": "kcl",
+      "theory_markdown": "# ⚡ Ley de Corrientes de Kirchhoff (LCK)\n\nLa LCK se fundamenta en la **conservación de la carga eléctrica**:\n\n> *En cualquier nodo eléctrico de un circuito, la suma algebraica de las corrientes que entran es idénticamente igual a la suma de las corrientes que salen.*\n\n$$\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}} \\quad \\Longleftrightarrow \\quad \\sum_{k=1}^N I_k = 0$$\n\n### Regla de Signos en Nodos:\n* Corrientes que **entran** al nodo: Signo positivo ($+I$).\n* Corrientes que **salen** del nodo: Signo negativo ($-I$).\n* Un nodo no acumula carga neta; todo electrón que ingresa debe salir por alguna de sus ramas.",
+      "xp_reward": 85,
+      "is_boss_level": false,
+      "challenges": [
+        {
+          "challenge_id": "S2-L6-C01",
+          "lesson_id": 6,
+          "topic_tag": "kcl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Al nodo de enlace A entra una corriente de 5.0 A. El subsistema de enfriamiento desvía 1.8 A. ¿Cuánta corriente fluye por la línea principal de datos?",
+          "prompt_text": "Un nodo eléctrico recibe una corriente entrante de I_in = 5.0 A. Si una de las dos ramas salientes drena I_1 = 1.8 A, ¿cuánta corriente I_2 sale por la otra rama?",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 3.2,
+            "nodes": [
+              { "id": "N_SRC", "x": 60, "y": 120, "label": "Fuente 5A" },
+              { "id": "N_CENTER", "x": 180, "y": 120, "label": "Nodo A" },
+              { "id": "N_TOP_OUT", "x": 300, "y": 60, "label": "I1 = 1.8A" },
+              { "id": "N_BOT_OUT", "x": 300, "y": 180, "label": "I2 = ?" }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "N_SRC", "to": "N_CENTER", "label": "Is = 5.0 A", "value": 5.0, "unit": "A" },
+              { "id": "R_BRANCH1", "type": "resistor", "from": "N_CENTER", "to": "N_TOP_OUT", "label": "Enfriamiento (1.8 A)", "value": 10, "unit": "Ω" },
+              { "id": "R_BRANCH2", "type": "resistor", "from": "N_CENTER", "to": "N_BOT_OUT", "label": "Datos (I2 = ?)", "value": 5, "unit": "Ω" }
+            ]
+          },
+          "options": [
+            { "id": "opt_3_2", "label": "3.2 A", "numeric_value": 3.2, "causes_overheat": false },
+            { "id": "opt_6_8", "label": "6.8 A", "numeric_value": 6.8, "causes_overheat": true },
+            { "id": "opt_2_5", "label": "2.5 A", "numeric_value": 2.5, "causes_overheat": false },
+            { "id": "opt_9_0", "label": "9.0 A", "numeric_value": 9.0, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_3_2",
+            "target_numeric_value": 3.2,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 3.2,
+            "resulting_power_watts": 51.2
+          },
+          "explanation_markdown": "Aplicando la **Ley de Corrientes de Kirchhoff (LCK)** en el nodo A:\n$$\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}} \\implies 5.0\\text{ A} = 1.8\\text{ A} + I_2$$\nDespejando $I_2$:\n$$I_2 = 5.0\\text{ A} - 1.8\\text{ A} = 3.2\\text{ A}$$\nLa corriente en la segunda rama es exactamente $3.2\\text{ A}$."
+        },
+        {
+          "challenge_id": "S2-L6-C02",
+          "lesson_id": 6,
+          "topic_tag": "kcl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "happy",
+          "kilo_dialogue": "Al distribuidor central entran 10 A. Se ramifica en 3 líneas de suministro: la Línea 1 toma 3.0 A y la Línea 2 toma 4.5 A. ¿Cuánto debe tomar la Línea 3 para que el nodo no colapse?",
+          "prompt_text": "En un nodo donde convergen cuatro ramas, entra una corriente total de 10.0 A. Dos ramas extraen 3.0 A y 4.5 A respectivamente. Determina la corriente de la tercera rama saliente.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 2.5,
+            "nodes": [
+              { "id": "N_IN", "x": 60, "y": 120, "label": "IN (10 A)" },
+              { "id": "N_NODE", "x": 180, "y": 120, "label": "Nodo Central" },
+              { "id": "N_L1", "x": 300, "y": 50, "label": "L1 (3.0 A)" },
+              { "id": "N_L2", "x": 300, "y": 120, "label": "L2 (4.5 A)" },
+              { "id": "N_L3", "x": 300, "y": 190, "label": "L3 (I3 = ?)" }
+            ],
+            "components": [
+              { "id": "IS_MAIN", "type": "current_source_dc", "from": "N_IN", "to": "N_NODE", "label": "Is = 10 A", "value": 10, "unit": "A" },
+              { "id": "R_L1", "type": "resistor", "from": "N_NODE", "to": "N_L1", "label": "L1 = 3.0 A", "value": 4, "unit": "Ω" },
+              { "id": "R_L2", "type": "resistor", "from": "N_NODE", "to": "N_L2", "label": "L2 = 4.5 A", "value": 2.67, "unit": "Ω" },
+              { "id": "R_L3", "type": "resistor", "from": "N_NODE", "to": "N_L3", "label": "L3 = ?", "value": 4.8, "unit": "Ω" }
+            ]
+          },
+          "options": [
+            { "id": "opt_2_5a", "label": "2.5 A", "numeric_value": 2.5, "causes_overheat": false },
+            { "id": "opt_7_5a", "label": "7.5 A", "numeric_value": 7.5, "causes_overheat": true },
+            { "id": "opt_1_5a", "label": "1.5 A", "numeric_value": 1.5, "causes_overheat": false },
+            { "id": "opt_0_5a", "label": "0.5 A", "numeric_value": 0.5, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_2_5a",
+            "target_numeric_value": 2.5,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 2.5,
+            "resulting_power_watts": 30.0
+          },
+          "explanation_markdown": "Planteando la ecuación de LCK en el nodo:\n$$I_{\\text{in}} = I_1 + I_2 + I_3 \\implies 10.0\\text{ A} = 3.0\\text{ A} + 4.5\\text{ A} + I_3$$\n$$I_3 = 10.0\\text{ A} - 7.5\\text{ A} = 2.5\\text{ A}$$\nLa corriente en la tercera línea es exactamente $2.5\\text{ A}$."
+        },
+        {
+          "challenge_id": "S2-L6-C03",
+          "lesson_id": 6,
+          "topic_tag": "kcl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "shock",
+          "kilo_dialogue": "¡Alerta de sensor! Un monitor de telemetría reporta: Entran 8 A por una rama y 4 A por otra, pero los sensores de salida reportan 9 A y 5 A. ¿Se cumple la LCK en este nodo?",
+          "prompt_text": "Un nodo reporta dos corrientes entrantes de 8 A y 4 A, y dos corrientes salientes de 9 A y 5 A. ¿Es físicamente posible este estado bajo la LCK?",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.0,
+            "nodes": [
+              { "id": "N_IN1", "x": 60, "y": 70, "label": "+8 A" },
+              { "id": "N_IN2", "x": 60, "y": 170, "label": "+4 A" },
+              { "id": "N_TEST", "x": 180, "y": 120, "label": "Nodo Falla" },
+              { "id": "N_OUT1", "x": 300, "y": 70, "label": "-9 A" },
+              { "id": "N_OUT2", "x": 300, "y": 170, "label": "-5 A" }
+            ],
+            "components": [
+              { "id": "I_IN1", "type": "wire", "from": "N_IN1", "to": "N_TEST" },
+              { "id": "I_IN2", "type": "wire", "from": "N_IN2", "to": "N_TEST" },
+              { "id": "I_OUT1", "type": "wire", "from": "N_TEST", "to": "N_OUT1" },
+              { "id": "I_OUT2", "type": "wire", "from": "N_TEST", "to": "N_OUT2" }
+            ]
+          },
+          "options": [
+            { "id": "opt_no", "label": "No, viola la LCK porque entran 12 A y saldrían 14 A (hay error de sensor o fuga)", "numeric_value": null, "causes_overheat": false },
+            { "id": "opt_yes", "label": "Sí, porque el nodo puede amplificar corriente pasivamente", "numeric_value": null, "causes_overheat": true },
+            { "id": "opt_maybe", "label": "Sí, siempre que el voltaje en el nodo sea negativo", "numeric_value": null, "causes_overheat": false },
+            { "id": "opt_temp", "label": "Es válido si la temperatura del cable es muy baja", "numeric_value": null, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_no",
+            "target_numeric_value": null,
+            "tolerance_percent": 0.0,
+            "resulting_current_amps": 12.0,
+            "resulting_power_watts": 0.0
+          },
+          "explanation_markdown": "Verificamos sumas:\n$$\\sum I_{\\text{entran}} = 8\\text{ A} + 4\\text{ A} = 12\\text{ A}$$\n$$\\sum I_{\\text{salen}} = 9\\text{ A} + 5\\text{ A} = 14\\text{ A}$$\nComo $12\\text{ A} \\neq 14\\text{ A}$, la lectura **viola el principio de conservación de la carga**. Indica una calibración errónea en los sensores de telemetría."
+        }
+      ]
+    },
+    {
+      "lesson_id": 7,
+      "sector_id": 2,
+      "node_order": 3,
+      "title": "Ley de Voltajes de Kirchhoff (LVK)",
+      "topic_tag": "kvl",
+      "theory_markdown": "# 🔄 Ley de Voltajes de Kirchhoff (LVK)\n\nLa LVK se fundamenta en la **conservación de la energía**:\n\n> *La suma algebraica de todas las diferencias de potencial (tensiones) a lo largo de cualquier lazo cerrado o malla de un circuito es idénticamente cero.*\n\n$$\\sum_{k=1}^M V_k = 0$$\n\n### Convención para recorrer un lazo:\n1. Elige un sentido de recorrido (típicamente horario).\n2. Si al pasar por un elemento entras por la terminal negativa y sales por la positiva: es una **elevación de potencial ($+V_s$)**.\n3. Si entras por la terminal positiva y sales por la negativa: es una **caída de potencial ($-V_R$)**.\n\n$$V_s - V_{R1} - V_{R2} - \\dots = 0 \\implies V_s = \\sum V_{\\text{caídas}}$$",
+      "xp_reward": 85,
+      "is_boss_level": false,
+      "challenges": [
+        {
+          "challenge_id": "S2-L7-C01",
+          "lesson_id": 7,
+          "topic_tag": "kvl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "En un lazo cerrado alimentado con Vs = 24 V, medimos una caída de 6 V en R1 y 10 V en R2. ¿Cuál debe ser la caída de potencial en R3 para cerrar el lazo?",
+          "prompt_text": "Un circuito de un solo lazo alimentado por una fuente de Vs = 24 V contiene tres resistencias en serie. Si V_R1 = 6 V y V_R2 = 10 V, calcula la caída de voltaje en V_R3.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.04,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+24 V" },
+              { "id": "N2", "x": 150, "y": 60, "label": "Nodo 1" },
+              { "id": "N3", "x": 250, "y": 60, "label": "Nodo 2" },
+              { "id": "N4", "x": 250, "y": 180, "label": "Nodo 3" },
+              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 24 V", "value": 24, "unit": "V" },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "VR1 = 6 V", "value": 150, "unit": "Ω" },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "VR2 = 10 V", "value": 250, "unit": "Ω" },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "VR3 = ?", "value": 200, "unit": "Ω" },
+              { "id": "W1", "type": "wire", "from": "N4", "to": "N_GND" }
+            ]
+          },
+          "options": [
+            { "id": "opt_8v", "label": "8.0 V", "numeric_value": 8.0, "causes_overheat": false },
+            { "id": "opt_16v", "label": "16.0 V", "numeric_value": 16.0, "causes_overheat": false },
+            { "id": "opt_4v", "label": "4.0 V", "numeric_value": 4.0, "causes_overheat": false },
+            { "id": "opt_40v", "label": "40.0 V", "numeric_value": 40.0, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_8v",
+            "target_numeric_value": 8.0,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.04,
+            "resulting_power_watts": 0.96
+          },
+          "explanation_markdown": "Por **Ley de Voltajes de Kirchhoff (LVK)**, la suma de elevaciones es igual a la suma de caídas en el lazo:\n$$V_s = V_{R1} + V_{R2} + V_{R3} \\implies 24\\text{ V} = 6\\text{ V} + 10\\text{ V} + V_{R3}$$\n$$V_{R3} = 24\\text{ V} - 16\\text{ V} = 8.0\\text{ V}$$\nLa tensión en $R_3$ es exactamente $8.0\\text{ V}$."
+        },
+        {
+          "challenge_id": "S2-L7-C02",
+          "lesson_id": 7,
+          "topic_tag": "kvl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "happy",
+          "kilo_dialogue": "¡Dos fuentes en serie con polaridades opuestas! Vs1 = 18 V empuja en sentido horario y Vs2 = 6 V se opone. Con una resistencia de carga de 4 Ω, ¿cuál es la corriente neta?",
+          "prompt_text": "Un circuito cerrado contiene dos fuentes en oposición: Vs1 = 18 V y Vs2 = 6 V, alimentando una resistencia de R = 4 Ω. Determina la corriente I del lazo.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 3.0,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "V1 (+18V)" },
+              { "id": "N2", "x": 260, "y": 60, "label": "V2" },
+              { "id": "N3", "x": 260, "y": 180, "label": "V3 (-6V)" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs1 = 18 V", "value": 18, "unit": "V" },
+              { "id": "R_LOAD", "type": "resistor", "from": "N1", "to": "N2", "label": "R = 4 Ω", "value": 4, "unit": "Ω" },
+              { "id": "VS2_OPP", "type": "voltage_source_dc", "from": "N3", "to": "N2", "label": "Vs2 = 6 V (Opos.)", "value": 6, "unit": "V" },
+              { "id": "W1", "type": "wire", "from": "N3", "to": "N4" }
+            ]
+          },
+          "options": [
+            { "id": "opt_3a", "label": "3.0 A (en sentido horario)", "numeric_value": 3.0, "causes_overheat": false },
+            { "id": "opt_6a", "label": "6.0 A", "numeric_value": 6.0, "causes_overheat": true },
+            { "id": "opt_1_5a", "label": "1.5 A", "numeric_value": 1.5, "causes_overheat": false },
+            { "id": "opt_4_5a", "label": "4.5 A", "numeric_value": 4.5, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_3a",
+            "target_numeric_value": 3.0,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 3.0,
+            "resulting_power_watts": 36.0
+          },
+          "explanation_markdown": "Recorriendo el lazo en sentido horario con la LVK:\n$$+18\\text{ V} - (I \\cdot 4\\text{ }\\Omega) - 6\\text{ V} = 0$$\n$$12\\text{ V} = 4\\cdot I \\implies I = \\frac{12\\text{ V}}{4\\text{ }\\Omega} = 3.0\\text{ A}$$\nLa fuente de $18\\text{ V}$ domina a la de $6\\text{ V}$, entregando $3.0\\text{ A}$ netos al circuito."
+        },
+        {
+          "challenge_id": "S2-L7-C03",
+          "lesson_id": 7,
+          "topic_tag": "kvl",
+          "interaction_type": "multiple_choice",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Pregunta de examen UAA: Si un lazo cerrado tiene 4 caídas de potencial y se recorre completamente, ¿a qué valor exacto debe ser igual la suma algebraica total de voltajes?",
+          "prompt_text": "De acuerdo con el principio fundamental de conservación de energía plasmado en la Ley de Voltajes de Kirchhoff, la sumatoria algebraica de diferencias de potencial en un lazo cerrado siempre es:",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.05,
+            "nodes": [
+              { "id": "NA", "x": 80, "y": 60, "label": "A" },
+              { "id": "NB", "x": 240, "y": 60, "label": "B" },
+              { "id": "NC", "x": 240, "y": 180, "label": "C" },
+              { "id": "ND", "x": 80, "y": 180, "label": "D" }
+            ],
+            "components": [
+              { "id": "V1", "type": "wire", "from": "ND", "to": "NA" },
+              { "id": "V2", "type": "wire", "from": "NA", "to": "NB" },
+              { "id": "V3", "type": "wire", "from": "NB", "to": "NC" },
+              { "id": "V4", "type": "wire", "from": "NC", "to": "ND" }
+            ]
+          },
+          "options": [
+            { "id": "opt_zero_v", "label": "Idénticamente 0 Volts (conservación de energía)", "numeric_value": 0, "causes_overheat": false },
+            { "id": "opt_infinite_v", "label": "Infinito, debido a las oscilaciones de carga", "numeric_value": null, "causes_overheat": false },
+            { "id": "opt_positive_v", "label": "Siempre mayor a cero para compensar pérdidas térmicas", "numeric_value": null, "causes_overheat": false },
+            { "id": "opt_current_v", "label": "Igual a la corriente total multiplicada por la permitividad", "numeric_value": null, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_zero_v",
+            "target_numeric_value": 0,
+            "tolerance_percent": 0.0,
+            "resulting_current_amps": 0.05,
+            "resulting_power_watts": 0.0
+          },
+          "explanation_markdown": "Dado que el campo electrostático es un **campo conservativo**, el trabajo neto para trasladar una carga a lo largo de cualquier trayectoria cerrada es cero:\n$$\\oint \\vec{E} \\cdot d\\vec{\\ell} = 0 \\implies \\sum V_k = 0$$\nPor tanto, la suma de tensiones en cualquier lazo cerrado es **rigurosamente 0 Volts**."
+        }
+      ]
+    },
+    {
+      "lesson_id": 8,
+      "sector_id": 2,
+      "node_order": 4,
+      "title": "Jefe de Sector: Divisores de Tensión & Corriente",
+      "topic_tag": "dividers",
+      "theory_markdown": "# 🎚️ Divisores de Tensión y de Corriente\n\nLos divisores son las herramientas de cálculo más veloces en circuitos:\n\n### 1. Divisor de Tensión (Resistencias en Serie)\nEl voltaje en una resistencia $R_x$ es directamente proporcional a su valor sobre la suma total:\n$$V_x = V_s \\cdot \\frac{R_x}{R_1 + R_2 + \\dots + R_n}$$\n\n### 2. Divisor de Corriente (Dos Resistencias en Paralelo)\nLa corriente se divide inversamente al valor resistivo. **La corriente de una rama es proporcional a la resistencia OPUESTA**:\n$$I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2}, \\quad I_2 = I_s \\cdot \\frac{R_1}{R_1 + R_2}$$\n*La rama con menor resistencia absorbe la mayor proporción de corriente.*",
+      "xp_reward": 160,
+      "is_boss_level": true,
+      "challenges": [
+        {
+          "challenge_id": "S2-L8-C01",
+          "lesson_id": 8,
+          "topic_tag": "dividers",
+          "interaction_type": "multiple_choice",
+          "difficulty": "boss",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡El coprocesador central de Neo-Ags requiere exactamente 3.3 V desde el riel de 12 V! Si R2 a tierra vale 3.3 kΩ, ¿qué valor debe tener R1 en el divisor?",
+          "prompt_text": "Diseña un divisor de voltaje para obtener V_out = 3.3 V a partir de una fuente de Vs = 12 V. Si la resistencia inferior es R2 = 3.3 kΩ, ¿qué valor debe tener R1?",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.001,
+            "nodes": [
+              { "id": "N_12V", "x": 60, "y": 60, "label": "Vs = 12V" },
+              { "id": "N_MID", "x": 200, "y": 60, "label": "Vout = 3.3V" },
+              { "id": "N_R2_B", "x": 200, "y": 180, "label": "R2-" },
+              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_12V", "label": "Vs = 12 V", "value": 12, "unit": "V" },
+              { "id": "R1_SLOT", "type": "resistor", "from": "N_12V", "to": "N_MID", "label": "R1 = ?", "value": 8700, "unit": "Ω" },
+              { "id": "R2", "type": "resistor", "from": "N_MID", "to": "N_R2_B", "label": "R2 = 3.3 kΩ", "value": 3300, "unit": "Ω" },
+              { "id": "W1", "type": "wire", "from": "N_R2_B", "to": "N_GND" }
+            ]
+          },
+          "options": [
+            { "id": "opt_8_7k", "label": "8.7 kΩ (8,700 Ω)", "numeric_value": 8700, "causes_overheat": false },
+            { "id": "opt_3_3k", "label": "3.3 kΩ (daría 6.0 V)", "numeric_value": 3300, "causes_overheat": false },
+            { "id": "opt_12k", "label": "12.0 kΩ", "numeric_value": 12000, "causes_overheat": false },
+            { "id": "opt_1k", "label": "1.0 kΩ (quemaría el microchip con 9.2 V)", "numeric_value": 1000, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_8_7k",
+            "target_numeric_value": 8700,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.001,
+            "resulting_power_watts": 0.012
+          },
+          "explanation_markdown": "Por fórmula del **Divisor de Voltaje**:\n$$V_{\\text{out}} = V_s \\cdot \\frac{R_2}{R_1 + R_2} \\implies 3.3\\text{ V} = 12\\text{ V} \\cdot \\frac{3300}{R_1 + 3300}$$\nDespejando:\n$$\\frac{3.3}{12} = 0.275 \\implies R_1 + 3300 = \\frac{3300}{0.275} = 12,000\\text{ }\\Omega$$\n$$R_1 = 12,000\\text{ }\\Omega - 3,300\\text{ }\\Omega = 8,700\\text{ }\\Omega = 8.7\\text{ k}\\Omega$$\nCon $R_1 = 8.7\\text{ k}\\Omega$, el procesador recibe exactamente $3.3\\text{ V}$."
+        },
+        {
+          "challenge_id": "S2-L8-C02",
+          "lesson_id": 8,
+          "topic_tag": "dividers",
+          "interaction_type": "multiple_choice",
+          "difficulty": "boss",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Una fuente de corriente de Is = 6.0 A alimenta dos ramas en paralelo: R1 = 20 Ω y R2 = 40 Ω. ¿Cuánta corriente circulará por la rama de menor resistencia R1?",
+          "prompt_text": "Aplica el Divisor de Corriente para determinar la corriente I_1 que fluye a través de R1 = 20 Ω cuando el par paralelo R1 || R2 (R2 = 40 Ω) es alimentado por Is = 6.0 A.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 4.0,
+            "nodes": [
+              { "id": "N_IS_T", "x": 80, "y": 60, "label": "Is+" },
+              { "id": "N_R1_T", "x": 180, "y": 60, "label": "R1+" },
+              { "id": "N_R2_T", "x": 280, "y": 60, "label": "R2+" },
+              { "id": "N_IS_B", "x": 80, "y": 180, "label": "Is-" },
+              { "id": "N_R1_B", "x": 180, "y": 180, "label": "R1-" },
+              { "id": "N_R2_B", "x": 280, "y": 180, "label": "R2-" }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "N_IS_B", "to": "N_IS_T", "label": "Is = 6.0 A", "value": 6.0, "unit": "A" },
+              { "id": "W1", "type": "wire", "from": "N_IS_T", "to": "N_R1_T" },
+              { "id": "W2", "type": "wire", "from": "N_R1_T", "to": "N_R2_T" },
+              { "id": "R1", "type": "resistor", "from": "N_R1_T", "to": "N_R1_B", "label": "R1 = 20 Ω", "value": 20, "unit": "Ω" },
+              { "id": "R2", "type": "resistor", "from": "N_R2_T", "to": "N_R2_B", "label": "R2 = 40 Ω", "value": 40, "unit": "Ω" },
+              { "id": "W3", "type": "wire", "from": "N_R2_B", "to": "N_R1_B" },
+              { "id": "W4", "type": "wire", "from": "N_R1_B", "to": "N_IS_B" }
+            ]
+          },
+          "options": [
+            { "id": "opt_4a", "label": "4.0 A (mayor corriente por menor resistencia)", "numeric_value": 4.0, "causes_overheat": false },
+            { "id": "opt_2a", "label": "2.0 A", "numeric_value": 2.0, "causes_overheat": false },
+            { "id": "opt_3a", "label": "3.0 A (se dividiría a partes iguales)", "numeric_value": 3.0, "causes_overheat": false },
+            { "id": "opt_6a", "label": "6.0 A", "numeric_value": 6.0, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_4a",
+            "target_numeric_value": 4.0,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 4.0,
+            "resulting_power_watts": 320.0
+          },
+          "explanation_markdown": "En el **Divisor de Corriente**, la corriente en $R_1$ usa la resistencia de la rama opuesta $R_2$ en el numerador:\n$$I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2} = 6.0\\text{ A} \\cdot \\frac{40\\text{ }\\Omega}{20\\text{ }\\Omega + 40\\text{ }\\Omega} = 6.0 \\times \\frac{40}{60} = 4.0\\text{ A}$$\nPor su parte, $R_2$ conduce los $2.0\\text{ A}$ restantes ($4\\text{ A} + 2\\text{ A} = 6\\text{ A}$)."
+        },
+        {
+          "challenge_id": "S2-L8-C03",
+          "lesson_id": 8,
+          "topic_tag": "dividers",
+          "interaction_type": "component_slot",
+          "difficulty": "boss",
+          "kilo_emotion": "happy",
+          "kilo_dialogue": "¡ÚLTIMO RETO DEL JEFE KIRCHHOFF! Necesitamos fijar exactamente V_out = 5.0 V con una fuente de 20 V. Si R_inferior = 250 Ω, ¿qué resistencia debemos soldar en el slot superior?",
+          "prompt_text": "Inserta en el slot de resistencia superior el valor que genere una salida regulada de exactamente V_out = 5.0 V con Vs = 20 V y R_inferior = 250 Ω.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": false,
+            "current_speed_amps": 0.02,
+            "nodes": [
+              { "id": "N_20V", "x": 60, "y": 60, "label": "+20V" },
+              { "id": "N_MID_BOSS", "x": 200, "y": 60, "label": "Vout = 5V" },
+              { "id": "N_BOT_R", "x": 200, "y": 180, "label": "GND_R" },
+              { "id": "N_GND_SRC", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND_SRC", "to": "N_20V", "label": "Vs = 20 V", "value": 20, "unit": "V" },
+              { "id": "R_TOP_SLOT", "type": "resistor_slot", "from": "N_20V", "to": "N_MID_BOSS", "label": "R_sup = ?", "value": null, "unit": "Ω", "max_watts": 1.0 },
+              { "id": "R_BOT_LOAD", "type": "resistor", "from": "N_MID_BOSS", "to": "N_BOT_R", "label": "R_inf = 250 Ω", "value": 250, "unit": "Ω" },
+              { "id": "W1", "type": "wire", "from": "N_BOT_R", "to": "N_GND_SRC" }
+            ]
+          },
+          "options": [
+            { "id": "opt_750", "label": "750 Ω", "numeric_value": 750, "causes_overheat": false },
+            { "id": "opt_250", "label": "250 Ω (daría 10 V)", "numeric_value": 250, "causes_overheat": true },
+            { "id": "opt_1000", "label": "1,000 Ω (daría 4 V)", "numeric_value": 1000, "causes_overheat": false },
+            { "id": "opt_500", "label": "500 Ω (daría 6.67 V)", "numeric_value": 500, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_750",
+            "target_numeric_value": 750,
+            "tolerance_percent": 2.0,
+            "resulting_current_amps": 0.02,
+            "resulting_power_watts": 0.3
+          },
+          "explanation_markdown": "Para obtener $V_{\\text{out}} = 5.0\\text{ V}$ a partir de $20\\text{ V}$, la resistencia inferior ($250\\text{ }\\Omega$) debe representar la cuarta parte ($1/4$) de la resistencia total:\n$$\\frac{R_{\\text{inf}}}{R_{\\text{total}}} = \\frac{5.0}{20.0} = 0.25 \\implies R_{\\text{total}} = \\frac{250}{0.25} = 1,000\\text{ }\\Omega$$\n$$R_{\\text{sup}} = R_{\\text{total}} - R_{\\text{inf}} = 1,000\\text{ }\\Omega - 250\\text{ }\\Omega = 750\\text{ }\\Omega$$\n¡El Sector 2: Nodos de Kirchhoff ha sido estabilizado al 100%!"
+        }
+      ]
+    }
+  ]
+}
