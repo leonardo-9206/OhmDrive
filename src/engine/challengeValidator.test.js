@@ -38,8 +38,48 @@ for (const lesson of sector1.lessons) {
   }
 }
 
-// 2. Slider tuning (±2% tolerance)
-test('slider_tuning acepta dentro de ±2%', () => {
+// 2. Numeric input with units and ±3% rounding tolerance (Rubric Criteria 5 & 6)
+const numericMock = {
+  interaction_type: 'numeric_input',
+  solution_json: {
+    target_base_si_value: 0.02,
+    base_si_unit: 'A',
+    accepted_units: { A: 1, mA: 0.001 },
+    tolerance_percent: 3.0,
+    resulting_current_amps: 0.02,
+  },
+}
+
+test('numeric_input acepta 20 mA equivalente a 0.02 A', () => {
+  const res = validateChallenge(numericMock, { numericValue: 20, unit: 'mA' })
+  assert.equal(res.isCorrect, true)
+  assert.equal(res.unitError, null)
+})
+
+test('numeric_input acepta 0.02 A en unidad base', () => {
+  const res = validateChallenge(numericMock, { numericValue: 0.02, unit: 'A' })
+  assert.equal(res.isCorrect, true)
+})
+
+test('numeric_input acepta redondeo dentro de ±3% (20.5 mA)', () => {
+  const res = validateChallenge(numericMock, { numericValue: 20.5, unit: 'mA' })
+  assert.equal(res.isCorrect, true)
+})
+
+test('numeric_input rechaza valor fuera de ±3% (22 mA)', () => {
+  const res = validateChallenge(numericMock, { numericValue: 22, unit: 'mA' })
+  assert.equal(res.isCorrect, false)
+  assert.equal(res.unitError, null)
+})
+
+test('numeric_input rechaza unidad incompatible con unitError', () => {
+  const res = validateChallenge(numericMock, { numericValue: 20, unit: 'V' })
+  assert.equal(res.isCorrect, false)
+  assert.ok(res.unitError && res.unitError.includes('Revisar unidades'))
+})
+
+// 3. Slider tuning (±2% / ±3% tolerance)
+test('slider_tuning acepta dentro de tolerancia', () => {
   const mock = {
     interaction_type: 'slider_tuning',
     solution_json: { target_numeric_value: 3.3, tolerance_percent: 2.0, resulting_current_amps: 0.01 },
@@ -48,7 +88,7 @@ test('slider_tuning acepta dentro de ±2%', () => {
   assert.equal(validateChallenge(mock, { numericValue: 4.0 }).isCorrect, false)
 })
 
-// 3. Multimeter probe
+// 4. Multimeter probe
 test('multimeter_probe valida modo y nodos', () => {
   const mock = {
     interaction_type: 'multimeter_probe',
@@ -58,7 +98,7 @@ test('multimeter_probe valida modo y nodos', () => {
   assert.equal(validateChallenge(mock, { mode: 'A_SERIES', redNodeId: 'A', blackNodeId: 'GND' }).isCorrect, false)
 })
 
-// 4. Superposition toggle
+// 5. Superposition toggle
 test('superposition_toggle valida estado de fuentes', () => {
   const mock = {
     interaction_type: 'superposition_toggle',
