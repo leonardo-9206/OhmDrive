@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { sectorsList } from '../../data/sectors'
 import CircuitCanvas from './CircuitCanvas'
+import { DC_LEVEL_TOPOLOGIES } from './fixtures/dcLevelTopologies'
 
 /**
  * Banco de pruebas visual del motor SVG (solo en desarrollo: /dev/circuits).
@@ -8,19 +9,33 @@ import CircuitCanvas from './CircuitCanvas'
  * provocar cortocircuito o sobrecalentar un componente.
  */
 export default function CircuitGallery() {
+  const [source, setSource] = useState('levels')
   const challenges = sectorsList.flatMap((s) =>
     s.lessons.flatMap((l) => l.challenges.map((c) => ({ ...c, sectorTitle: s.title, lessonTitle: l.title }))),
   )
+  const levelCards = DC_LEVEL_TOPOLOGIES.map((t) => ({
+    challenge_id: t.title,
+    interaction_type: `nivel ${t.level}`,
+    circuit_config_json: t.config,
+  }))
+  const cards = source === 'levels' ? levelCards : challenges
 
   return (
     <div className="bg-pcb-grid min-h-[100dvh] px-4 py-6 text-slate-100">
-      <div className="mx-auto max-w-md space-y-4">
-        <header>
-          <p className="font-mono text-xs uppercase tracking-widest text-neon-volt">US-04 · dev</p>
+      <div className="mx-auto max-w-md space-y-4 md:grid md:max-w-5xl md:grid-cols-2 md:gap-4 md:space-y-0">
+        <header className="md:col-span-2">
+          <p className="font-mono text-xs uppercase tracking-widest text-neon-volt">US-04 · US-08R · dev</p>
           <h1 className="font-display text-xl font-bold text-white">Circuit Canvas Gallery</h1>
-          <p className="text-sm text-slate-400">{challenges.length} circuitos de sectorsList</p>
+          <div className="mt-2 flex gap-2">
+            <Toggle active={source === 'levels'} onClick={() => setSource('levels')}>
+              6 niveles ({levelCards.length})
+            </Toggle>
+            <Toggle active={source === 'sectors'} onClick={() => setSource('sectors')}>
+              sectores JSON ({challenges.length})
+            </Toggle>
+          </div>
         </header>
-        {challenges.map((c) => (
+        {cards.map((c) => (
           <GalleryCard key={c.challenge_id} challenge={c} />
         ))}
       </div>
