@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:engine": "node src/engine/circuitSolver.test.js"
+    "test:engine": "node src/engine/circuitSolver.test.js",
+    "test:store": "node src/store/useGameStore.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.1",
