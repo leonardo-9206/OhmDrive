@@ -36,6 +36,7 @@ import circuitSolver, {
 } from './circuitSolver.js'
 
 import { sectorsList, getSectorById, getLessonById, getAllLessons } from '../data/sectors/index.js'
+import { validateChallenge } from './challengeValidator.js'
 
 let passed = 0
 let failed = 0
@@ -126,31 +127,83 @@ assertClose('Impedancia |Z|: R = 30Ω, X = 40Ω -> |Z| = 50Ω', calcImpedanceMag
 assertClose('Potencia Aparente: P = 400 kW, Q = 300 kVAR -> S = 500 kVA', calcApparentPower(400, 300), 500)
 assertClose('Factor de Potencia: P = 400, S = 500 -> FP = 0.80', calcPowerFactor(400, 500), 0.8)
 
-// 9. Validación Integral de Sectores 1 a 4
-console.log('\n--- 9. Validación de Datos Curriculares (Sectores 1 al 4) ---')
-assert('Existen 4 sectores en la lista', sectorsList.length === 4)
+// 9. Validación Curricular Oficial de la Rúbrica (3 Unidades · 6 Niveles · 24 Retos)
+console.log('\n--- 9. Validación de Datos Curriculares Oficiales (3 Unidades · 6 Niveles · 24 Retos) ---')
+assert('Existen exactamente 3 Unidades en la lista', sectorsList.length === 3)
 
 sectorsList.forEach((sec, sIdx) => {
   const expectedSectorId = sIdx + 1
-  assert(`Sector ${expectedSectorId} (${sec.slug}): ID correcto`, sec.sector_id === expectedSectorId)
-  assert(`Sector ${expectedSectorId}: Tiene 4 lecciones`, sec.lessons.length === 4)
+  assert(`Unidad ${expectedSectorId} (${sec.slug}): ID correcto`, sec.sector_id === expectedSectorId)
+  assert(`Unidad ${expectedSectorId}: Tiene exactamente 2 niveles`, sec.lessons.length === 2)
 
   sec.lessons.forEach((les) => {
-    assert(`Lección ${les.lesson_id} (${les.title}): Tiene retos definidos`, les.challenges.length >= 3)
+    assert(`Nivel ${les.lesson_id} (${les.title}): Tiene theory_markdown`, Boolean(les.theory_markdown && les.theory_markdown.length > 50))
+    assert(`Nivel ${les.lesson_id}: Tiene formulas_markdown`, Boolean(les.formulas_markdown && les.formulas_markdown.length > 30))
+    assert(`Nivel ${les.lesson_id}: Tiene solved_example_json completo`, Boolean(les.solved_example_json?.title && les.solved_example_json?.steps_markdown && les.solved_example_json?.final_result))
+    assert(`Nivel ${les.lesson_id}: Tiene exactamente 4 ejercicios`, les.challenges.length === 4)
+
+    const mcCount = les.challenges.filter((c) => c.interaction_type === 'multiple_choice').length
+    const numCount = les.challenges.filter((c) => c.interaction_type === 'numeric_input').length
+    assert(`Nivel ${les.lesson_id}: Combina 2 opción múltiple y 2 respuesta numérica`, mcCount === 2 && numCount === 2)
+
     les.challenges.forEach((ch) => {
       assert(`Reto ${ch.challenge_id}: Tiene solution_json válido`, Boolean(ch.solution_json))
-      assert(`Reto ${ch.challenge_id}: Tiene explanation_markdown`, Boolean(ch.explanation_markdown))
+      assert(`Reto ${ch.challenge_id}: Tiene hint_markdown para reintento`, Boolean(ch.hint_markdown && ch.hint_markdown.length > 10))
+      assert(`Reto ${ch.challenge_id}: Tiene explanation_markdown paso a paso`, Boolean(ch.explanation_markdown && ch.explanation_markdown.length > 15))
       assert(`Reto ${ch.challenge_id}: Tiene circuit_config_json con nodos`, Boolean(ch.circuit_config_json?.nodes?.length))
+
+      if (ch.interaction_type === 'numeric_input') {
+        assert(`Reto numérico ${ch.challenge_id}: Tiene unit_options y default_unit`, Boolean(ch.unit_options?.length && ch.default_unit))
+        assert(`Reto numérico ${ch.challenge_id}: Tiene target_base_si_value`, Number.isFinite(ch.solution_json?.target_base_si_value))
+      }
     })
   })
 })
 
 const allLessons = getAllLessons()
-assert(`Total global de lecciones = 16 (4 sectores x 4 lecciones)`, allLessons.length === 16)
-assert(`getLessonById(1) encuentra Distrito Ohm L1`, getLessonById(1)?.sector?.slug === 'distrito-ohm')
-assert(`getLessonById(8) encuentra Nodos Kirchhoff Boss L8`, getLessonById(8)?.sector?.slug === 'nodos-kirchhoff')
-assert(`getLessonById(12) encuentra Núcleo Thévenin Boss L12`, getLessonById(12)?.sector?.slug === 'nucleo-thevenin')
-assert(`getLessonById(16) encuentra Pulso Reactivo Boss Final L16`, getLessonById(16)?.sector?.slug === 'pulso-reactivo')
+assert(`Total global de niveles = 6 (3 unidades x 2 niveles)`, allLessons.length === 6)
+const totalChallenges = allLessons.flatMap((l) => l.challenges)
+assert(`Total oficial de ejercicios = 24 (6 niveles x 4 ejercicios)`, totalChallenges.length === 24)
+
+assert(`getLessonById(1) encuentra Distrito Ohm Nivel 1`, getLessonById(1)?.sector?.slug === 'distrito-ohm')
+assert(`getLessonById(2) encuentra Distrito Ohm Nivel 2`, getLessonById(2)?.lesson?.lesson_id === 2)
+assert(`getLessonById(3) encuentra Red de Distribución Nivel 3`, getLessonById(3)?.sector?.slug === 'red-distribucion')
+assert(`getLessonById(4) encuentra Red de Distribución Nivel 4`, getLessonById(4)?.lesson?.lesson_id === 4)
+assert(`getLessonById(5) encuentra Núcleo Kirchhoff Nivel 5`, getLessonById(5)?.sector?.slug === 'nucleo-kirchhoff')
+assert(`getLessonById(6) encuentra Núcleo Kirchhoff Nivel 6`, getLessonById(6)?.lesson?.lesson_id === 6)
+
+// 10. Validación Física de los 24 Retos con challengeValidator
+console.log('\n--- 10. Validación Física de los 24 Retos (challengeValidator) ---')
+totalChallenges.forEach((ch) => {
+  if (ch.interaction_type === 'multiple_choice') {
+    const correctRes = validateChallenge(ch, { optionId: ch.solution_json.correct_option_id })
+    assert(`Reto ${ch.challenge_id} (MC): opción correcta valida isCorrect: true`, correctRes.isCorrect === true)
+
+    const incorrectOpt = ch.options?.find((o) => o.id !== ch.solution_json.correct_option_id)
+    if (incorrectOpt) {
+      const wrongRes = validateChallenge(ch, { optionId: incorrectOpt.id })
+      assert(`Reto ${ch.challenge_id} (MC): opción incorrecta valida isCorrect: false`, wrongRes.isCorrect === false)
+    }
+  } else if (ch.interaction_type === 'numeric_input') {
+    const resDisplay = validateChallenge(ch, {
+      numericValue: ch.solution_json.display_target_value,
+      unit: ch.solution_json.display_unit
+    })
+    assert(`Reto ${ch.challenge_id} (Num): valor display (${ch.solution_json.display_target_value} ${ch.solution_json.display_unit}) -> isCorrect: true`, resDisplay.isCorrect === true)
+
+    const resBase = validateChallenge(ch, {
+      numericValue: ch.solution_json.target_base_si_value,
+      unit: ch.solution_json.base_si_unit
+    })
+    assert(`Reto ${ch.challenge_id} (Num): valor base SI (${ch.solution_json.target_base_si_value} ${ch.solution_json.base_si_unit}) -> isCorrect: true`, resBase.isCorrect === true)
+
+    const wrongValRes = validateChallenge(ch, {
+      numericValue: Number(ch.solution_json.target_base_si_value) * 10,
+      unit: ch.solution_json.base_si_unit
+    })
+    assert(`Reto ${ch.challenge_id} (Num): valor erróneo -> isCorrect: false`, wrongValRes.isCorrect === false)
+  }
+})
 
 console.log(`\n========================================`)
 console.log(`Pruebas completadas: ${passed} pasadas, ${failed} falladas`)
