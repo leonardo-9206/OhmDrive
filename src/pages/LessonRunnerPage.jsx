@@ -215,7 +215,7 @@ export default function LessonRunnerPage() {
   const lessonData = useMemo(() => getLessonById(lessonId), [lessonId])
   const currentFuses = useGameStore((s) => s.user.currentFuses)
   const consumeFuse = useGameStore((s) => s.consumeFuse)
-  const completeLessonNode = useGameStore((s) => s.completeLessonNode)
+  const recordLevelResults = useGameStore((s) => s.recordLevelResults)
 
   const lesson = lessonData?.lesson || null
   const sector = lessonData?.sector || null
@@ -351,19 +351,16 @@ export default function LessonRunnerPage() {
     // Completed all exercises in the level (Criterion 8)
     if (!completionRecordedRef.current) {
       completionRecordedRef.current = true
-      const total = Math.max(1, challenges.length)
-      const scorePercentage = Math.round((correctCount / total) * 100)
       const durationSeconds = Math.max(
         1,
         Math.round((Date.now() - startedAtRef.current) / 1000)
       )
-      completeLessonNode({
-        sectorId: sector.sector_id,
-        nodeOrder: lesson.node_order,
+      recordLevelResults({
         lessonId: lesson.lesson_id,
-        wattsEarned: scorePoints,
+        correctCount,
+        errorCount,
+        scorePoints,
         fusesLost: errorCount,
-        scorePercentage,
         durationSeconds,
       })
     }
