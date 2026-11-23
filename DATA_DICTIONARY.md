@@ -219,6 +219,49 @@ When validating `"numeric_input"`, `challengeValidator.js` converts the user's i
 | **Potencia ($P$)** | `"W"` | `"W": 1`, `"mW": 0.001`, `"kW": 1000` |
 | **Carga / Energía** | `"C"` / `"J"`| `"C": 1`, `"J": 1`, `"kJ": 1000` |
 
+### 4.3 `circuit_config_json` — Component Types & Diagram Annotations (US-08R, `<CircuitCanvas />`)
+
+`<CircuitCanvas />` draws everything from `circuit_config_json`. All fields below marked *optional* are backwards compatible: older JSONs keep working without them.
+
+**Canvas:** `viewBox="0 0 360 240"`. Keep nodes between `x: 40–320` and `y: 50–190` so labels have room. Use horizontal/vertical segments; diagonal ones are supported but harder to read.
+
+**Supported `components[].type`:**
+
+| `type` | Drawn as | Direction convention (`from` → `to`) |
+| :--- | :--- | :--- |
+| `voltage_source_dc` | Cyan circle with `+` / `−` | `from` = negative terminal, `to` = positive terminal |
+| `current_source_dc` | Amber circle with arrow | Arrow points from `from` to `to` |
+| `resistor` | Magenta IEEE zig-zag | — |
+| `resistor_slot` | Dashed tappable box (`component_slot` exercises) | — |
+| `wire` | Copper trace (no label) | — |
+| `cyber_led` | Diode symbol, glows green when energized | Anode = `from`, cathode = `to` |
+| `cyber_sensor` | Series meter with digital display (`value: null` → `"? A"`) | — |
+
+Unknown types render as a generic dashed box (the screen never crashes).
+
+**Optional per-component field — `current_amps` (number):** real current of that branch. It sets the speed of that branch's electron-flow animation (parallel branches move at different speeds) and its direction: positive = flows `from` → `to`, negative = flows `to` → `from`, `0` = no flow. Without it, every branch uses `current_speed_amps`.
+
+**Optional `annotations` array (Levels 4–6):**
+
+| Annotation | Fields | Drawn as |
+| :--- | :--- | :--- |
+| `current_arrow` | `target` (component id), `label` (e.g. `"I₁"`, `"I_x = ?"`), `reverse` (bool, optional) | Amber arrowhead on the branch + label. Follows the sign of the target's `current_amps`. |
+| `node_voltage` | `node` (node id), `label` (e.g. `"V_A = ?"`) | Cyan ring on the node + pill tag |
+| `mesh_current` | `label` (e.g. `"I_a"`), `nodes` (ids of the mesh corners) **or** `center` `{x, y}`, `clockwise` (default `true`), `radius` (default `22`) | Dashed circular arrow in the middle of the mesh |
+
+```json
+"annotations": [
+  { "type": "node_voltage", "node": "A", "label": "V_A = ?" },
+  { "type": "current_arrow", "target": "R1", "label": "I₁" },
+  { "type": "current_arrow", "target": "R3", "label": "I₃" },
+  { "type": "mesh_current", "label": "I_a", "nodes": ["TL", "A", "BM", "BL"] }
+]
+```
+
+> ⚠️ Never put the answer in a label: if a label contains `?`, `<CircuitCanvas />` hides that component's `value`.
+
+Reference circuits for the 6 levels (series, parallel, mixed, dividers, LVK, LCK, nodes and meshes) with verified physics live in `src/components/circuit-svg/fixtures/dcLevelTopologies.js` and can be previewed at `/dev/circuits` (dev mode).
+
 ---
 
 ## 5. Level Progress Persistence Schema in `useGameStore.js` (Criteria 8, 9 & 10)
