@@ -1,23 +1,21 @@
 /**
- * OhmDrive — Sectors Data Registry
- * Exporta los 4 sectores de Modo Historia para carga modular en StoryMapPage y LessonRunnerPage.
+ * OhmDrive — Sectors Data Registry (Official Rubric: 3 Units · 6 Levels · 24 Exercises)
+ * Exporta las 3 unidades de Modo Historia para carga modular en StoryMapPage y LessonRunnerPage.
  *
- * Sector 1: Distrito Ohm (Unidad I - Básicos, Ohm y Potencia)
- * Sector 2: Nodos de Kirchhoff (Unidad I - Serie/Paralelo, LCK, LVK y Divisores)
- * Sector 3: El Núcleo Thévenin (Unidad II - Nodos, Superposición, Transformación y Thévenin)
- * Sector 4: Pulso Reactivo & CA (Unidades III-V - RC/RL, Fasores e Impedancia, y Potencia CA)
+ * Unidad 1: Distrito Ohm (Nivel 1: V, I, R · Nivel 2: Ley de Ohm y Potencia)
+ * Unidad 2: Red de Distribución (Nivel 3: Serie y Paralelo · Nivel 4: Divisores de Tensión y Corriente)
+ * Unidad 3: Núcleo Kirchhoff (Nivel 5: Leyes de Kirchhoff · Nivel 6: Introducción a Nodos y Mallas)
  */
 import sector1 from './sector1.json' with { type: 'json' }
 import sector2 from './sector2.json' with { type: 'json' }
 import sector3 from './sector3.json' with { type: 'json' }
-import sector4 from './sector4.json' with { type: 'json' }
 
-export { sector1, sector2, sector3, sector4 }
+export { sector1, sector2, sector3 }
 
-export const sectorsList = [sector1, sector2, sector3, sector4]
+export const sectorsList = [sector1, sector2, sector3]
 
 /**
- * Obtiene un sector por su ID (1 a 4).
+ * Obtiene un sector por su ID (1 a 3).
  * @param {number|string} sectorId
  * @returns {object|null}
  */
@@ -26,7 +24,7 @@ export function getSectorById(sectorId) {
 }
 
 /**
- * Busca una lección por su ID global (1 a 16) a través de todos los sectores.
+ * Busca una lección por su ID global (1 a 6) a través de los 3 sectores.
  * @param {number|string} lessonId
  * @returns {{ sector: object, lesson: object }|null}
  */
@@ -39,7 +37,7 @@ export function getLessonById(lessonId) {
 }
 
 /**
- * Obtiene todas las lecciones de todos los sectores aplanadas en un solo arreglo.
+ * Obtiene todas las lecciones de los 3 sectores aplanadas en un solo arreglo (6 niveles).
  * @returns {object[]}
  */
 export function getAllLessons() {
@@ -50,7 +48,6 @@ export default {
   sector1,
   sector2,
   sector3,
-  sector4,
   sectorsList,
   getSectorById,
   getLessonById,

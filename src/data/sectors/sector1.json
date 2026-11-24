@@ -3,172 +3,231 @@
   "sector_order": 1,
   "slug": "distrito-ohm",
   "title": "Sector 1: Distrito Ohm",
-  "uaa_unit_ref": "Unidad I: Leyes Experimentales y Circuitos Simples (Temas 1.1 - 1.3)",
-  "lore_description": "¡Alerta en Neo-Aguascalientes! La subestación principal del Distrito Ohm colapsó tras un pulso electromagnético masivo. Acompaña a K-1L0 para calibrar las variables eléctricas básicas, dominar el multímetro y evitar que las resistencias se fundan por sobrecarga.",
+  "uaa_unit_ref": "Unidad I: Fundamentos y Potencia en CD",
+  "lore_description": "¡Alerta en Neo-Aguascalientes! La subestación principal del Distrito Ohm colapsó tras un pulso electromagnético masivo. Acompaña a K-1L0 para calibrar las variables eléctricas básicas, dominar la Ley de Ohm y evitar que las resistencias se fundan por sobrecarga.",
   "accent_color_hex": "#00F0FF",
   "lessons": [
     {
       "lesson_id": 1,
       "sector_id": 1,
       "node_order": 1,
-      "title": "Variables Fundamentales & Polaridad",
-      "topic_tag": "fundamentals",
-      "theory_markdown": "# ⚡ Variables Eléctricas Fundamentales\n\nEn todo sistema eléctrico existen 4 magnitudes base indispensables:\n\n1. **Carga ($q$):** Cantidad de electricidad medida en **Coulombs ($C$)**. Un electrón tiene una carga elemental de $e^- = -1.602 \\times 10^{-19}\\text{ C}$.\n2. **Corriente ($I$):** Rapidez de flujo de carga eléctrica a través de una sección transversal: $$I = \\frac{dq}{dt}\\quad [\\text{Amperes, } 1\\text{ A} = 1\\text{ C/s}]$$\n3. **Voltaje o Tensión ($V$):** Energía o trabajo requerido para mover una carga unitaria entre dos nodos: $$V = \\frac{dw}{dq}\\quad [\\text{Volts, } 1\\text{ V} = 1\\text{ J/C}]$$\n4. **Convención Pasiva de Signos:** En cualquier componente pasivo (como una resistencia), la corriente $I$ **entra por la terminal de mayor potencial ($+$)** y sale por la de menor potencial ($-$). La energía es **absorbida/disipada** por el elemento.",
-      "xp_reward": 50,
+      "title": "Nivel 1: Voltaje, Corriente y Resistencia",
+      "topic_tag": "v_i_r",
+      "xp_reward": 100,
       "is_boss_level": false,
+      "theory_markdown": "# ⚡ Variables Eléctricas Fundamentales en CD\nEn todo circuito eléctrico existen magnitudes base indispensables:\n\n1. **Carga ($q$):** Cantidad de electricidad medida en **Coulombs ($C$)**. Un electrón tiene una carga elemental de $e^- = -1.602 \\times 10^{-19}\\text{ C}$.\n2. **Corriente ($I$):** Rapidez con la que fluye la carga neta a través de una sección transversal: $$I = \\frac{\\Delta q}{\\Delta t} \\quad [\\text{Amperes, } 1\\text{ A} = 1\\text{ C/s}]$$\n3. **Voltaje o Tensión ($V$):** Diferencia de potencial o energía requerida para mover una carga unitaria: $$V = \\frac{\\Delta w}{\\Delta q} \\quad [\\text{Volts, } 1\\text{ V} = 1\\text{ J/C}]$$\n4. **Resistencia ($R$):** Oposición física de un conductor al paso de la corriente: $$R = \\rho \\frac{L}{A} \\quad [\\text{Ohms, } \\Omega]$$\n5. **Convención Pasiva de Signos:** En componentes que absorben o disipan energía (como resistores), la corriente **entra por la terminal de mayor potencial ($+$)** y sale por la de menor potencial ($-$).",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Corriente Eléctrica Media:** $$I = \\frac{\\Delta q}{\\Delta t} \\quad [\\text{A}]$$\n* **Diferencia de Potencial / Voltaje:** $$V = \\frac{\\Delta w}{\\Delta q} \\quad [\\text{V}]$$\n* **Carga Transportada:** $$\\Delta q = I \\cdot \\Delta t \\quad [\\text{C}]$$\n* **Resistencia de un Conductor:** $$R = \\rho \\frac{L}{A} \\quad [\\Omega]$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Cálculo de Corriente y Voltaje por Definición",
+        "problem_statement": "Por un conductor cilíndrico en el Distrito Ohm fluyen q = 45 C de carga en un intervalo de t = 15 s. Para mover dicha carga se realizó un trabajo de w = 540 J. Determina la corriente eléctrica I y el voltaje V entre sus terminales.",
+        "circuit_config_json": {
+          "template": "single_loop_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 3.0,
+          "nodes": [
+            { "id": "N1", "x": 60, "y": 60, "label": "+12V" },
+            { "id": "N2", "x": 280, "y": 60, "label": "A" },
+            { "id": "N3", "x": 280, "y": 180, "label": "B" },
+            { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V", "current_amps": 3.0 },
+            { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 4, "unit": "Ω", "current_amps": 3.0 },
+            { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 3.0 },
+            { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 3.0 }
+          ],
+          "annotations": [
+            { "type": "current_arrow", "target": "W1", "label": "I = 3 A" }
+          ]
+        },
+        "steps_markdown": "1. **Datos conocidos:** Carga $\\Delta q = 45\\text{ C}$, tiempo $\\Delta t = 15\\text{ s}$, trabajo realizado $\\Delta w = 540\\text{ J}$.\n2. **Calculamos la corriente eléctrica con la definición:**\n$$I = \\frac{\\Delta q}{\\Delta t} = \\frac{45\\text{ C}}{15\\text{ s}} = 3.0\\text{ A}$$\n3. **Calculamos la diferencia de potencial (voltaje):**\n$$V = \\frac{\\Delta w}{\\Delta q} = \\frac{540\\text{ J}}{45\\text{ C}} = 12.0\\text{ V}$$\n4. **Verificación física:** Un conductor con $12\\text{ V}$ y $3\\text{ A}$ presenta una resistencia de $R = \\frac{V}{I} = \\frac{12}{3} = 4\\ \\Omega$.",
+        "final_result": "I = 3.0 A  |  V = 12.0 V"
+      },
       "challenges": [
         {
-          "challenge_id": "S1-L1-C01",
+          "challenge_id": "U1-L1-C01",
           "lesson_id": 1,
-          "topic_tag": "fundamentals",
+          "step_order": 1,
+          "topic_tag": "v_i_r",
           "interaction_type": "multiple_choice",
           "difficulty": "basic",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡Hola, Ingeniero! K-1L0 en línea. Los sensores del sector registran un flujo masivo de carga. Si 60 Coulombs cruzan la línea de enlace en 20 segundos, ¿cuánta corriente fluye?",
-          "prompt_text": "Calcula la corriente eléctrica neta si fluyen q = 60 C de carga durante un intervalo de t = 20 s.",
+          "kilo_dialogue": "¡Iniciemos la calibración de la red! Una fuente entrega 180 Joules de trabajo para impulsar 15 Coulombs de carga. ¿Qué tensión genera?",
+          "prompt_text": "Una fuente de corriente directa suministra \\Delta w = 180\\text{ J} de energía para mover \\Delta q = 15\\text{ C} de carga entre sus bornes. ¿Cuál es el voltaje V de la fuente?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
-            "current_speed_amps": 3.0,
+            "current_speed_amps": 1.0,
             "nodes": [
-              { "id": "N_SRC_POS", "x": 60, "y": 60, "label": "+" },
-              { "id": "N_METER_IN", "x": 200, "y": 60, "label": "A" },
-              { "id": "N_LOAD_POS", "x": 300, "y": 60, "label": "B" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_BOT_RIGHT", "x": 300, "y": 180, "label": "C" }
-            ],
-            "components": [
-              {
-                "id": "VS1",
-                "type": "voltage_source_dc",
-                "from": "N_GND",
-                "to": "N_SRC_POS",
-                "label": "Generador",
-                "value": 12,
-                "unit": "V"
-              },
-              {
-                "id": "AMPERE_SENSOR",
-                "type": "cyber_sensor",
-                "from": "N_SRC_POS",
-                "to": "N_LOAD_POS",
-                "label": "Sensor de Flujo",
-                "value": null,
-                "unit": "A"
-              },
-              {
-                "id": "LOAD1",
-                "type": "resistor",
-                "from": "N_LOAD_POS",
-                "to": "N_BOT_RIGHT",
-                "label": "Carga Central",
-                "value": 4,
-                "unit": "Ω"
-              },
-              {
-                "id": "W_RETURN",
-                "type": "wire",
-                "from": "N_BOT_RIGHT",
-                "to": "N_GND"
-              }
-            ]
-          },
-          "options": [
-            { "id": "opt_1", "label": "1.5 A", "numeric_value": 1.5, "causes_overheat": false },
-            { "id": "opt_2", "label": "3.0 A", "numeric_value": 3.0, "causes_overheat": false },
-            { "id": "opt_3", "label": "120 A", "numeric_value": 120, "causes_overheat": true },
-            { "id": "opt_4", "label": "0.33 A", "numeric_value": 0.33, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_2",
-            "target_numeric_value": 3.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 3.0,
-            "resulting_power_watts": 36.0
-          },
-          "explanation_markdown": "Por definición física fundamental, la corriente es la razón de cambio de la carga con respecto al tiempo:\n$$I = \\frac{\\Delta q}{\\Delta t} = \\frac{60\\text{ C}}{20\\text{ s}} = 3.0\\text{ A}$$\nUn flujo de $1\\text{ A}$ equivale a un Coulomb por segundo ($1\\text{ C/s}$)."
-        },
-        {
-          "challenge_id": "S1-L1-C02",
-          "lesson_id": 1,
-          "topic_tag": "fundamentals",
-          "interaction_type": "multiple_choice",
-          "difficulty": "basic",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡Ojo con la convención pasiva! En un resistor, la corriente entra por la terminal donde la energía entra al componente. ¿Qué signo corresponde a la terminal por donde entra la corriente?",
-          "prompt_text": "Según la Convención Pasiva de Signos utilizada en ingeniería, ¿qué polaridad se le asigna a la terminal por donde ENTRA la corriente a una resistencia?",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.05,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "A (+)" },
-              { "id": "N2", "x": 240, "y": 60, "label": "B" },
-              { "id": "N3", "x": 240, "y": 180, "label": "C" },
+              { "id": "N1", "x": 60, "y": 60, "label": "+12V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
               { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
             ],
             "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1 (Pasivo)", "value": 240, "unit": "Ω" },
-              { "id": "LED1", "type": "cyber_led", "from": "N2", "to": "N3", "label": "Diodo Láser", "value": 0, "unit": "V" },
-              { "id": "W1", "type": "wire", "from": "N3", "to": "N4" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V", "current_amps": 1.0 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 12, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 1.0 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 1.0 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "I = 1 A" }
             ]
           },
           "options": [
-            { "id": "opt_pos", "label": "Terminal Positiva (+), porque absorbe potencia", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_neg", "label": "Terminal Negativa (-), porque genera electrones", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_zero", "label": "Neutro (0 V), porque la resistencia es simétrica", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_none", "label": "No tiene polaridad bajo ninguna condición", "numeric_value": null, "causes_overheat": false }
+            { "id": "opt_1", "label": "12 V", "numeric_value": 12, "causes_overheat": false },
+            { "id": "opt_2", "label": "2700 V", "numeric_value": 2700, "causes_overheat": true },
+            { "id": "opt_3", "label": "0.083 V", "numeric_value": 0.083, "causes_overheat": false },
+            { "id": "opt_4", "label": "24 V", "numeric_value": 24, "causes_overheat": false }
           ],
           "solution_json": {
-            "correct_option_id": "opt_pos",
-            "target_numeric_value": null,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 0.05,
-            "resulting_power_watts": 0.6
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 12,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 1.0,
+            "resulting_power_watts": 12.0
           },
-          "explanation_markdown": "En la **Convención Pasiva de Signos**, si la corriente entra por la terminal marcada como positiva ($+$):\n$$P = +V \\cdot I > 0$$\nEsto indica físicamente que el elemento está **absorbiendo energía** del circuito (disipándola en forma de calor)."
+          "hint_markdown": "💡 **Pista de K-1L0:** El voltaje mide la energía por unidad de carga: $V = \\frac{\\Delta w}{\\Delta q}$. Divide $180\\text{ J}$ entre $15\\text{ C}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la definición de diferencia de potencial eléctrico:\n$$V = \\frac{\\Delta w}{\\Delta q} = \\frac{180\\text{ J}}{15\\text{ C}} = 12.0\\text{ V}$$\nLa fuente entrega $12\\text{ Joules}$ de trabajo por cada Coulomb de electrones que impulsa a través del circuito."
         },
         {
-          "challenge_id": "S1-L1-C03",
+          "challenge_id": "U1-L1-C02",
           "lesson_id": 1,
-          "topic_tag": "fundamentals",
+          "step_order": 2,
+          "topic_tag": "v_i_r",
           "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "¡La batería de emergencia de la Torre de Transmisión está en marcha! Si transfiere 150 C bajo una tensión de 12 V, ¿cuánta energía en Joules se suministra?",
-          "prompt_text": "Calcula el trabajo o energía total suministrada por una batería de respaldo de V = 12 V al transferir una carga de q = 150 C.",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Cuidado con la polaridad! En componentes pasivos la corriente entra por una terminal específica. ¿Cuál es?",
+          "prompt_text": "De acuerdo con la Convención Pasiva de Signos utilizada en ingeniería eléctrica, ¿qué polaridad se le asigna a la terminal por donde la corriente I ENTRA a un resistor que absorbe energía?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
             "current_speed_amps": 0.5,
             "nodes": [
-              { "id": "N_BAT_P", "x": 80, "y": 60, "label": "+12V" },
-              { "id": "N_LOAD", "x": 260, "y": 60, "label": "Reactor" },
-              { "id": "N_RET", "x": 260, "y": 180, "label": "Retorno" },
-              { "id": "N_GND", "x": 80, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "N1", "x": 60, "y": 60, "label": "+" },
+              { "id": "N2", "x": 280, "y": 60, "label": "-" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
             ],
             "components": [
-              { "id": "BAT1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_BAT_P", "label": "Batería Respaldo", "value": 12, "unit": "V" },
-              { "id": "R_REACTOR", "type": "resistor", "from": "N_BAT_P", "to": "N_LOAD", "label": "Reactor Auxiliar", "value": 24, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_LOAD", "to": "N_RET" },
-              { "id": "W2", "type": "wire", "from": "N_RET", "to": "N_GND" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 10, "unit": "V", "current_amps": 0.5 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 20, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 0.5 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I →" }
             ]
           },
           "options": [
-            { "id": "opt_w1", "label": "1,800 J", "numeric_value": 1800, "causes_overheat": false },
-            { "id": "opt_w2", "label": "12.5 J", "numeric_value": 12.5, "causes_overheat": false },
-            { "id": "opt_w3", "label": "180 J", "numeric_value": 180, "causes_overheat": false },
-            { "id": "opt_w4", "label": "3,600 J", "numeric_value": 3600, "causes_overheat": false }
+            { "id": "opt_pos", "label": "Positivo (+)", "causes_overheat": false },
+            { "id": "opt_neg", "label": "Negativo (-)", "causes_overheat": true },
+            { "id": "opt_neu", "label": "Neutro (0 V)", "causes_overheat": false },
+            { "id": "opt_gnd", "label": "Tierra (GND)", "causes_overheat": false }
           ],
           "solution_json": {
-            "correct_option_id": "opt_w1",
-            "target_numeric_value": 1800,
-            "tolerance_percent": 2.0,
+            "correct_option_id": "opt_pos",
             "resulting_current_amps": 0.5,
-            "resulting_power_watts": 6.0
+            "resulting_power_watts": 5.0
           },
-          "explanation_markdown": "Por definición de potencial eléctrico ($V = \\frac{W}{q}$), la energía transferida se calcula despejando el trabajo $W$:\n$$W = q \\cdot V = 150\\text{ C} \\times 12\\text{ V} = 1800\\text{ J}$$\n$1\\text{ Joule} = 1\\text{ Volt} \\cdot 1\\text{ Coulomb}$."
+          "hint_markdown": "💡 **Pista de K-1L0:** En cualquier elemento pasivo que consume energía, la corriente fluye cuesta abajo en potencial: entra por el polo positivo (+) y sale por el polo negativo (-).",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nEn la Convención Pasiva de Signos, la corriente entra por la terminal positiva ($+$) del componente pasivo ($p = +v \\cdot i > 0$, potencia absorbida). Si saliera por el positivo, el elemento estaría suministrando energía al circuito como una fuente activa."
+        },
+        {
+          "challenge_id": "U1-L1-C03",
+          "lesson_id": 1,
+          "step_order": 3,
+          "topic_tag": "v_i_r",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Tu turno de calcular con precisión! Ingresa el valor numérico y selecciona la unidad correcta.",
+          "prompt_text": "A través del cableado principal circulan \\Delta q = 72\\text{ C} de carga en un lapso de \\Delta t = 12\\text{ s}. Calcula la corriente eléctrica neta I que recorre el conductor.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 6.0,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+24V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 24, "unit": "V", "current_amps": 6.0 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 4, "unit": "Ω", "current_amps": 6.0 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 6.0 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 6.0 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "I = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
+          "solution_json": {
+            "target_base_si_value": 6.0,
+            "base_si_unit": "A",
+            "display_target_value": 6.0,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 6.0,
+            "resulting_power_watts": 144.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** La corriente es el caudal de carga en el tiempo: $I = \\frac{\\Delta q}{\\Delta t}$. Divide $72\\text{ C}$ entre $12\\text{ s}$ y selecciona la unidad adecuada (A o mA).",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nCalculamos la corriente eléctrica con la razón de flujo de carga:\n$$I = \\frac{\\Delta q}{\\Delta t} = \\frac{72\\text{ C}}{12\\text{ s}} = 6.0\\text{ A} = 6000\\text{ mA}$$\nSe aceptan indistintamente 6.0 A o 6000 mA."
+        },
+        {
+          "challenge_id": "U1-L1-C04",
+          "lesson_id": 1,
+          "step_order": 4,
+          "topic_tag": "v_i_r",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Sensor calibrado a 250 mA por 40 segundos. ¿Cuánta carga acumulada pasó por la sección?",
+          "prompt_text": "Un sensor amperímetro en la línea de enlace registra una corriente continua constante de I = 250\\text{ mA} durante un tiempo de \\Delta t = 40\\text{ s}. ¿Cuánta carga eléctrica total \\Delta q cruzó por el sensor?",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.25,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+5V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "Sensor" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 5, "unit": "V", "current_amps": 0.25 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 20, "unit": "Ω", "current_amps": 0.25 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 0.25 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.25 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "250 mA" }
+            ]
+          },
+          "unit_options": ["C", "mC", "A", "V", "J"],
+          "default_unit": "C",
+          "solution_json": {
+            "target_base_si_value": 10.0,
+            "base_si_unit": "C",
+            "display_target_value": 10.0,
+            "display_unit": "C",
+            "accepted_units": {
+              "C": 1,
+              "mC": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.25
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Despeja la carga de la fórmula: $\\Delta q = I \\cdot \\Delta t$. Recuerda convertir primero $250\\text{ mA}$ a Amperes ($0.25\\text{ A}$) antes de multiplicar por los $40\\text{ s}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Convertimos la corriente al Sistema Internacional: $I = 250\\text{ mA} = 0.25\\text{ A}$.\n2. Despejamos la carga eléctrica:\n$$\\Delta q = I \\cdot \\Delta t = 0.25\\text{ A} \\times 40\\text{ s} = 10.0\\text{ C} = 10,000\\text{ mC}$$"
         }
       ]
     },
@@ -176,406 +235,227 @@
       "lesson_id": 2,
       "sector_id": 1,
       "node_order": 2,
-      "title": "El Multímetro en el Laboratorio",
-      "topic_tag": "multimeter",
-      "theory_markdown": "# 🎛️ Uso Correcto del Multímetro Digital (DMM)\n\nEn el laboratorio de circuitos de la UAA, una regla de oro separa al ingeniero calificado del que funde instrumentos:\n\n### 1. Medición de Voltaje (Voltímetro)\n* **Conexión:** Estrictamente **EN PARALELO** con el componente.\n* **Impedancia interna:** Resistencia muy alta ($R_v \\to \\infty$). No desvía la corriente del circuito.\n\n### 2. Medición de Corriente (Amperímetro)\n* **Conexión:** Estrictamente **EN SERIE** abriendo la rama de interés.\n* **Impedancia interna:** Resistencia prácticamente nula ($R_A \\to 0$). Permite que la corriente fluya sin introducir una caída de tensión artificial.\n\n> ⚠️ **¡Peligro de Cortocircuito!**\n> Si conectas un amperímetro en paralelo con una fuente o resistencia con carga, la resistencia casi nula del instrumento creará un lazo de cortocircuito ($I = V / 0 \\to \\infty$), quemando el fusible interno o disparando el protector de la fuente.",
-      "xp_reward": 60,
+      "title": "Nivel 2: Ley de Ohm y Potencia",
+      "topic_tag": "ohm_power",
+      "xp_reward": 100,
       "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Ley de Ohm y Potencia en CD\nLa **Ley de Ohm** establece que la corriente ($I$) que circula por un conductor es directamente proporcional al voltaje aplicado ($V$) e inversamente proporcional a su resistencia ($R$).\n\nA su vez, la **potencia eléctrica ($P$)** mide la rapidez con la que la energía se absorbe o disipa en forma de calor (Efecto Joule):\n$$P = V \\cdot I = I^2 \\cdot R = \\frac{V^2}{R} \\quad [\\text{Watts, W}]$$\n\n**Límite Térmico:** Todo resistor comercial tiene una potencia máxima nominal (ej. 1/4 W = 250 mW). Si la disipación calculada supera dicho valor, el componente se quema.",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Ley de Ohm:** $$V = I \\cdot R \\quad \\Longleftrightarrow \\quad I = \\frac{V}{R} \\quad \\Longleftrightarrow \\quad R = \\frac{V}{I}$$\n* **Potencia en Corriente Directa:** $$P = V \\cdot I = I^2 \\cdot R = \\frac{V^2}{R} \\quad [\\text{Watts, W}]$$\n* **Energía Disipada (Joule):** $$W = P \\cdot t \\quad [\\text{Joules, J}]$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Cálculo de Corriente y Potencia en un Resistor",
+        "problem_statement": "Una fuente de corriente directa de Vs = 12 V alimenta una resistencia de R1 = 400 Ω. Calcula la corriente I que circula por el circuito y la potencia P disipada por la resistencia.",
+        "circuit_config_json": {
+          "template": "single_loop_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 0.03,
+          "nodes": [
+            { "id": "N1", "x": 60, "y": 60, "label": "+12V" },
+            { "id": "N2", "x": 280, "y": 60, "label": "A" },
+            { "id": "N3", "x": 280, "y": 180, "label": "B" },
+            { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V", "current_amps": 0.03 },
+            { "id": "W1", "type": "wire", "from": "N1", "to": "N2", "current_amps": 0.03 },
+            { "id": "RL", "type": "resistor", "from": "N2", "to": "N3", "label": "R_L", "value": 400, "unit": "Ω", "current_amps": 0.03 },
+            { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.03 }
+          ],
+          "annotations": [
+            { "type": "current_arrow", "target": "W1", "label": "I = 30 mA" }
+          ]
+        },
+        "steps_markdown": "1. **Identificamos los datos:** $V_s = 12\\text{ V}$ y $R_L = 400\\ \\Omega$.\n2. **Calculamos la corriente con la Ley de Ohm:**\n$$I = \\frac{V_s}{R_L} = \\frac{12\\text{ V}}{400\\ \\Omega} = 0.03\\text{ A} = 30\\text{ mA}$$\n3. **Calculamos la potencia disipada:**\n$$P = V_s \\cdot I = 12\\text{ V} \\times 0.03\\text{ A} = 0.36\\text{ W} = 360\\text{ mW}$$",
+        "final_result": "I = 30 mA (0.03 A)  |  P = 0.36 W (360 mW)"
+      },
       "challenges": [
         {
-          "challenge_id": "S1-L2-C01",
+          "challenge_id": "U1-L2-C01",
           "lesson_id": 2,
-          "topic_tag": "multimeter",
+          "step_order": 1,
+          "topic_tag": "ohm_power",
           "interaction_type": "multiple_choice",
           "difficulty": "basic",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡Mira mis orejas! La oreja roja es la punta (+) y la negra es COM (-). Queremos medir el voltaje en la resistencia R1. ¿Cómo debemos conectar el multímetro en el circuito?",
-          "prompt_text": "¿Cómo debe conectarse un multímetro para medir correctamente la caída de voltaje a través de una resistencia en operación?",
+          "kilo_dialogue": "¡Apliquemos la Ley de Ohm! Si conocemos la caída de potencial y la resistencia, ¿cuánta corriente fluye?",
+          "prompt_text": "Un resistor de R = 250\\ \\Omega tiene una caída de voltaje medida de V = 50\\text{ V}. ¿Cuál es la corriente eléctrica I que circula por él?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
-            "current_speed_amps": 0.012,
+            "current_speed_amps": 0.20,
             "nodes": [
-              { "id": "N_A", "x": 60, "y": 60, "label": "A (+12V)" },
-              { "id": "N_B", "x": 260, "y": 60, "label": "B" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_C", "x": 260, "y": 180, "label": "C" }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_A", "label": "Vs", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N_A", "to": "N_B", "label": "R1 = 1 kΩ", "value": 1000, "unit": "Ω" },
-              { "id": "LOAD_LED", "type": "cyber_led", "from": "N_B", "to": "N_C", "label": "Carga Óptica", "value": 0, "unit": "V" },
-              { "id": "W1", "type": "wire", "from": "N_C", "to": "N_GND" }
-            ]
-          },
-          "options": [
-            { "id": "opt_par", "label": "En paralelo con R1, con alta resistencia interna para no alterar la corriente", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_ser", "label": "En serie con R1, cortando la pista de cobre", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_gnd", "label": "Con ambas puntas conectadas a tierra GND", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_open", "label": "En serie pero apagando previamente la fuente", "numeric_value": null, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_par",
-            "target_numeric_value": null,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 0.012,
-            "resulting_power_watts": 0.144
-          },
-          "explanation_markdown": "El voltímetro se conecta siempre **EN PARALELO** con el elemento cuya diferencia de potencial queremos conocer.\nComo un voltímetro ideal tiene resistencia de entrada infinita ($R_v \\approx \\infty$), prácticamente cero corriente se desvía por el medidor ($I_v \\approx 0$), garantizando que la lectura sea exacta sin perturbar el circuito."
-        },
-        {
-          "challenge_id": "S1-L2-C02",
-          "lesson_id": 2,
-          "topic_tag": "multimeter",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "shock",
-          "kilo_dialogue": "¡ALTO AHÍ! Un operario novato va a colocar las puntas del amperímetro directamente entre las terminales de la fuente de 24 V. ¿Qué catástrofe eléctrica ocurrirá?",
-          "prompt_text": "Si un estudiante conecta por error un multímetro en modo AMPERÍMETRO directamente en paralelo con una fuente de voltaje CD de 24 V, ¿cuál es la consecuencia física inmediata?",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": false,
-            "current_speed_amps": 0.0,
-            "nodes": [
-              { "id": "N_VCC", "x": 100, "y": 60, "label": "+24V" },
-              { "id": "N_GND", "x": 100, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_PROBE_RED", "x": 240, "y": 60, "label": "Punta Roja (A)" },
-              { "id": "N_PROBE_BLK", "x": 240, "y": 180, "label": "Punta Negra (COM)" }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_VCC", "label": "Vs", "value": 24, "unit": "V" },
-              { "id": "PROBE_WIRE_P", "type": "wire", "from": "N_VCC", "to": "N_PROBE_RED" },
-              { "id": "DMM_AMP_SHORT", "type": "resistor", "from": "N_PROBE_RED", "to": "N_PROBE_BLK", "label": "Amperímetro (R ≈ 0 Ω)", "value": 0.01, "unit": "Ω" },
-              { "id": "PROBE_WIRE_N", "type": "wire", "from": "N_PROBE_BLK", "to": "N_GND" }
-            ]
-          },
-          "options": [
-            { "id": "opt_sc", "label": "Cortocircuito severo: corriente excesiva que funde el fusible del multímetro", "numeric_value": null, "causes_overheat": true },
-            { "id": "opt_ok", "label": "El multímetro medirá 24 A con total normalidad", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_zero", "label": "El multímetro mostrará 0 A y no pasará nada", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_volts", "label": "El multímetro cambiará automáticamente a modo voltímetro", "numeric_value": null, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_sc",
-            "target_numeric_value": null,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 2400.0,
-            "resulting_power_watts": 57600.0
-          },
-          "explanation_markdown": "El amperímetro interno presenta una resistencia de muestreo mínima shunt ($R_A \\approx 0.01\\text{ }\\Omega$).\nAl colocarlo directamente entre los terminales de una fuente de $24\\text{ V}$ sin resistencia de carga en serie, por Ley de Ohm la corriente teórica tiende a:\n$$I = \\frac{V_s}{R_A} = \\frac{24\\text{ V}}{0.01\\text{ }\\Omega} = 2,400\\text{ A}$$\nEsta corriente de cortocircuito destruye el fusible protector ultra-rápido del multímetro instantáneamente."
-        },
-        {
-          "challenge_id": "S1-L2-C03",
-          "lesson_id": 2,
-          "topic_tag": "multimeter",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "¡Correcto! Para medir corriente abrimos la pista y conectamos en serie. En este lazo con Vs = 12 V y R = 1.2 kΩ, ¿cuál será la lectura exacta en el display del amperímetro?",
-          "prompt_text": "Se conecta un amperímetro digital en serie en un lazo simple alimentado por una fuente de Vs = 12 V con un resistor de R = 1.2 kΩ. ¿Qué lectura mostrará el instrumento?",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.01,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "Vs+" },
-              { "id": "N2", "x": 180, "y": 60, "label": "DMM IN" },
-              { "id": "N3", "x": 280, "y": 60, "label": "DMM OUT" },
-              { "id": "N4", "x": 280, "y": 180, "label": "R_BOT" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs", "value": 12, "unit": "V" },
-              { "id": "DMM_A", "type": "cyber_sensor", "from": "N1", "to": "N2", "label": "[DMM: 10.0 mA]", "value": 0.01, "unit": "A" },
-              { "id": "W1", "type": "wire", "from": "N2", "to": "N3" },
-              { "id": "R1", "type": "resistor", "from": "N3", "to": "N4", "label": "R1 = 1.2 kΩ", "value": 1200, "unit": "Ω" },
-              { "id": "W2", "type": "wire", "from": "N4", "to": "N_GND" }
-            ]
-          },
-          "options": [
-            { "id": "opt_10ma", "label": "10 mA", "numeric_value": 0.01, "causes_overheat": false },
-            { "id": "opt_100ma", "label": "100 mA", "numeric_value": 0.1, "causes_overheat": false },
-            { "id": "opt_1ma", "label": "1.0 mA", "numeric_value": 0.001, "causes_overheat": false },
-            { "id": "opt_144ma", "label": "14.4 mA", "numeric_value": 0.0144, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_10ma",
-            "target_numeric_value": 0.01,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.01,
-            "resulting_power_watts": 0.12
-          },
-          "explanation_markdown": "Al estar el amperímetro conectado en serie con la resistencia de $1.2\\text{ k}\\Omega = 1200\\text{ }\\Omega$:\n$$I = \\frac{V_s}{R} = \\frac{12\\text{ V}}{1200\\text{ }\\Omega} = 0.01\\text{ A} = 10.0\\text{ mA}$$\nLa lectura del multímetro será exactamente de $10\\text{ mA}$."
-        }
-      ]
-    },
-    {
-      "lesson_id": 3,
-      "sector_id": 1,
-      "node_order": 3,
-      "title": "Ley de Ohm: La Relación V = I · R",
-      "topic_tag": "ohm",
-      "theory_markdown": "# 📐 La Ley de Ohm y Despejes Algebraicos\n\nFormulada por Georg Simon Ohm en 1827, es el pilar de la ingeniería eléctrica:\n\n$$V = I \\cdot R$$\n\nDe este triángulo fundamental derivamos los dos despejes esenciales:\n\n* **Para hallar Corriente:** $$I = \\frac{V}{R}$$\n* **Para hallar Resistencia:** $$R = \\frac{V}{I}$$\n\n### Consideraciones Físicas:\n1. Si la resistencia $R$ se mantiene constante y aumentamos el voltaje $V$, la corriente $I$ aumenta **linealmente**.\n2. A mayor resistencia en el camino de conducción, menor corriente puede circular para un mismo voltaje aplicado.\n3. En unidades del SI: $1\\text{ Ohm (}\\Omega\\text{)} = 1\\text{ Volt} / 1\\text{ Ampere}$.",
-      "xp_reward": 75,
-      "is_boss_level": false,
-      "challenges": [
-        {
-          "challenge_id": "S1-L3-C01",
-          "lesson_id": 3,
-          "topic_tag": "ohm",
-          "interaction_type": "component_slot",
-          "difficulty": "normal",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡Atención Ingeniero! El nodo óptico del Distrito necesita exactamente 20 mA alimentado con una fuente de 10 V. ¿Qué resistencia debemos soldar en el slot R1?",
-          "prompt_text": "Selecciona la resistencia R1 exacta para limitar la corriente del lazo a I = 20 mA con una fuente de Vs = 10 V.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": false,
-            "current_speed_amps": 0.02,
-            "nodes": [
-              { "id": "N_TL", "x": 60, "y": 60, "label": "A" },
-              { "id": "N_TR", "x": 260, "y": 60, "label": "B" },
-              { "id": "N_BR", "x": 260, "y": 180, "label": "C" },
-              { "id": "N_BL", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_BL", "to": "N_TL", "label": "Vs", "value": 10, "unit": "V" },
-              { "id": "R1_SLOT", "type": "resistor_slot", "from": "N_TL", "to": "N_TR", "label": "R1 = ?", "value": null, "unit": "Ω", "max_watts": 0.5 },
-              { "id": "LED_CORE", "type": "cyber_led", "from": "N_TR", "to": "N_BR", "label": "Nodo Óptico", "value": 0, "unit": "V" },
-              { "id": "W1", "type": "wire", "from": "N_BR", "to": "N_BL" }
-            ]
-          },
-          "options": [
-            { "id": "opt_100", "label": "100 Ω", "numeric_value": 100, "causes_overheat": true },
-            { "id": "opt_500", "label": "500 Ω", "numeric_value": 500, "causes_overheat": false },
-            { "id": "opt_2k", "label": "2 kΩ", "numeric_value": 2000, "causes_overheat": false },
-            { "id": "opt_50", "label": "50 Ω", "numeric_value": 50, "causes_overheat": true }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_500",
-            "target_numeric_value": 500,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.02,
-            "resulting_power_watts": 0.2
-          },
-          "explanation_markdown": "Por **Ley de Ohm**, despejamos la resistencia requerida:\n$$R_1 = \\frac{V_s}{I} = \\frac{10\\text{ V}}{0.020\\text{ A}} = 500\\text{ }\\Omega$$\nCon $500\\text{ }\\Omega$, la potencia disipada es $P = 10\\text{ V} \\times 0.02\\text{ A} = 0.2\\text{ W}$, lo cual es completamente seguro para un resistor de $0.5\\text{ W}$."
-        },
-        {
-          "challenge_id": "S1-L3-C02",
-          "lesson_id": 3,
-          "topic_tag": "ohm",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "Una línea de transmisión de 24 V alimenta un sensor perimetral de resistencia interna fija R = 1.2 kΩ. ¿Cuánta corriente circulará por la línea?",
-          "prompt_text": "Determina la corriente que fluye por un sensor de R = 1.2 kΩ cuando se conecta a una fuente de alimentación constante de V = 24 V.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.02,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "+" },
-              { "id": "N2", "x": 260, "y": 60, "label": "LINE" },
-              { "id": "N3", "x": 260, "y": 180, "label": "RETURN" },
+              { "id": "N1", "x": 60, "y": 60, "label": "+50V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
               { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
             ],
             "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 24, "unit": "V" },
-              { "id": "R_SENSOR", "type": "resistor", "from": "N1", "to": "N2", "label": "Sensor = 1.2 kΩ", "value": 1200, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N2", "to": "N3" },
-              { "id": "W2", "type": "wire", "from": "N3", "to": "N4" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 50, "unit": "V", "current_amps": 0.20 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 250, "unit": "Ω", "current_amps": 0.20 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 0.20 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.20 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "I = ?" }
             ]
           },
           "options": [
-            { "id": "opt_20ma", "label": "20 mA", "numeric_value": 0.02, "causes_overheat": false },
-            { "id": "opt_50ma", "label": "50 mA", "numeric_value": 0.05, "causes_overheat": false },
-            { "id": "opt_2ma", "label": "2.0 mA", "numeric_value": 0.002, "causes_overheat": false },
-            { "id": "opt_288ma", "label": "28.8 mA", "numeric_value": 0.0288, "causes_overheat": false }
+            { "id": "opt_1", "label": "0.20 A (200 mA)", "numeric_value": 0.20, "causes_overheat": false },
+            { "id": "opt_2", "label": "5.0 A", "numeric_value": 5.0, "causes_overheat": true },
+            { "id": "opt_3", "label": "12.5 A", "numeric_value": 12.5, "causes_overheat": true },
+            { "id": "opt_4", "label": "0.05 A", "numeric_value": 0.05, "causes_overheat": false }
           ],
           "solution_json": {
-            "correct_option_id": "opt_20ma",
-            "target_numeric_value": 0.02,
-            "tolerance_percent": 2.0,
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 0.20,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.20,
+            "resulting_power_watts": 10.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Despeja la corriente de la Ley de Ohm: $I = \\frac{V}{R} = \\frac{50}{250}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la Ley de Ohm:\n$$I = \\frac{V}{R} = \\frac{50\\text{ V}}{250\\ \\Omega} = 0.20\\text{ A} = 200\\text{ mA}$$"
+        },
+        {
+          "challenge_id": "U1-L2-C02",
+          "lesson_id": 2,
+          "step_order": 2,
+          "topic_tag": "ohm_power",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Cálculo de potencia! Una carga automotriz consume 2.5 A a 12 V. ¿Cuántos Watts disipa?",
+          "prompt_text": "Un dispositivo electrónico opera conectado a una batería de V = 12\\text{ V} demandando una corriente constante de I = 2.5\\text{ A}. ¿Cuánta potencia eléctrica P disipa?",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 2.5,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+12V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V", "current_amps": 2.5 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "Carga", "value": 4.8, "unit": "Ω", "current_amps": 2.5 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 2.5 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 2.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "2.5 A" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "30 W", "numeric_value": 30, "causes_overheat": false },
+            { "id": "opt_2", "label": "4.8 W", "numeric_value": 4.8, "causes_overheat": false },
+            { "id": "opt_3", "label": "15 W", "numeric_value": 15, "causes_overheat": false },
+            { "id": "opt_4", "label": "60 W", "numeric_value": 60, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 30,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 2.5,
+            "resulting_power_watts": 30.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** La potencia eléctrica en corriente directa es directamente $P = V \\cdot I$. Multiplica $12\\text{ V} \\times 2.5\\text{ A}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la fórmula fundamental de potencia eléctrica:\n$$P = V \\cdot I = 12\\text{ V} \\times 2.5\\text{ A} = 30.0\\text{ W}$$"
+        },
+        {
+          "challenge_id": "U1-L2-C03",
+          "lesson_id": 2,
+          "step_order": 3,
+          "topic_tag": "ohm_power",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "¡Tu turno de calcular con precisión! Ingresa el valor numérico y selecciona la unidad correcta.",
+          "prompt_text": "En el siguiente circuito, una fuente de Vs = 24 V alimenta un resistor de R1 = 1.2 kΩ. Calcula la corriente I que circula por el lazo.",
+          "circuit_config_json": {
+            "template": "single_loop_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.02,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+24V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 24, "unit": "V", "current_amps": 0.02 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 1200, "unit": "Ω", "current_amps": 0.02 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 0.02 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.02 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "I = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.02,
+            "base_si_unit": "A",
+            "display_target_value": 20,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
             "resulting_current_amps": 0.02,
             "resulting_power_watts": 0.48
           },
-          "explanation_markdown": "Convertimos la resistencia a unidades base del SI ($1.2\\text{ k}\\Omega = 1,200\\text{ }\\Omega$):\n$$I = \\frac{V}{R} = \\frac{24\\text{ V}}{1200\\text{ }\\Omega} = 0.02\\text{ A} = 20\\text{ mA}$$\nLa corriente que atraviesa el sensor es de $20\\text{ mA}$."
+          "hint_markdown": "💡 **Pista de K-1L0:** Recuerda convertir primero $1.2\\text{ k}\\Omega$ a Ohms ($1200\\ \\Omega$) y aplicar $I = \\frac{V_s}{R_1}$. Verifica si expresas tu resultado en $\\text{A}$ o en $\\text{mA}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Convertimos la resistencia a Ohms: $R_1 = 1.2\\text{ k}\\Omega = 1,200\\ \\Omega$.\n2. Aplicamos la Ley de Ohm:\n$$I = \\frac{V_s}{R_1} = \\frac{24\\text{ V}}{1200\\ \\Omega} = 0.02\\text{ A} = 20\\text{ mA}$$"
         },
         {
-          "challenge_id": "S1-L3-C03",
-          "lesson_id": 3,
-          "topic_tag": "ohm",
-          "interaction_type": "multiple_choice",
+          "challenge_id": "U1-L2-C04",
+          "lesson_id": 2,
+          "step_order": 4,
+          "topic_tag": "ohm_power",
+          "interaction_type": "numeric_input",
           "difficulty": "normal",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "Pregunta de análisis conceptual: Si el voltaje en una resistencia fija se duplica de 5 V a 10 V, ¿qué le ocurre a la corriente?",
-          "prompt_text": "Si una resistencia lineal de 330 Ω se somete al doble de diferencia de potencial (de 5 V a 10 V), ¿qué cambio experimenta la corriente que la atraviesa?",
+          "kilo_dialogue": "Disipación de calor por Efecto Joule. Con 400 mA sobre 50 Ohms, calcula los Watts que se desprenden.",
+          "prompt_text": "Un resistor de potencia R = 50\\ \\Omega conduce una corriente continua de I = 400\\text{ mA}. Calcula la potencia eléctrica P disipada en forma de calor.",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
-            "current_speed_amps": 0.0303,
+            "current_speed_amps": 0.4,
             "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "V1" },
-              { "id": "N2", "x": 260, "y": 60, "label": "V2" },
-              { "id": "N3", "x": 260, "y": 180, "label": "V3" },
+              { "id": "N1", "x": 60, "y": 60, "label": "+20V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
               { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
             ],
             "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs = 10 V", "value": 10, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R = 330 Ω", "value": 330, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N2", "to": "N3" },
-              { "id": "W2", "type": "wire", "from": "N3", "to": "N4" }
-            ]
-          },
-          "options": [
-            { "id": "opt_double", "label": "Se duplica exactamente, debido a la relación lineal I = V / R", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_quad", "label": "Se cuadruplica, porque la potencia es proporcional al voltaje al cuadrado", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_half", "label": "Se reduce a la mitad para conservar energía", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_same", "label": "Permanece constante porque la resistencia no cambia", "numeric_value": null, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_double",
-            "target_numeric_value": null,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 0.0303,
-            "resulting_power_watts": 0.303
-          },
-          "explanation_markdown": "Dado que $R$ es constante y la Ley de Ohm es lineal ($I = \\frac{1}{R} \\cdot V$):\n$$I_1 = \\frac{5\\text{ V}}{330\\text{ }\\Omega} = 15.15\\text{ mA}$$\n$$I_2 = \\frac{10\\text{ V}}{330\\text{ }\\Omega} = 30.30\\text{ mA} = 2 \\cdot I_1$$\nLa corriente se **duplica exactamente**."
-        }
-      ]
-    },
-    {
-      "lesson_id": 4,
-      "sector_id": 1,
-      "node_order": 4,
-      "title": "Jefe de Sector: Sobrecarga & Límite de Watts",
-      "topic_tag": "dc_power",
-      "theory_markdown": "# 💥 Efecto Joule y Disipación de Potencia en CD\n\nToda resistencia por la que circula corriente transforma energía eléctrica en energía calorífica (Efecto Joule).\n\n### Fórmulas de Potencia Eléctrica:\n$$P = V \\cdot I = I^2 \\cdot R = \\frac{V^2}{R}\\quad [\\text{Watts, W}]$$\n\n### Valores Comerciales Estándar de Potencia:\nLas resistencias comerciales no toleran calor infinito. Vienen clasificadas por su tamaño físico:\n* **$1/8\\text{ W}$ ($0.125\\text{ W}$)**: Circuitos de muy baja señal.\n* **$1/4\\text{ W}$ ($0.250\\text{ W}$)**: El estándar común de protoboard.\n* **$1/2\\text{ W}$ ($0.500\\text{ W}$)**: Potencia moderada.\n* **$1.0\\text{ W}$, $2.0\\text{ W}$, $5.0\\text{ W}$**: Resistencias de potencia de alambre o óxido metálico.\n\n> 🚨 **Regla de Diseño Seguro (Factor 1.5x - 2x):**\n> Si la potencia calculada $P_{\\text{calc}}$ supera la potencia nominal $P_{\\max}$, la resistencia se sobrecalienta, emite humo tóxico y se quema (abriendo el circuito). Nunca operes una resistencia al $100\\%$ de su límite nominal.",
-      "xp_reward": 150,
-      "is_boss_level": true,
-      "challenges": [
-        {
-          "challenge_id": "S1-L4-C01",
-          "lesson_id": 4,
-          "topic_tag": "dc_power",
-          "interaction_type": "multiple_choice",
-          "difficulty": "boss",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡El Jefe del Distrito Ohm activó la barrera de seguridad! Una luminaria de emergencia opera a 12 V y consume 50 mA. ¿Cuál es su disipación y qué potencia comercial mínima debemos elegir para no fundirla?",
-          "prompt_text": "Una carga de señalización opera a V = 12 V con una corriente de I = 50 mA. Calcula la potencia disipada y determina la potencia comercial nominal segura más adecuada.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.05,
-            "nodes": [
-              { "id": "N_PWR_P", "x": 60, "y": 60, "label": "+12V" },
-              { "id": "N_PWR_L", "x": 260, "y": 60, "label": "LAMP" },
-              { "id": "N_PWR_R", "x": 260, "y": 180, "label": "RET" },
-              { "id": "N_PWR_G", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 20, "unit": "V", "current_amps": 0.4 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 50, "unit": "Ω", "current_amps": 0.4 },
+              { "id": "W1", "type": "wire", "from": "N2", "to": "N3", "current_amps": 0.4 },
+              { "id": "W2", "type": "wire", "from": "N3", "to": "N4", "current_amps": 0.4 }
             ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_PWR_G", "to": "N_PWR_P", "label": "Vs", "value": 12, "unit": "V" },
-              { "id": "LOAD_LAMP", "type": "resistor", "from": "N_PWR_P", "to": "N_PWR_L", "label": "Luminaria (50 mA)", "value": 240, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_PWR_L", "to": "N_PWR_R" },
-              { "id": "W2", "type": "wire", "from": "N_PWR_R", "to": "N_PWR_G" }
+            "annotations": [
+              { "type": "current_arrow", "target": "W1", "label": "400 mA" }
             ]
           },
-          "options": [
-            { "id": "opt_1w", "label": "P = 0.60 W (Elegir resistencia comercial de 1 W)", "numeric_value": 0.6, "causes_overheat": false },
-            { "id": "opt_quarter", "label": "P = 0.60 W (Usar resistencia de 1/4 W estándar)", "numeric_value": 0.6, "causes_overheat": true },
-            { "id": "opt_half", "label": "P = 0.60 W (Usar resistencia de 1/2 W al límite)", "numeric_value": 0.6, "causes_overheat": true },
-            { "id": "opt_wrong", "label": "P = 6.00 W (Usar resistencia de cemento de 10 W)", "numeric_value": 6.0, "causes_overheat": false }
-          ],
+          "unit_options": ["W", "mW", "kW", "V", "A"],
+          "default_unit": "W",
           "solution_json": {
-            "correct_option_id": "opt_1w",
-            "target_numeric_value": 0.6,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.05,
-            "resulting_power_watts": 0.6
+            "target_base_si_value": 8.0,
+            "base_si_unit": "W",
+            "display_target_value": 8.0,
+            "display_unit": "W",
+            "accepted_units": {
+              "W": 1,
+              "mW": 0.001,
+              "kW": 1000
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.4,
+            "resulting_power_watts": 8.0
           },
-          "explanation_markdown": "Calculamos la potencia disipada con $P = V \\cdot I$:\n$$P = 12\\text{ V} \\times 0.05\\text{ A} = 0.60\\text{ W}$$\nUna resistencia de $1/4\\text{ W} = 0.25\\text{ W}$ o de $1/2\\text{ W} = 0.50\\text{ W}$ se **quemará** porque $0.60\\text{ W} > 0.50\\text{ W}$.\nLa opción segura comercial inmediata es una resistencia de **$1.0\\text{ W}$**."
-        },
-        {
-          "challenge_id": "S1-L4-C02",
-          "lesson_id": 4,
-          "topic_tag": "dc_power",
-          "interaction_type": "multiple_choice",
-          "difficulty": "boss",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "En el almacén solo tenemos resistencias de carbón de 100 Ω con especificación de 1/4 W (0.25 W). ¿Cuál es el voltaje máximo que podemos aplicarle antes de que empiece a humear?",
-          "prompt_text": "Determina el voltaje máximo absoluto (V_max) que puede soportar una resistencia comercial de R = 100 Ω clasificada a 1/4 W (0.25 W) sin sobrecalentarse.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.05,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "V_MAX" },
-              { "id": "N2", "x": 260, "y": 60, "label": "B" },
-              { "id": "N3", "x": 260, "y": 180, "label": "C" },
-              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "V_max = ?", "value": 5.0, "unit": "V" },
-              { "id": "R_TEST", "type": "resistor", "from": "N1", "to": "N2", "label": "100 Ω (1/4 W)", "value": 100, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N2", "to": "N3" },
-              { "id": "W2", "type": "wire", "from": "N3", "to": "N4" }
-            ]
-          },
-          "options": [
-            { "id": "opt_5v", "label": "5.0 V", "numeric_value": 5.0, "causes_overheat": false },
-            { "id": "opt_25v", "label": "25.0 V", "numeric_value": 25.0, "causes_overheat": true },
-            { "id": "opt_2_5v", "label": "2.5 V", "numeric_value": 2.5, "causes_overheat": false },
-            { "id": "opt_12v", "label": "12.0 V", "numeric_value": 12.0, "causes_overheat": true }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_5v",
-            "target_numeric_value": 5.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.05,
-            "resulting_power_watts": 0.25
-          },
-          "explanation_markdown": "Partiendo de la ecuación de potencia $P = \\frac{V^2}{R}$, despejamos el voltaje máximo permitido:\n$$V_{\\max} = \\sqrt{P_{\\max} \\cdot R} = \\sqrt{0.25\\text{ W} \\times 100\\text{ }\\Omega} = \\sqrt{25} = 5.0\\text{ V}$$\nSi se aplican más de $5.0\\text{ V}$ (por ejemplo $12\\text{ V}$), la disipación sería $P = 12^2/100 = 1.44\\text{ W}$, lo que quemará la resistencia de inmediato."
-        },
-        {
-          "challenge_id": "S1-L4-C03",
-          "lesson_id": 4,
-          "topic_tag": "dc_power",
-          "interaction_type": "component_slot",
-          "difficulty": "boss",
-          "kilo_emotion": "shock",
-          "kilo_dialogue": "¡ÚLTIMA PRUEBA DEL JEFE! El reactor auxiliar trabaja a Vs = 24 V. Debemos conectar una resistencia de carga para disipar energía pero sin exceder nuestro disipador de 2 Watts. ¿Qué resistencia debemos soldar?",
-          "prompt_text": "Selecciona la resistencia de carga R_carga adecuada para conectar directamente a Vs = 24 V de modo que la potencia disipada no supere los 2.0 W de seguridad térmica.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": false,
-            "current_speed_amps": 0.05,
-            "nodes": [
-              { "id": "N_RXT_A", "x": 60, "y": 60, "label": "+24V" },
-              { "id": "N_RXT_B", "x": 260, "y": 60, "label": "R_IN" },
-              { "id": "N_RXT_C", "x": 260, "y": 180, "label": "R_OUT" },
-              { "id": "N_RXT_D", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_RXT_D", "to": "N_RXT_A", "label": "Vs", "value": 24, "unit": "V" },
-              { "id": "R_SLOT_BOSS", "type": "resistor_slot", "from": "N_RXT_A", "to": "N_RXT_B", "label": "R_carga = ?", "value": null, "unit": "Ω", "max_watts": 2.0 },
-              { "id": "LED_CORE", "type": "cyber_led", "from": "N_RXT_B", "to": "N_RXT_C", "label": "Reactor Core", "value": 0, "unit": "V" },
-              { "id": "W1", "type": "wire", "from": "N_RXT_C", "to": "N_RXT_D" }
-            ]
-          },
-          "options": [
-            { "id": "opt_50", "label": "50 Ω (P = 11.5 W)", "numeric_value": 50, "causes_overheat": true },
-            { "id": "opt_120", "label": "120 Ω (P = 4.8 W)", "numeric_value": 120, "causes_overheat": true },
-            { "id": "opt_240", "label": "240 Ω (P = 2.4 W)", "numeric_value": 240, "causes_overheat": true },
-            { "id": "opt_480", "label": "480 Ω (P = 1.2 W)", "numeric_value": 480, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_480",
-            "target_numeric_value": 480,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.05,
-            "resulting_power_watts": 1.2
-          },
-          "explanation_markdown": "Para no superar $P_{\\max} = 2.0\\text{ W}$ con una fuente de $V_s = 24\\text{ V}$, despejamos la resistencia mínima requerida:\n$$R_{\\min} = \\frac{V_s^2}{P_{\\max}} = \\frac{24^2}{2.0\\text{ W}} = \\frac{576}{2.0} = 288\\text{ }\\Omega$$\nCualquier resistencia menor a $288\\text{ }\\Omega$ se quemará:\n* $240\\text{ }\\Omega \\implies P = 24^2 / 240 = 2.4\\text{ W} > 2.0\\text{ W}$ (¡SE QUEMA!)\n* $480\\text{ }\\Omega \\implies P = 24^2 / 480 = 1.2\\text{ W} \\le 2.0\\text{ W}$ (¡OPERACIÓN SEGURA Y ESTABLE!)\n\n¡Has restaurado la subestación del Distrito Ohm con éxito!"
+          "hint_markdown": "💡 **Pista de K-1L0:** Usa la fórmula de Joule $P = I^2 \\cdot R$. Convierte $400\\text{ mA}$ a Amperes ($0.4\\text{ A}$) y elévalo al cuadrado antes de multiplicar por $50\\ \\Omega$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Convertimos la corriente al SI: $I = 400\\text{ mA} = 0.4\\text{ A}$.\n2. Aplicamos la fórmula de Joule:\n$$P = I^2 \\cdot R = (0.4\\text{ A})^2 \\times 50\\ \\Omega = 0.16 \\times 50 = 8.0\\text{ W} = 8000\\text{ mW}$$"
         }
       ]
     }

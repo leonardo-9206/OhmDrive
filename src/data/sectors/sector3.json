@@ -1,550 +1,505 @@
 {
   "sector_id": 3,
   "sector_order": 3,
-  "slug": "nucleo-thevenin",
-  "title": "Sector 3: El Núcleo Thévenin",
-  "uaa_unit_ref": "Unidad II: Técnicas de Análisis de Circuitos (Temas 2.1 - 2.6)",
-  "lore_description": "Has penetrado en el Núcleo Thévenin, donde las fuentes redundantes y las mallas cruzadas alimentan la computación pesada de Neo-Aguascalientes. Acompaña a K-1L0 para dominar el método nodal, el principio de superposición, la transformación de fuentes y la reducción Thévenin/Norton.",
-  "accent_color_hex": "#A855F7",
+  "slug": "nucleo-kirchhoff",
+  "title": "Sector 3: Núcleo Kirchhoff",
+  "uaa_unit_ref": "Unidad III: Leyes de Kirchhoff y Análisis Sistemático",
+  "lore_description": "El reactor central de Neo-Aguascalientes presenta topologías de múltiples mallas y nodos interconectados. Domina las Leyes de Kirchhoff y los métodos sistemáticos de nodos y mallas para balancear el flujo energético y evitar una desconexión crítica.",
+  "accent_color_hex": "#FF0055",
   "lessons": [
     {
-      "lesson_id": 9,
+      "lesson_id": 5,
       "sector_id": 3,
       "node_order": 1,
-      "title": "Nodos Esenciales & Método Nodal",
-      "topic_tag": "nodal_analysis",
-      "theory_markdown": "# 📍 Análisis Nodal y Nodo de Referencia (GND)\n\nEl método de voltajes de nodo es la técnica más potente y sistemática en ingeniería eléctrica:\n\n### 1. Nodos Esenciales\nUn **nodo esencial** es un punto de conexión donde convergen **tres o más ramas** del circuito.\n\n### 2. Selección de Tierra (GND)\nSe elige un nodo común como **referencia o tierra ($\text{GND}$)** cuyo potencial se define idénticamente en **$0\text{ Volts}$**.\n\n### 3. Ecuaciones de Nodo (LCK + Ley de Ohm)\nPara cada nodo esencial no de referencia con voltaje desconocido $V_A$, planteamos la LCK expresando las corrientes salientes:\n$$\\sum I_{\\text{salen}} = 0 \\implies \\frac{V_A - V_1}{R_1} + \\frac{V_A - V_2}{R_2} + \\dots = 0$$",
-      "xp_reward": 90,
+      "title": "Nivel 5: Leyes de Kirchhoff (LCK y LVK)",
+      "topic_tag": "kirchhoff",
+      "xp_reward": 100,
       "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Leyes Fundamentales de Kirchhoff\nFormuladas por Gustav Kirchhoff en 1845, estas leyes son las herramientas maestras del análisis de circuitos:\n\n1. **Ley de Corrientes de Kirchhoff (LCK):** En cualquier nodo eléctrico, la suma algebraica de corrientes es cero. La corriente total que entra a un nodo es idéntica a la que sale (Conservación de la Carga):\n$$\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}} \\quad \\Longleftrightarrow \\quad \\sum_{k=1}^n I_k = 0$$\n\n2. **Ley de Voltajes de Kirchhoff (LVK):** A lo largo de cualquier lazo o trayectoria cerrada, la suma algebraica de diferencias de potencial es cero (Conservación de la Energía):\n$$\\sum_{k=1}^m V_k = 0 \\quad \\Longleftrightarrow \\quad \\sum V_{\\text{fuentes}} = \\sum V_{\\text{caídas}}$$",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Ley de Corrientes de Kirchhoff (LCK):** $$\\sum I_{\\text{entrantes}} = \\sum I_{\\text{salientes}}$$\n* **Ley de Voltajes de Kirchhoff (LVK):** $$\\sum_{k=1}^m V_k = 0 \\quad \\implies \\quad V_s = V_{R_1} + V_{R_2} + \\dots$$\n* **Ecuación de Lazo Horario Simple:** $$-V_s + I R_1 + I R_2 + \\dots = 0 \\implies I = \\frac{V_s}{\\sum R_i}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: LVK en un Lazo con Fuentes Opuestas",
+        "problem_statement": "Un lazo cerrado contiene dos fuentes en oposición: Vs1 = 12 V (elevando potencial) y Vs2 = 4 V (oponiéndose), junto a R1 = 100 Ω y R2 = 300 Ω. Aplica la LVK para calcular la corriente I que circula por el lazo.",
+        "circuit_config_json": {
+          "template": "kvl_loop_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 0.02,
+          "nodes": [
+            { "id": "N1", "x": 60, "y": 60, "label": "A" },
+            { "id": "N2", "x": 280, "y": 60, "label": "B" },
+            { "id": "N3", "x": 280, "y": 180, "label": "C" },
+            { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 0.02 },
+            { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 100, "unit": "Ω", "current_amps": 0.02 },
+            { "id": "VS2", "type": "voltage_source_dc", "from": "N3", "to": "N2", "label": "Vs2", "value": 4, "unit": "V", "current_amps": -0.02 },
+            { "id": "R2", "type": "resistor", "from": "N3", "to": "N4", "label": "R2", "value": 300, "unit": "Ω", "current_amps": 0.02 }
+          ],
+          "annotations": [
+            { "type": "current_arrow", "target": "R1", "label": "I = 20 mA" },
+            { "type": "mesh_current", "label": "LVK", "nodes": ["N1", "N2", "N3", "N4"] }
+          ]
+        },
+        "steps_markdown": "1. **Recorremos el lazo en sentido horario desde GND:**\n$$-V_{s1} + V_{R1} + V_{s2} + V_{R2} = 0$$\n2. **Sustituimos por Ley de Ohm ($V_R = I \\cdot R$):**\n$$-12 + I(100) + 4 + I(300) = 0$$\n3. **Agrupamos términos semejantes:**\n$$I(400) - 8 = 0 \\implies I(400) = 8\\text{ V}$$\n4. **Despejamos la corriente:**\n$$I = \\frac{8\\text{ V}}{400\\ \\Omega} = 0.02\\text{ A} = 20\\text{ mA}$$",
+        "final_result": "I = 20 mA (0.02 A)"
+      },
       "challenges": [
         {
-          "challenge_id": "S3-L9-C01",
-          "lesson_id": 9,
-          "topic_tag": "nodal_analysis",
+          "challenge_id": "U3-L5-C01",
+          "lesson_id": 5,
+          "step_order": 1,
+          "topic_tag": "kirchhoff",
           "interaction_type": "multiple_choice",
           "difficulty": "basic",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "Para resolver este bloque por análisis nodal, K-1L0 necesita fijar el nodo de tierra. ¿Cuál es el potencial eléctrico absoluto que se le asigna por definición al nodo de referencia GND?",
-          "prompt_text": "¿Qué valor de potencial eléctrico se le asigna por definición al nodo de referencia (tierra / GND) en el método de voltajes de nodo?",
+          "kilo_dialogue": "Balance de corrientes en un nodo: entran 3.5 A y 2.0 A, y salen 1.5 A más una corriente Ix. ¿Cuánto vale Ix?",
+          "prompt_text": "En un nodo central convergen dos corrientes entrantes I1 = 3.5 A e I2 = 2.0 A, y dos salientes: I3 = 1.5 A y una corriente desconocida Ix. ¿Cuánto vale Ix según la LCK?",
           "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 0.05,
-            "nodes": [
-              { "id": "N_A", "x": 100, "y": 60, "label": "Nodo A" },
-              { "id": "N_B", "x": 240, "y": 60, "label": "Nodo B" },
-              { "id": "N_GND", "x": 170, "y": 180, "label": "GND (Ref)", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_A", "label": "Vs = 12 V", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N_A", "to": "N_B", "label": "R1 = 4 Ω", "value": 4, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N_B", "to": "N_GND", "label": "R2 = 8 Ω", "value": 8, "unit": "Ω" }
-            ]
-          },
-          "options": [
-            { "id": "opt_0v", "label": "Exactamente 0 Volts (referencia común de potencial)", "numeric_value": 0, "causes_overheat": false },
-            { "id": "opt_1v", "label": "1.0 Volt como constante normalizada", "numeric_value": 1, "causes_overheat": false },
-            { "id": "opt_inf", "label": "Infinito para aislar el retorno de tierra", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_depend", "label": "Depende de la suma de todas las fuentes de corriente", "numeric_value": null, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_0v",
-            "target_numeric_value": 0,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 1.0,
-            "resulting_power_watts": 12.0
-          },
-          "explanation_markdown": "En el análisis nodal, el **nodo de referencia o tierra (GND)** se establece por convenio en **$0\text{ Volts}$** ($V_{\\text{ref}} = 0\\text{ V}$). Todos los demás potenciales de nodo se miden con respecto a este punto común."
-        },
-        {
-          "challenge_id": "S3-L9-C02",
-          "lesson_id": 9,
-          "topic_tag": "nodal_analysis",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "Una fuente de 12 V se conecta mediante R1 = 4 Ω a un nodo esencial Va. Desde Va, una resistencia R2 = 8 Ω va hacia GND. Plantea la ecuación y calcula el voltaje Va.",
-          "prompt_text": "Aplica la ecuación nodal en el nodo Va: (Va - 12)/4 + Va/8 = 0. Determina el voltaje del nodo Va con respecto a tierra.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 1.0,
-            "nodes": [
-              { "id": "N_SRC", "x": 60, "y": 60, "label": "+12 V" },
-              { "id": "N_VA", "x": 180, "y": 60, "label": "Va = ?" },
-              { "id": "N_GND_A", "x": 180, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_GND_S", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND_S", "to": "N_SRC", "label": "Vs = 12 V", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N_SRC", "to": "N_VA", "label": "R1 = 4 Ω", "value": 4, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N_VA", "to": "N_GND_A", "label": "R2 = 8 Ω", "value": 8, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_GND_A", "to": "N_GND_S" }
-            ]
-          },
-          "options": [
-            { "id": "opt_8v", "label": "8.0 V", "numeric_value": 8.0, "causes_overheat": false },
-            { "id": "opt_4v", "label": "4.0 V", "numeric_value": 4.0, "causes_overheat": false },
-            { "id": "opt_6v", "label": "6.0 V", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_12v", "label": "12.0 V", "numeric_value": 12.0, "causes_overheat": true }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_8v",
-            "target_numeric_value": 8.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 1.0,
-            "resulting_power_watts": 8.0
-          },
-          "explanation_markdown": "Multiplicamos la ecuación por el común denominador $8$:\n$$8 \\cdot \\left[\\frac{V_a - 12}{4} + \\frac{V_a}{8}\\right] = 0 \\implies 2(V_a - 12) + V_a = 0$$\n$$2V_a - 24 + V_a = 0 \\implies 3V_a = 24 \\implies V_a = 8.0\\text{ V}$$\nEl potencial en el nodo esencial es de exactamente $8.0\\text{ V}$."
-        },
-        {
-          "challenge_id": "S3-L9-C03",
-          "lesson_id": 9,
-          "topic_tag": "nodal_analysis",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "Una fuente de corriente inyecta Is = 3.0 A directamente hacia un nodo con dos ramas a tierra en paralelo: R1 = 6 Ω y R2 = 12 Ω. ¿Qué voltaje aparece en el nodo?",
-          "prompt_text": "Una fuente ideal de corriente inyecta 3.0 A a un nodo conectado a dos resistencias en paralelo hacia GND: R1 = 6 Ω y R2 = 12 Ω. Calcula el voltaje de nodo resultante.",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 3.0,
-            "nodes": [
-              { "id": "N_IS", "x": 60, "y": 60, "label": "Is IN" },
-              { "id": "N_CENTRAL", "x": 160, "y": 60, "label": "Nodo V" },
-              { "id": "N_R2_T", "x": 260, "y": 60, "label": "R2+" },
-              { "id": "N_GND_C", "x": 160, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_GND_S", "x": 60, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N_GND_R2", "x": 260, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "IS1", "type": "current_source_dc", "from": "N_GND_S", "to": "N_IS", "label": "Is = 3.0 A", "value": 3.0, "unit": "A" },
-              { "id": "W1", "type": "wire", "from": "N_IS", "to": "N_CENTRAL" },
-              { "id": "R1", "type": "resistor", "from": "N_CENTRAL", "to": "N_GND_C", "label": "R1 = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "W2", "type": "wire", "from": "N_CENTRAL", "to": "N_R2_T" },
-              { "id": "R2", "type": "resistor", "from": "N_R2_T", "to": "N_GND_R2", "label": "R2 = 12 Ω", "value": 12, "unit": "Ω" }
-            ]
-          },
-          "options": [
-            { "id": "opt_12v", "label": "12.0 V", "numeric_value": 12.0, "causes_overheat": false },
-            { "id": "opt_18v", "label": "18.0 V", "numeric_value": 18.0, "causes_overheat": true },
-            { "id": "opt_4v", "label": "4.0 V", "numeric_value": 4.0, "causes_overheat": false },
-            { "id": "opt_24v", "label": "24.0 V", "numeric_value": 24.0, "causes_overheat": true }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_12v",
-            "target_numeric_value": 12.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 3.0,
-            "resulting_power_watts": 36.0
-          },
-          "explanation_markdown": "Calculamos la resistencia equivalente en paralelo conectada a tierra:\n$$R_{eq} = \\frac{6 \\times 12}{6 + 12} = \\frac{72}{18} = 4.0\\text{ }\\Omega$$\nPor Ley de Ohm, el voltaje del nodo es:\n$$V = I_s \\cdot R_{eq} = 3.0\\text{ A} \\times 4.0\\text{ }\\Omega = 12.0\\text{ V}$$\nPor $R_1$ circulan $2.0\\text{ A}$ y por $R_2$ circula $1.0\\text{ A}$ ($2 + 1 = 3\\text{ A}$)."
-        }
-      ]
-    },
-    {
-      "lesson_id": 10,
-      "sector_id": 3,
-      "node_order": 2,
-      "title": "Principio de Superposición",
-      "topic_tag": "superposition",
-      "theory_markdown": "# ⚡ Principio de Superposición en Circuitos Lineales\n\nEn cualquier circuito resistivo lineal con múltiples fuentes independientes:\n\n> *La respuesta total (voltaje o corriente en cualquier elemento) es la suma algebraica de las respuestas causadas por cada fuente independiente actuando sola.*\n\n$$X_{\\text{total}} = X' + X'' + X''' + \\dots$$\n\n### Regla de Oro para \"Apagar\" Fuentes Independientes:\n1. **Fuente de Voltaje ($V_s = 0\\text{ V}$):** Se reemplaza por un **CORTOCIRCUITO (alambre/cable directo)**.\n2. **Fuente de Corriente ($I_s = 0\\text{ A}$):** Se reemplaza por un **CIRCUITO ABIERTO (se corta o desconecta la rama)**.",
-      "xp_reward": 95,
-      "is_boss_level": false,
-      "challenges": [
-        {
-          "challenge_id": "S3-L10-C01",
-          "lesson_id": 10,
-          "topic_tag": "superposition",
-          "interaction_type": "multiple_choice",
-          "difficulty": "basic",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "Para analizar una red por superposición, debemos apagar fuentes. ¿Cómo se apaga una fuente independiente de voltaje frente a una de corriente?",
-          "prompt_text": "Bajo el teorema de superposición, ¿cuál es el procedimiento correcto para 'apagar' o desactivar una fuente de voltaje independiente y una fuente de corriente independiente?",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": false,
-            "current_speed_amps": 0.0,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "A" },
-              { "id": "N2", "x": 160, "y": 60, "label": "B" },
-              { "id": "N3", "x": 260, "y": 60, "label": "C" },
-              { "id": "N_GND", "x": 160, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs -> Corto", "value": 0, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 10, "unit": "Ω" },
-              { "id": "IS1", "type": "current_source_dc", "from": "N_GND", "to": "N3", "label": "Is -> Abierto", "value": 0, "unit": "A" }
-            ]
-          },
-          "options": [
-            { "id": "opt_sc_oc", "label": "Fuente de Voltaje -> Cortocircuito (0 V); Fuente de Corriente -> Circuito Abierto (0 A)", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_both_sc", "label": "Ambas fuentes se reemplazan por cortocircuitos", "numeric_value": null, "causes_overheat": true },
-            { "id": "opt_both_oc", "label": "Ambas fuentes se reemplazan por circuitos abiertos", "numeric_value": null, "causes_overheat": false },
-            { "id": "opt_resistor", "label": "Cada fuente se sustituye por una resistencia de 1 MΩ", "numeric_value": null, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_sc_oc",
-            "target_numeric_value": null,
-            "tolerance_percent": 0.0,
-            "resulting_current_amps": 0.0,
-            "resulting_power_watts": 0.0
-          },
-          "explanation_markdown": "Una fuente de voltaje entrega $0\\text{ V}$ cuando sus terminales están en **cortocircuito** ($V = 0$).\nUna fuente de corriente entrega $0\\text{ A}$ cuando sus terminales están en **circuito abierto** ($I = 0$)."
-        },
-        {
-          "challenge_id": "S3-L10-C02",
-          "lesson_id": 10,
-          "topic_tag": "superposition",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "En un circuito con Vs = 12 V e Is = 2 A alimentando un divisor de dos resistencias R1 = 6 Ω y R2 = 6 Ω, calcula el voltaje V' en R2 debido únicamente a la fuente de voltaje Vs (apagando Is).",
-          "prompt_text": "Calcula el voltaje V' en R2 producido únicamente por la fuente de voltaje Vs = 12 V al apagar la fuente de corriente Is (reemplazándola por un circuito abierto).",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 1.0,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "+12 V" },
-              { "id": "N2", "x": 180, "y": 60, "label": "Vout'" },
-              { "id": "N3", "x": 180, "y": 180, "label": "R2-" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 12 V", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1 = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "R2 = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N3", "to": "N_GND" }
-            ]
-          },
-          "options": [
-            { "id": "opt_6v", "label": "6.0 V (divisor simétrico de 12 V)", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_12v", "label": "12.0 V", "numeric_value": 12.0, "causes_overheat": false },
-            { "id": "opt_3v", "label": "3.0 V", "numeric_value": 3.0, "causes_overheat": false },
-            { "id": "opt_0v", "label": "0.0 V", "numeric_value": 0.0, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_6v",
-            "target_numeric_value": 6.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 1.0,
-            "resulting_power_watts": 6.0
-          },
-          "explanation_markdown": "Con la fuente de corriente $I_s$ en circuito abierto (desconectada), el circuito queda como un divisor de voltaje simple:\n$$V' = V_s \\cdot \\frac{R_2}{R_1 + R_2} = 12\\text{ V} \\cdot \\frac{6}{6 + 6} = 12 \\times 0.5 = 6.0\\text{ V}$$\nLa contribución de la fuente de voltaje sola es de $6.0\\text{ V}$."
-        },
-        {
-          "challenge_id": "S3-L10-C03",
-          "lesson_id": 10,
-          "topic_tag": "superposition",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "Ahora calculamos la contribución de la fuente de corriente Is = 2 A apagando Vs (en cortocircuito): V'' = Is * (R1 || R2) = 2 A * 3 Ω = 6 V. Por superposición, ¿cuál es el voltaje total real?",
-          "prompt_text": "Si la contribución de la fuente de voltaje es V' = 6.0 V y la contribución de la fuente de corriente es V'' = 6.0 V con la misma polaridad, ¿cuál es el voltaje total V_total en R2?",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 2.0,
-            "nodes": [
-              { "id": "N1", "x": 60, "y": 60, "label": "A" },
-              { "id": "N2", "x": 180, "y": 60, "label": "V_total" },
-              { "id": "N3", "x": 300, "y": 60, "label": "Is+" },
-              { "id": "N_GND", "x": 180, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 12 V", "value": 12, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1 = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N2", "to": "N_GND", "label": "R2 = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "IS1", "type": "current_source_dc", "from": "N_GND", "to": "N3", "label": "Is = 2 A", "value": 2, "unit": "A" },
-              { "id": "W1", "type": "wire", "from": "N3", "to": "N2" }
-            ]
-          },
-          "options": [
-            { "id": "opt_12v_tot", "label": "12.0 V (V' + V'' = 6 V + 6 V)", "numeric_value": 12.0, "causes_overheat": false },
-            { "id": "opt_0v_tot", "label": "0.0 V (se anulan mutuamente)", "numeric_value": 0.0, "causes_overheat": false },
-            { "id": "opt_6v_tot", "label": "6.0 V (prevalece la fuente más grande)", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_18v_tot", "label": "18.0 V", "numeric_value": 18.0, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_12v_tot",
-            "target_numeric_value": 12.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 2.0,
-            "resulting_power_watts": 24.0
-          },
-          "explanation_markdown": "Por el **Principio de Superposición**:\n$$V_{\\text{total}} = V' + V'' = 6.0\\text{ V} + 6.0\\text{ V} = 12.0\\text{ V}$$\nAmbas fuentes empujan en la misma dirección positiva sobre $R_2$, logrando $12.0\\text{ V}$ netos."
-        }
-      ]
-    },
-    {
-      "lesson_id": 11,
-      "sector_id": 3,
-      "node_order": 3,
-      "title": "Transformación de Fuentes",
-      "topic_tag": "source_transformation",
-      "theory_markdown": "# 🔄 Transformación de Fuentes Prácticas\n\nPermite convertir fuentes de tensión en fuentes de corriente y viceversa sin alterar el comportamiento externo del circuito:\n\n### 1. Fuente de Tensión a Fuente de Corriente\nUna fuente ideal de voltaje $V_s$ **en serie** con una resistencia $R_s$ es idéntica a:\n* Una fuente de corriente $I_s = \\frac{V_s}{R_s}$ **en paralelo** con la misma resistencia $R_p = R_s$.\n\n### 2. Fuente de Corriente a Fuente de Tensión\nUna fuente de corriente $I_s$ **en paralelo** con $R_p$ equivale a:\n* Una fuente de voltaje $V_s = I_s \\cdot R_p$ **en serie** con $R_s = R_p$.\n\n> ⚠️ **Regla de Flecha y Polaridad:**\n> La flecha de la fuente de corriente siempre apunta hacia la terminal positiva ($+$) de la fuente de tensión equivalente.",
-      "xp_reward": 95,
-      "is_boss_level": false,
-      "challenges": [
-        {
-          "challenge_id": "S3-L11-C01",
-          "lesson_id": 11,
-          "topic_tag": "source_transformation",
-          "interaction_type": "multiple_choice",
-          "difficulty": "basic",
-          "kilo_emotion": "thinking",
-          "kilo_dialogue": "Una fuente de voltaje Vs = 18 V está conectada en serie con una resistencia Rs = 6 Ω. ¿Cuáles son los parámetros de la fuente de corriente equivalente en paralelo?",
-          "prompt_text": "Transforma una fuente de tensión práctica de Vs = 18 V en serie con Rs = 6 Ω a su fuente de corriente equivalente en paralelo (Is, Rp).",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": true,
-            "current_speed_amps": 3.0,
-            "nodes": [
-              { "id": "N1", "x": 80, "y": 60, "label": "A" },
-              { "id": "N2", "x": 200, "y": 60, "label": "B" },
-              { "id": "N_GND", "x": 80, "y": 180, "label": "GND", "is_ground": true }
-            ],
-            "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N1", "label": "Vs = 18 V", "value": 18, "unit": "V" },
-              { "id": "RS1", "type": "resistor", "from": "N1", "to": "N2", "label": "Rs = 6 Ω", "value": 6, "unit": "Ω" }
-            ]
-          },
-          "options": [
-            { "id": "opt_3a_6ohm", "label": "Is = 3.0 A en paralelo con Rp = 6 Ω", "numeric_value": 3.0, "causes_overheat": false },
-            { "id": "opt_108a", "label": "Is = 108 A en paralelo con Rp = 6 Ω", "numeric_value": 108.0, "causes_overheat": true },
-            { "id": "opt_3a_3ohm", "label": "Is = 3.0 A en paralelo con Rp = 3 Ω", "numeric_value": 3.0, "causes_overheat": false },
-            { "id": "opt_033a", "label": "Is = 0.33 A en paralelo con Rp = 6 Ω", "numeric_value": 0.33, "causes_overheat": false }
-          ],
-          "solution_json": {
-            "correct_option_id": "opt_3a_6ohm",
-            "target_numeric_value": 3.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 3.0,
-            "resulting_power_watts": 54.0
-          },
-          "explanation_markdown": "Por la relación de transformación de fuentes:\n$$I_s = \\frac{V_s}{R_s} = \\frac{18\\text{ V}}{6\\text{ }\\Omega} = 3.0\\text{ A}$$\nLa resistencia mantiene su valor numérico idéntico pero se conecta en paralelo: $R_p = 6.0\\text{ }\\Omega$."
-        },
-        {
-          "challenge_id": "S3-L11-C02",
-          "lesson_id": 11,
-          "topic_tag": "source_transformation",
-          "interaction_type": "multiple_choice",
-          "difficulty": "normal",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "Ahora en sentido opuesto: Una fuente de corriente Is = 4.0 A en paralelo con Rp = 5 Ω alimenta la red. ¿Cuál es su fuente de tensión equivalente en serie?",
-          "prompt_text": "Transforma una fuente de corriente de Is = 4.0 A en paralelo con una resistencia de Rp = 5 Ω en su fuente de voltaje en serie equivalente (Vs, Rs).",
-          "circuit_config_json": {
-            "template": "single_loop_dc",
+            "template": "kcl_node_dc",
             "is_energized_initially": true,
             "current_speed_amps": 4.0,
             "nodes": [
-              { "id": "N1", "x": 100, "y": 60, "label": "Is+" },
-              { "id": "N2", "x": 220, "y": 60, "label": "Rp+" },
-              { "id": "N_GND", "x": 100, "y": 180, "label": "GND", "is_ground": true },
-              { "id": "N4", "x": 220, "y": 180, "label": "Rp-" }
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "Nodo A" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
             ],
             "components": [
-              { "id": "IS1", "type": "current_source_dc", "from": "N_GND", "to": "N1", "label": "Is = 4 A", "value": 4, "unit": "A" },
-              { "id": "W1", "type": "wire", "from": "N1", "to": "N2" },
-              { "id": "RP", "type": "resistor", "from": "N2", "to": "N4", "label": "Rp = 5 Ω", "value": 5, "unit": "Ω" },
-              { "id": "W2", "type": "wire", "from": "N4", "to": "N_GND" }
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "I1", "value": 3.5, "unit": "A", "current_amps": 3.5 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 3.5 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "I3", "value": 4, "unit": "Ω", "current_amps": 1.5 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 4.0 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "Ix", "value": 4, "unit": "Ω", "current_amps": 4.0 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 4.0 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 5.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "3.5 A" },
+              { "type": "current_arrow", "target": "R1", "label": "1.5 A" },
+              { "type": "current_arrow", "target": "R2", "label": "Ix = ?" }
             ]
           },
           "options": [
-            { "id": "opt_20v_5ohm", "label": "Vs = 20 V en serie con Rs = 5 Ω", "numeric_value": 20.0, "causes_overheat": false },
-            { "id": "opt_08v", "label": "Vs = 0.8 V en serie con Rs = 5 Ω", "numeric_value": 0.8, "causes_overheat": false },
-            { "id": "opt_20v_20ohm", "label": "Vs = 20 V en serie con Rs = 20 Ω", "numeric_value": 20.0, "causes_overheat": false },
-            { "id": "opt_100v", "label": "Vs = 100 V en serie con Rs = 5 Ω", "numeric_value": 100.0, "causes_overheat": true }
+            { "id": "opt_1", "label": "4.0 A", "numeric_value": 4.0, "causes_overheat": false },
+            { "id": "opt_2", "label": "7.0 A", "numeric_value": 7.0, "causes_overheat": true },
+            { "id": "opt_3", "label": "3.0 A", "numeric_value": 3.0, "causes_overheat": false },
+            { "id": "opt_4", "label": "1.5 A", "numeric_value": 1.5, "causes_overheat": false }
           ],
           "solution_json": {
-            "correct_option_id": "opt_20v_5ohm",
-            "target_numeric_value": 20.0,
-            "tolerance_percent": 2.0,
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 4.0,
+            "tolerance_percent": 3.0,
             "resulting_current_amps": 4.0,
-            "resulting_power_watts": 80.0
+            "resulting_power_watts": 48.0
           },
-          "explanation_markdown": "Aplicando la Ley de Ohm para la transformación:\n$$V_s = I_s \\cdot R_p = 4.0\\text{ A} \\times 5\\text{ }\\Omega = 20.0\\text{ V}$$\nLa resistencia equivalente se conecta en serie y mantiene su valor: $R_s = 5.0\\text{ }\\Omega$."
+          "hint_markdown": "💡 **Pista de K-1L0:** Por la LCK: $\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}}$. Suma $3.5 + 2.0 = 5.5\\text{ A}$. Luego resta $1.5\\text{ A}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la Ley de Corrientes de Kirchhoff (LCK):\n$$I_{\\text{entran}} = I_{\\text{salen}} \\implies 3.5\\text{ A} + 2.0\\text{ A} = 1.5\\text{ A} + I_x$$\n$$5.5\\text{ A} = 1.5\\text{ A} + I_x \\implies I_x = 5.5 - 1.5 = 4.0\\text{ A}$$"
         },
         {
-          "challenge_id": "S3-L11-C03",
-          "lesson_id": 11,
-          "topic_tag": "source_transformation",
+          "challenge_id": "U3-L5-C02",
+          "lesson_id": 5,
+          "step_order": 2,
+          "topic_tag": "kirchhoff",
           "interaction_type": "multiple_choice",
-          "difficulty": "normal",
+          "difficulty": "basic",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "Al transformar dos fuentes de voltaje en serie a corriente en paralelo, una aporta 3 A y la otra 2 A al mismo nodo. ¿Cuál es la corriente total inyectada?",
-          "prompt_text": "Si dos ramas en paralelo contienen fuentes de corriente ideales orientadas en la misma dirección con valores de 3.0 A y 2.0 A, ¿cuál es la fuente de corriente equivalente combinada?",
+          "kilo_dialogue": "LVK en una malla cerrada: la fuente suministra 18 V y dos resistencias consumen 5 V y 7 V. ¿Cuánto cae en la tercera?",
+          "prompt_text": "En una malla cerrada, una fuente entrega Vs = 18 V a tres resistores en serie donde se miden caídas de VR1 = 5 V y VR2 = 7 V. Según la LVK, ¿cuál es la caída de tensión VR3 en el tercer resistor?",
           "circuit_config_json": {
-            "template": "single_loop_dc",
+            "template": "series_dc",
             "is_energized_initially": true,
-            "current_speed_amps": 5.0,
+            "current_speed_amps": 0.5,
             "nodes": [
-              { "id": "N1", "x": 80, "y": 60, "label": "Is1+" },
-              { "id": "N2", "x": 180, "y": 60, "label": "Is2+" },
-              { "id": "N3", "x": 280, "y": 60, "label": "Carga" },
-              { "id": "N_GND", "x": 180, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "N1", "x": 60, "y": 60, "label": "+18V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
             ],
             "components": [
-              { "id": "IS1", "type": "current_source_dc", "from": "N_GND", "to": "N1", "label": "Is1 = 3 A", "value": 3, "unit": "A" },
-              { "id": "IS2", "type": "current_source_dc", "from": "N_GND", "to": "N2", "label": "Is2 = 2 A", "value": 2, "unit": "A" },
-              { "id": "W1", "type": "wire", "from": "N1", "to": "N2" },
-              { "id": "W2", "type": "wire", "from": "N2", "to": "N3" },
-              { "id": "R_L", "type": "resistor", "from": "N3", "to": "N_GND", "label": "RL = 4 Ω", "value": 4, "unit": "Ω" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 18, "unit": "V", "current_amps": 0.5 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "5V", "value": 10, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "7V", "value": 14, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "VR3", "value": 12, "unit": "Ω", "current_amps": 0.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I" }
             ]
           },
           "options": [
-            { "id": "opt_5a", "label": "5.0 A (suma directa en paralelo)", "numeric_value": 5.0, "causes_overheat": false },
-            { "id": "opt_1a", "label": "1.0 A (diferencia)", "numeric_value": 1.0, "causes_overheat": false },
-            { "id": "opt_6a", "label": "6.0 A (producto)", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_2_5a", "label": "2.5 A (promedio)", "numeric_value": 2.5, "causes_overheat": false }
+            { "id": "opt_1", "label": "6 V", "numeric_value": 6, "causes_overheat": false },
+            { "id": "opt_2", "label": "12 V", "numeric_value": 12, "causes_overheat": false },
+            { "id": "opt_3", "label": "18 V", "numeric_value": 18, "causes_overheat": false },
+            { "id": "opt_4", "label": "30 V", "numeric_value": 30, "causes_overheat": true }
           ],
           "solution_json": {
-            "correct_option_id": "opt_5a",
-            "target_numeric_value": 5.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 5.0,
-            "resulting_power_watts": 100.0
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 6,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.5,
+            "resulting_power_watts": 3.0
           },
-          "explanation_markdown": "Las fuentes de corriente conectadas en paralelo con la misma polaridad simplemente se suman de forma algebraica:\n$$I_{\\text{eq}} = I_1 + I_2 = 3.0\\text{ A} + 2.0\\text{ A} = 5.0\\text{ A}$$\nEsta simplificación permite resolver circuitos complejos en un solo paso."
+          "hint_markdown": "💡 **Pista de K-1L0:** Por LVK la suma de caídas iguala al voltaje entregado: $18 = 5 + 7 + V_{R3}$. Resta $18 - 12$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPor Ley de Voltajes de Kirchhoff (LVK):\n$$V_s - V_{R_1} - V_{R_2} - V_{R_3} = 0 \\implies 18 - 5 - 7 - V_{R_3} = 0$$\n$$V_{R_3} = 18 - 12 = 6.0\\text{ V}$$"
+        },
+        {
+          "challenge_id": "U3-L5-C03",
+          "lesson_id": 5,
+          "step_order": 3,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Tres resistencias en serie de 200, 500 y 500 Ohms con 36 V. Aplica LVK para calcular la corriente.",
+          "prompt_text": "En un lazo cerrado, una fuente de Vs = 36 V alimenta tres resistencias en serie: R1 = 200 Ω, R2 = 500 Ω y R3 = 500 Ω. Aplica la LVK para calcular la corriente I que recorre el circuito.",
+          "circuit_config_json": {
+            "template": "series_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.03,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+36V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 36, "unit": "V", "current_amps": 0.03 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 200, "unit": "Ω", "current_amps": 0.03 },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "R2", "value": 500, "unit": "Ω", "current_amps": 0.03 },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "R3", "value": 500, "unit": "Ω", "current_amps": 0.03 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.03,
+            "base_si_unit": "A",
+            "display_target_value": 30,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.03,
+            "resulting_power_watts": 1.08
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** La suma total de resistencias es $200 + 500 + 500 = 1200\\ \\Omega$. Divide la tensión total $36\\text{ V}$ entre $1200\\ \\Omega$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Suma de resistencias del lazo: $R_{\\text{total}} = 200 + 500 + 500 = 1200\\ \\Omega$.\n2. Por LVK:\n$$I = \\frac{V_s}{R_{\\text{total}}} = \\frac{36\\text{ V}}{1200\\ \\Omega} = 0.03\\text{ A} = 30.0\\text{ mA}$$"
+        },
+        {
+          "challenge_id": "U3-L5-C04",
+          "lesson_id": 5,
+          "step_order": 4,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Al nodo entran 500 mA y salen dos ramas con 180 mA y 220 mA. ¿Cuánta corriente fluye por la tercera?",
+          "prompt_text": "A un nodo principal llega una corriente de entrada de I_in = 500 mA y salen tres ramas. Si la rama 1 conduce I1 = 180 mA y la rama 2 conduce I2 = 220 mA, calcula la corriente I3 de la tercera rama.",
+          "circuit_config_json": {
+            "template": "kcl_node_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.5,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "Nodo" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "I_in", "value": 0.5, "unit": "A", "current_amps": 0.5 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.5 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "I1", "value": 10, "unit": "Ω", "current_amps": 0.18 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.32 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "I2", "value": 10, "unit": "Ω", "current_amps": 0.22 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.22 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "500 mA" },
+              { "type": "current_arrow", "target": "R1", "label": "180 mA" },
+              { "type": "current_arrow", "target": "R2", "label": "220 mA" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.1,
+            "base_si_unit": "A",
+            "display_target_value": 100,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.1,
+            "resulting_power_watts": 1.2
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica la LCK en el nodo: $500\\text{ mA} = 180\\text{ mA} + 220\\text{ mA} + I_3$. Despeja $I_3$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPor LCK:\n$$I_{\\text{in}} = I_1 + I_2 + I_3 \\implies 500\\text{ mA} = (180 + 220)\\text{ mA} + I_3$$\n$$I_3 = 500 - 400 = 100.0\\text{ mA} = 0.1\\text{ A}$$"
         }
       ]
     },
     {
-      "lesson_id": 12,
+      "lesson_id": 6,
       "sector_id": 3,
-      "node_order": 4,
-      "title": "Jefe de Sector: Teoremas de Thévenin & Norton",
-      "topic_tag": "thevenin_norton",
-      "theory_markdown": "# 🏆 Teoremas de Thévenin y Norton\n\nLos teoremas cumbre de la Unidad II de la UAA:\n\n### 1. Teorema de Thévenin\nCualquier circuito resistivo lineal con fuentes visto desde dos terminales $a\\text{–}b$ puede reducirse a:\n* Una sola fuente de voltaje $V_{th}$ en serie con una resistencia $R_{th}$.\n* **$V_{th}$:** Voltaje en circuito abierto entre $a\\text{–}b$ ($V_{th} = V_{ab,\\text{oc}}$).\n* **$R_{th}$:** Resistencia vista desde $a\\text{–}b$ con todas las fuentes independientes apagadas ($R_{th} = V_{oc} / I_{sc}$).\n\n### 2. Teorema de Norton\nEquivalente dual: Una fuente de corriente $I_N = I_{sc} = \\frac{V_{th}}{R_{th}}$ en paralelo con la misma $R_{th}$.\n\n### 3. Teorema de Máxima Transferencia de Potencia\nSe transfiere la máxima potencia a una carga resistiva $R_L$ cuando:\n$$R_L = R_{th} \\implies P_{\\max} = \\frac{V_{th}^2}{4 R_{th}}$$",
-      "xp_reward": 180,
-      "is_boss_level": true,
+      "node_order": 2,
+      "title": "Nivel 6: Introducción a Nodos y Mallas",
+      "topic_tag": "nodes_meshes",
+      "xp_reward": 100,
+      "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Métodos Sistemáticos de Nodos y Mallas\nCuando un circuito contiene múltiples fuentes y lazos interconectados, los métodos de Nodos y Mallas permiten resolver sistemáticamente cualquier incógnita:\n\n1. **Método de Nodos (Tensiones de Nodo):** Basado en la LCK. Se elige un nodo de referencia (Tierra / GND = 0 V). Para cada nodo no de referencia ($N-1$ nodos) se plantea una ecuación de corrientes sumando los términos $\\frac{V_{\\text{nodo}} - V_{\\text{vecino}}}{R} = 0$.\n\n2. **Método de Mallas (Corrientes de Malla):** Basado en la LVK para circuitos planos. Se asigna una corriente de malla ficticia a cada lazo independiente ($M = B - N + 1$) y se plantea una suma de voltajes. Para dos mallas contiguas, el resistor central es atravesado por la diferencia neta de corrientes $(I_1 - I_2)$.",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Ecuación Nodal General (Nodo $A$):** $$\\sum \\frac{V_A - V_k}{R_k} = \\sum I_{\\text{fuentes entrantes}}$$\n* **Ecuación de Malla 1:** $$(R_1 + R_{\\text{común}}) I_1 - R_{\\text{común}} I_2 = \\sum V_{\\text{fuentes, malla 1}}$$\n* **Ecuación de Malla 2:** $$-R_{\\text{común}} I_1 + (R_2 + R_{\\text{común}}) I_2 = \\sum V_{\\text{fuentes, malla 2}}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Voltaje de Nodo VA en Circuito de Dos Mallas",
+        "problem_statement": "En un circuito de dos mallas con nodo central A: una fuente Vs1 = 12 V se conecta a través de R1 = 2 Ω al nodo A. En el nodo A se conecta a tierra R3 = 4 Ω, y hacia la derecha R2 = 4 Ω conectada a una fuente Vs2 = 6 V (con su polo positivo hacia arriba y negativo a tierra). Determina la tensión de nodo VA.",
+        "circuit_config_json": {
+          "template": "two_mesh_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 2.25,
+          "nodes": [
+            { "id": "TL", "x": 40, "y": 50 },
+            { "id": "A", "x": 180, "y": 50, "label": "Nodo A" },
+            { "id": "TR", "x": 320, "y": 50 },
+            { "id": "BL", "x": 40, "y": 190 },
+            { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+            { "id": "BR", "x": 320, "y": 190 }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+            { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+            { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+            { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+            { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+            { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+            { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+          ],
+          "annotations": [
+            { "type": "node_voltage", "node": "A", "label": "V_A = 7.5 V" },
+            { "type": "current_arrow", "target": "R1", "label": "I1 = 2.25 A" },
+            { "type": "current_arrow", "target": "R3", "label": "I3 = 1.875 A" },
+            { "type": "current_arrow", "target": "R2", "label": "I2 = 0.375 A" }
+          ]
+        },
+        "steps_markdown": "1. **Planteamos la LCK en el nodo $A$ (suma de corrientes salientes = 0):**\n$$\\frac{V_A - 12}{2} + \\frac{V_A - 0}{4} + \\frac{V_A - 6}{4} = 0$$\n2. **Multiplicamos toda la ecuación por el mínimo común múltiplo (4):**\n$$2(V_A - 12) + V_A + (V_A - 6) = 0$$\n$$2V_A - 24 + V_A + V_A - 6 = 0$$\n3. **Reducimos y despejamos $V_A$:**\n$$4V_A - 30 = 0 \\implies 4V_A = 30 \\implies V_A = \\frac{30}{4} = 7.5\\text{ V}$$",
+        "final_result": "VA = 7.5 V"
+      },
       "challenges": [
         {
-          "challenge_id": "S3-L12-C01",
-          "lesson_id": 12,
-          "topic_tag": "thevenin_norton",
+          "challenge_id": "U3-L6-C01",
+          "lesson_id": 6,
+          "step_order": 1,
+          "topic_tag": "nodes_meshes",
           "interaction_type": "multiple_choice",
-          "difficulty": "boss",
+          "difficulty": "basic",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "¡El Núcleo Thévenin nos presenta un puente! Una fuente de 24 V alimenta un divisor con R1 = 12 Ω y R2 = 12 Ω. ¿Cuál es el voltaje de Thévenin Vth visto desde las terminales a-b abiertas?",
-          "prompt_text": "Calcula el voltaje de circuito abierto de Thévenin (V_th) entre los terminales a-b de un circuito alimentado por Vs = 24 V con R1 = 12 Ω y R2 = 12 Ω.",
+          "kilo_dialogue": "Al aplicar el método nodal a un circuito de N = 4 nodos con 1 nodo a tierra, ¿cuántas ecuaciones independientes se formulan?",
+          "prompt_text": "Al aplicar el método de tensiones nodales a un circuito que cuenta con N = 4 nodos esenciales, ¿cuántas ecuaciones de nodo linealmente independientes se deben formular si se selecciona 1 nodo como referencia (GND)?",
           "circuit_config_json": {
-            "template": "single_loop_dc",
+            "template": "two_mesh_dc",
             "is_energized_initially": true,
             "current_speed_amps": 1.0,
             "nodes": [
-              { "id": "N_SRC_T", "x": 60, "y": 60, "label": "+24 V" },
-              { "id": "N_A", "x": 200, "y": 60, "label": "Terminal a" },
-              { "id": "N_B", "x": 200, "y": 180, "label": "Terminal b" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "Nodo 1" },
+              { "id": "TR", "x": 320, "y": 50, "label": "Nodo 2" },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
             ],
             "components": [
-              { "id": "VS1", "type": "voltage_source_dc", "from": "N_GND", "to": "N_SRC_T", "label": "Vs = 24 V", "value": 24, "unit": "V" },
-              { "id": "R1", "type": "resistor", "from": "N_SRC_T", "to": "N_A", "label": "R1 = 12 Ω", "value": 12, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N_A", "to": "N_B", "label": "R2 = 12 Ω", "value": 12, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_B", "to": "N_GND" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 1.0 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.5 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.5 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 1.0 }
+            ],
+            "annotations": [
+              { "type": "node_voltage", "node": "A", "label": "V1" }
             ]
           },
           "options": [
-            { "id": "opt_12v_th", "label": "12.0 V (divisor simétrico)", "numeric_value": 12.0, "causes_overheat": false },
-            { "id": "opt_24v_th", "label": "24.0 V", "numeric_value": 24.0, "causes_overheat": true },
-            { "id": "opt_6v_th", "label": "6.0 V", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_0v_th", "label": "0.0 V", "numeric_value": 0.0, "causes_overheat": false }
+            { "id": "opt_1", "label": "N - 1 = 3 ecuaciones", "numeric_value": 3, "causes_overheat": false },
+            { "id": "opt_2", "label": "N = 4 ecuaciones", "numeric_value": 4, "causes_overheat": false },
+            { "id": "opt_3", "label": "N + 1 = 5 ecuaciones", "numeric_value": 5, "causes_overheat": false },
+            { "id": "opt_4", "label": "2 ecuaciones", "numeric_value": 2, "causes_overheat": false }
           ],
           "solution_json": {
-            "correct_option_id": "opt_12v_th",
-            "target_numeric_value": 12.0,
-            "tolerance_percent": 2.0,
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 3,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 1.0,
+            "resulting_power_watts": 10.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Recuerda que al asignar el potencial de referencia (0 V) a un nodo, solo quedan $N - 1$ incógnitas de tensión por determinar.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPara un circuito con $N$ nodos esenciales, fijar un nodo de referencia (tierra, $0\\text{ V}$) reduce las variables desconocidas a $N - 1$. Por lo tanto, se formulan exactamente $N - 1 = 4 - 1 = 3$ ecuaciones nodales independientes."
+        },
+        {
+          "challenge_id": "U3-L6-C02",
+          "lesson_id": 6,
+          "step_order": 2,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "En dos mallas con corrientes horarias I1 e I2, ¿cuál es la corriente neta que desciende por la rama central compartida?",
+          "prompt_text": "En un análisis de mallas con dos lazos adyacentes que comparten un resistor Rc, si la malla 1 tiene corriente de malla I1 (horaria) y la malla 2 tiene I2 (horaria), ¿cuál es la corriente neta que desciende por Rc?",
+          "circuit_config_json": {
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 1.0,
+            "nodes": [
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "Rc" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 1.0 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "Rc", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.5 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.5 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 1.0 }
+            ],
+            "annotations": [
+              { "type": "mesh_current", "label": "I1", "nodes": ["TL", "A", "BM", "BL"] },
+              { "type": "mesh_current", "label": "I2", "nodes": ["A", "TR", "BR", "BM"] }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "I1 - I2", "causes_overheat": false },
+            { "id": "opt_2", "label": "I1 + I2", "causes_overheat": true },
+            { "id": "opt_3", "label": "I1 × I2", "causes_overheat": false },
+            { "id": "opt_4", "label": "I2 / I1", "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
             "resulting_current_amps": 1.0,
             "resulting_power_watts": 12.0
           },
-          "explanation_markdown": "El voltaje de Thévenin es la tensión en circuito abierto entre $a$ y $b$:\n$$V_{th} = V_{ab,\\text{oc}} = V_s \\cdot \\frac{R_2}{R_1 + R_2} = 24\\text{ V} \\cdot \\frac{12}{12 + 12} = 12.0\\text{ V}$$\nEl equivalente de Thévenin tiene un voltaje de $12.0\\text{ V}$."
+          "hint_markdown": "💡 **Pista de K-1L0:** Observa las direcciones relativas: la corriente de la malla 1 desciende por la rama central compartida, mientras que la corriente de la malla 2 asciende en sentido opuesto.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nLa corriente neta en la rama común es la superposición algebraica de las corrientes de malla. Como $I_1$ circula en sentido horario (hacia abajo en la rama común) e $I_2$ también circula en sentido horario (hacia arriba en la rama común), la corriente resultante hacia abajo es $I_{\\text{neta}} = I_1 - I_2$."
         },
         {
-          "challenge_id": "S3-L12-C02",
-          "lesson_id": 12,
-          "topic_tag": "thevenin_norton",
-          "interaction_type": "multiple_choice",
-          "difficulty": "boss",
+          "challenge_id": "U3-L6-C03",
+          "lesson_id": 6,
+          "step_order": 3,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
           "kilo_emotion": "thinking",
-          "kilo_dialogue": "Para la resistencia de Thévenin Rth: apagamos la fuente de 24 V sustituyéndola por un cortocircuito. Visto desde a-b, ¿cuál es la resistencia equivalente?",
-          "prompt_text": "Calcula la resistencia de Thévenin (R_th) vista desde los terminales a-b apagando la fuente de voltaje independiente (R1 = 12 Ω y R2 = 12 Ω).",
+          "kilo_dialogue": "Con Vs1 = 12 V y VA = 7.5 V a través de R1 = 2 Ω, calcula la corriente I1 de la rama izquierda.",
+          "prompt_text": "En el circuito de dos mallas del ejemplo, con Vs1 = 12 V, R1 = 2 Ω y tensión de nodo VA = 7.5 V, calcula la corriente I1 que fluye desde la fuente Vs1 hacia el nodo A.",
           "circuit_config_json": {
-            "template": "single_loop_dc",
-            "is_energized_initially": false,
-            "current_speed_amps": 0.0,
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 2.25,
             "nodes": [
-              { "id": "N_SHORT", "x": 60, "y": 60, "label": "Corto" },
-              { "id": "N_A", "x": 200, "y": 60, "label": "Terminal a" },
-              { "id": "N_B", "x": 200, "y": 180, "label": "Terminal b" },
-              { "id": "N_GND", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "VA=7.5V" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
             ],
             "components": [
-              { "id": "W_SHORT", "type": "wire", "from": "N_GND", "to": "N_SHORT" },
-              { "id": "R1", "type": "resistor", "from": "N_SHORT", "to": "N_A", "label": "R1 = 12 Ω", "value": 12, "unit": "Ω" },
-              { "id": "R2", "type": "resistor", "from": "N_A", "to": "N_B", "label": "R2 = 12 Ω", "value": 12, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_B", "to": "N_GND" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I1 = ?" }
             ]
           },
-          "options": [
-            { "id": "opt_6ohm_th", "label": "6.0 Ω (12 Ω || 12 Ω)", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_24ohm_th", "label": "24.0 Ω (12 Ω + 12 Ω)", "numeric_value": 24.0, "causes_overheat": false },
-            { "id": "opt_12ohm_th", "label": "12.0 Ω", "numeric_value": 12.0, "causes_overheat": false },
-            { "id": "opt_0ohm_th", "label": "0.0 Ω", "numeric_value": 0.0, "causes_overheat": true }
-          ],
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
           "solution_json": {
-            "correct_option_id": "opt_6ohm_th",
-            "target_numeric_value": 6.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 0.0,
-            "resulting_power_watts": 0.0
+            "target_base_si_value": 2.25,
+            "base_si_unit": "A",
+            "display_target_value": 2.25,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 2.25,
+            "resulting_power_watts": 10.125
           },
-          "explanation_markdown": "Al apagar la fuente de tensión con un cortocircuito, las resistencias $R_1$ y $R_2$ quedan conectadas en **paralelo** vistas desde las terminales $a\\text{–}b$:\n$$R_{th} = R_1 \\parallel R_2 = \\frac{12 \\times 12}{12 + 12} = \\frac{144}{24} = 6.0\\text{ }\\Omega$$\nEl circuito se reduce a $V_{th} = 12\\text{ V}$ en serie con $R_{th} = 6\\text{ }\\Omega$."
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica la Ley de Ohm a la rama izquierda: la caída de tensión sobre $R_1$ es $(V_{s1} - V_A)$. Divide $(12 - 7.5) / 2$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nCalculamos la caída de voltaje en $R_1$ y aplicamos la Ley de Ohm:\n$$I_1 = \\frac{V_{s1} - V_A}{R_1} = \\frac{12\\text{ V} - 7.5\\text{ V}}{2\\ \\Omega} = \\frac{4.5\\text{ V}}{2\\ \\Omega} = 2.25\\text{ A} = 2250\\text{ mA}$$"
         },
         {
-          "challenge_id": "S3-L12-C03",
-          "lesson_id": 12,
-          "topic_tag": "thevenin_norton",
-          "interaction_type": "multiple_choice",
-          "difficulty": "boss",
-          "kilo_emotion": "happy",
-          "kilo_dialogue": "¡BATALLA FINAL DEL NÚCLEO! Tenemos el equivalente Vth = 12.0 V y Rth = 6.0 Ω. ¿Qué resistencia de carga RL debemos conectar para extraer la máxima potencia posible y cuántos Watts transferirá?",
-          "prompt_text": "Para un circuito equivalente de Thévenin con V_th = 12 V y R_th = 6 Ω, calcula el valor óptimo de R_L bajo el Teorema de Máxima Transferencia de Potencia y la potencia máxima P_max transferida.",
+          "challenge_id": "U3-L6-C04",
+          "lesson_id": 6,
+          "step_order": 4,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Para el mismo circuito con VA = 7.5 V, calcula la corriente que drena la resistencia central R3 a tierra.",
+          "prompt_text": "Para el mismo circuito con VA = 7.5 V, calcula la corriente I3 que fluye verticalmente por la resistencia central R3 = 4 Ω hacia la tierra (GND = 0 V).",
           "circuit_config_json": {
-            "template": "single_loop_dc",
+            "template": "two_mesh_dc",
             "is_energized_initially": true,
-            "current_speed_amps": 1.0,
+            "current_speed_amps": 1.875,
             "nodes": [
-              { "id": "N_VTH", "x": 60, "y": 60, "label": "Vth = 12V" },
-              { "id": "N_MID_TH", "x": 160, "y": 60, "label": "Nodo Rth" },
-              { "id": "N_TERM_A", "x": 260, "y": 60, "label": "Terminal a" },
-              { "id": "N_TERM_B", "x": 260, "y": 180, "label": "Terminal b" },
-              { "id": "N_GND_TH", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "VA=7.5V" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
             ],
             "components": [
-              { "id": "VTH", "type": "voltage_source_dc", "from": "N_GND_TH", "to": "N_VTH", "label": "Vth = 12 V", "value": 12, "unit": "V" },
-              { "id": "RTH", "type": "resistor", "from": "N_VTH", "to": "N_MID_TH", "label": "Rth = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "W1", "type": "wire", "from": "N_MID_TH", "to": "N_TERM_A" },
-              { "id": "RL_OPT", "type": "resistor", "from": "N_TERM_A", "to": "N_TERM_B", "label": "RL = 6 Ω", "value": 6, "unit": "Ω" },
-              { "id": "W2", "type": "wire", "from": "N_TERM_B", "to": "N_GND_TH" }
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R3", "label": "I3 = ?" }
             ]
           },
-          "options": [
-            { "id": "opt_rl_6_p_6", "label": "RL = 6.0 Ω con P_max = 6.0 Watts", "numeric_value": 6.0, "causes_overheat": false },
-            { "id": "opt_rl_12_p_3", "label": "RL = 12.0 Ω con P_max = 3.0 Watts", "numeric_value": 3.0, "causes_overheat": false },
-            { "id": "opt_rl_6_p_24", "label": "RL = 6.0 Ω con P_max = 24.0 Watts", "numeric_value": 24.0, "causes_overheat": true },
-            { "id": "opt_rl_0_p_0", "label": "RL = 0.0 Ω (cortocircuito máximo)", "numeric_value": 0.0, "causes_overheat": true }
-          ],
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
           "solution_json": {
-            "correct_option_id": "opt_rl_6_p_6",
-            "target_numeric_value": 6.0,
-            "tolerance_percent": 2.0,
-            "resulting_current_amps": 1.0,
-            "resulting_power_watts": 6.0
+            "target_base_si_value": 1.875,
+            "base_si_unit": "A",
+            "display_target_value": 1.875,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 1.875,
+            "resulting_power_watts": 14.0625
           },
-          "explanation_markdown": "Por el **Teorema de Máxima Transferencia de Potencia**, la potencia máxima transferida a la carga se logra cuando la resistencia de carga iguala la resistencia de Thévenin:\n$$R_L = R_{th} = 6.0\\text{ }\\Omega$$\nLa potencia máxima disipada en la carga es:\n$$P_{\\max} = \\frac{V_{th}^2}{4 R_{th}} = \\frac{12^2}{4 \\times 6} = \\frac{144}{24} = 6.0\\text{ W}$$\n¡Has superado el Núcleo Thévenin y desbloqueado la etapa de alta frecuencia!"
+          "hint_markdown": "💡 **Pista de K-1L0:** Como el extremo inferior de $R_3$ está en $0\\text{ V}$, la corriente es directamente $I_3 = \\frac{V_A - 0}{R_3} = \\frac{7.5}{4}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la Ley de Ohm sobre la resistencia central conectada a tierra:\n$$I_3 = \\frac{V_A - V_{\\text{GND}}}{R_3} = \\frac{7.5\\text{ V} - 0\\text{ V}}{4\\ \\Omega} = 1.875\\text{ A} = 1875\\text{ mA}$$\nNota que por LCK en el nodo A:\n$$I_1 = I_2 + I_3 \\implies 2.25\\text{ A} = 0.375\\text{ A} + 1.875\\text{ A}$$"
         }
       ]
     }
