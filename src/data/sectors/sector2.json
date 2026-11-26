@@ -1,0 +1,518 @@
+{
+  "sector_id": 2,
+  "sector_order": 2,
+  "slug": "red-distribucion",
+  "title": "Sector 2: Red de Distribución",
+  "uaa_unit_ref": "Unidad II: Redes Resistivas y Divisores",
+  "lore_description": "Las líneas de enlace de la red secundaria enlazan subestaciones mediante combinaciones en serie y paralelo. Para equilibrar las cargas sin fundir fusibles, debes dominar la reducción de impedancias y los divisores de tensión y corriente.",
+  "accent_color_hex": "#FFD700",
+  "lessons": [
+    {
+      "lesson_id": 3,
+      "sector_id": 2,
+      "node_order": 1,
+      "title": "Nivel 3: Resistencias en Serie y Paralelo",
+      "topic_tag": "series_parallel",
+      "xp_reward": 100,
+      "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Conexiones Serie y Paralelo\nEn las redes de distribución de CD, los componentes se agrupan en dos configuraciones fundamentales:\n\n1. **Conexión Serie:** Los resistores están en la misma rama compartiendo un único nodo común sin bifurcaciones. Por todos ellos circula la **misma corriente ($I$)**, y el voltaje total se reparte: $$R_{eq,\\text{serie}} = R_1 + R_2 + R_3 + \\dots$$\n\n2. **Conexión Paralelo:** Los resistores están conectados entre el **mismo par de nodos**. Todos experimentan el **mismo voltaje ($V$)**, y la corriente total se divide entre las ramas: $$\\frac{1}{R_{eq,\\text{paralelo}}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\dots \\quad \\Longleftrightarrow \\quad R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2} \\quad (n=2)$$\n\n3. **Redes Mixtas:** Se resuelven de forma iterativa identificando y reduciendo grupos serie y paralelo de adentro hacia afuera.",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Resistencias en Serie:** $$R_{eq} = \\sum_{i=1}^n R_i = R_1 + R_2 + \\dots + R_n$$\n* **Resistencias en Paralelo (general):** $$\\frac{1}{R_{eq}} = \\sum_{i=1}^n \\frac{1}{R_i} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\dots$$\n* **Paralelo de Dos Resistencias:** $$R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2}$$\n* **Resistencias idénticas en paralelo ($n$ resistores de valor $R$):** $$R_{eq} = \\frac{R}{n}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Reducción de Red Mixta Serie-Paralelo",
+        "problem_statement": "Un circuito mixto alimentado por una fuente de Vs = 12 V consta de una resistencia R1 = 4 Ω en serie con el bloque en paralelo de R2 = 12 Ω y R3 = 6 Ω. Calcula la resistencia equivalente total Req y la corriente total IT.",
+        "circuit_config_json": {
+          "template": "mixed_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 1.5,
+          "nodes": [
+            { "id": "T0", "x": 50, "y": 50, "label": "+12V" },
+            { "id": "T1", "x": 180, "y": 50, "label": "A" },
+            { "id": "T2", "x": 310, "y": 50 },
+            { "id": "B0", "x": 50, "y": 190, "label": "GND", "is_ground": true },
+            { "id": "B1", "x": 180, "y": 190 },
+            { "id": "B2", "x": 310, "y": 190 }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 12, "unit": "V", "current_amps": 1.5 },
+            { "id": "R1", "type": "resistor", "from": "T0", "to": "T1", "label": "R1", "value": 4, "unit": "Ω", "current_amps": 1.5 },
+            { "id": "WT", "type": "wire", "from": "T1", "to": "T2", "current_amps": 1.0 },
+            { "id": "R2", "type": "resistor", "from": "T1", "to": "B1", "label": "R2", "value": 12, "unit": "Ω", "current_amps": 0.5 },
+            { "id": "R3", "type": "resistor", "from": "T2", "to": "B2", "label": "R3", "value": 6, "unit": "Ω", "current_amps": 1.0 },
+            { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 1.0 },
+            { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 1.5 }
+          ],
+          "annotations": [
+            { "type": "current_arrow", "target": "R1", "label": "I_T = 1.5 A" },
+            { "type": "current_arrow", "target": "R2", "label": "I2 = 0.5 A" },
+            { "type": "current_arrow", "target": "R3", "label": "I3 = 1.0 A" }
+          ]
+        },
+        "steps_markdown": "1. **Paso 1: Reducción del bloque en paralelo ($R_2 \\parallel R_3$):**\n$$R_{23} = \\frac{R_2 \\cdot R_3}{R_2 + R_3} = \\frac{12 \\times 6}{12 + 6} = \\frac{72}{18} = 4\\ \\Omega$$\n2. **Paso 2: Suma en serie con $R_1$:**\n$$R_{eq} = R_1 + R_{23} = 4\\ \\Omega + 4\\ \\Omega = 8\\ \\Omega$$\n3. **Paso 3: Cálculo de la corriente total de la fuente:**\n$$I_T = \\frac{V_s}{R_{eq}} = \\frac{12\\text{ V}}{8\\ \\Omega} = 1.5\\text{ A}$$",
+        "final_result": "Req = 8 Ω  |  IT = 1.5 A"
+      },
+      "challenges": [
+        {
+          "challenge_id": "U2-L3-C01",
+          "lesson_id": 3,
+          "step_order": 1,
+          "topic_tag": "series_parallel",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Tres resistencias en un único lazo serie. ¿Cuál es la resistencia total equivalente que ve la fuente?",
+          "prompt_text": "Tres resistencias de valores R1 = 100 Ω, R2 = 200 Ω y R3 = 300 Ω están conectadas en serie a una fuente de Vs = 12 V. ¿Cuál es la resistencia equivalente total Req?",
+          "circuit_config_json": {
+            "template": "series_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.02,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+12V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 12, "unit": "V", "current_amps": 0.02 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 100, "unit": "Ω", "current_amps": 0.02 },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "R2", "value": 200, "unit": "Ω", "current_amps": 0.02 },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "R3", "value": 300, "unit": "Ω", "current_amps": 0.02 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "600 Ω", "numeric_value": 600, "causes_overheat": false },
+            { "id": "opt_2", "label": "54.5 Ω", "numeric_value": 54.5, "causes_overheat": false },
+            { "id": "opt_3", "label": "200 Ω", "numeric_value": 200, "causes_overheat": false },
+            { "id": "opt_4", "label": "300 Ω", "numeric_value": 300, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 600,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.02,
+            "resulting_power_watts": 0.24
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** En una conexión serie, la resistencia equivalente es la suma directa de cada una: $R_{eq} = R_1 + R_2 + R_3$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nEn conexión serie las resistencias se suman algebraicamente:\n$$R_{eq} = R_1 + R_2 + R_3 = 100 + 200 + 300 = 600\\ \\Omega$$"
+        },
+        {
+          "challenge_id": "U2-L3-C02",
+          "lesson_id": 3,
+          "step_order": 2,
+          "topic_tag": "series_parallel",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Dos ramas en paralelo comparten el mismo voltaje. ¿Cuál es su resistencia equivalente?",
+          "prompt_text": "Dos resistencias de valores R1 = 300 Ω y R2 = 600 Ω están conectadas en paralelo. ¿Cuál es su resistencia equivalente Req?",
+          "circuit_config_json": {
+            "template": "parallel_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.06,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50, "label": "+" },
+              { "id": "T1", "x": 180, "y": 50 },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 12, "unit": "V", "current_amps": 0.06 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.06 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.02 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "R1", "value": 300, "unit": "Ω", "current_amps": 0.04 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "R2", "value": 600, "unit": "Ω", "current_amps": 0.02 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.02 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.06 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "I_T" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "200 Ω", "numeric_value": 200, "causes_overheat": false },
+            { "id": "opt_2", "label": "900 Ω", "numeric_value": 900, "causes_overheat": false },
+            { "id": "opt_3", "label": "450 Ω", "numeric_value": 450, "causes_overheat": false },
+            { "id": "opt_4", "label": "150 Ω", "numeric_value": 150, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 200,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.06,
+            "resulting_power_watts": 0.72
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Usa la fórmula producto entre suma: $R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2} = \\frac{300 \\times 600}{300 + 600}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nCalculamos la resistencia en paralelo:\n$$R_{eq} = \\frac{R_1 \\cdot R_2}{R_1 + R_2} = \\frac{300 \\times 600}{900} = \\frac{180,000}{900} = 200\\ \\Omega$$\nNota que la resistencia equivalente siempre es menor que la menor de las resistencias individuales ($200 < 300$)."
+        },
+        {
+          "challenge_id": "U2-L3-C03",
+          "lesson_id": 3,
+          "step_order": 3,
+          "topic_tag": "series_parallel",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Tres ramas en paralelo con 60, 120 y 40 Ohms. ¡Calcula su resistencia equivalente!",
+          "prompt_text": "Se conectan tres ramas en paralelo con valores R1 = 60 Ω, R2 = 120 Ω y R3 = 40 Ω. Calcula la resistencia equivalente total Req.",
+          "circuit_config_json": {
+            "template": "parallel_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.6,
+            "nodes": [
+              { "id": "T0", "x": 50, "y": 50, "label": "+12V" },
+              { "id": "T1", "x": 150, "y": 50 },
+              { "id": "T2", "x": 240, "y": 50 },
+              { "id": "T3", "x": 320, "y": 50 },
+              { "id": "B0", "x": 50, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 150, "y": 190 },
+              { "id": "B2", "x": 240, "y": 190 },
+              { "id": "B3", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 12, "unit": "V", "current_amps": 0.6 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.6 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.4 },
+              { "id": "WT3", "type": "wire", "from": "T2", "to": "T3", "current_amps": 0.3 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "R1", "value": 60, "unit": "Ω", "current_amps": 0.2 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "R2", "value": 120, "unit": "Ω", "current_amps": 0.1 },
+              { "id": "R3", "type": "resistor", "from": "T3", "to": "B3", "label": "R3", "value": 40, "unit": "Ω", "current_amps": 0.3 },
+              { "id": "WB3", "type": "wire", "from": "B3", "to": "B2", "current_amps": 0.3 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.4 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.6 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "I_T" }
+            ]
+          },
+          "unit_options": ["Ω", "kΩ", "mΩ", "V", "A"],
+          "default_unit": "Ω",
+          "solution_json": {
+            "target_base_si_value": 20.0,
+            "base_si_unit": "Ω",
+            "display_target_value": 20,
+            "display_unit": "Ω",
+            "accepted_units": {
+              "Ω": 1,
+              "kΩ": 1000,
+              "mΩ": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.6,
+            "resulting_power_watts": 7.2
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Suma los inversos: $\\frac{1}{R_{eq}} = \\frac{1}{60} + \\frac{1}{120} + \\frac{1}{40}$. Usando denominador común 120: $\\frac{2 + 1 + 3}{120} = \\frac{6}{120} = \\frac{1}{20}$. Invierte para hallar $R_{eq}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n$$\\frac{1}{R_{eq}} = \\frac{1}{60} + \\frac{1}{120} + \\frac{1}{40} = \\frac{2 + 1 + 3}{120} = \\frac{6}{120} = \\frac{1}{20\\ \\Omega}$$\n$$R_{eq} = 20.0\\ \\Omega$$"
+        },
+        {
+          "challenge_id": "U2-L3-C04",
+          "lesson_id": 3,
+          "step_order": 4,
+          "topic_tag": "series_parallel",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Red mixta: reduce el paralelo primero y calcula la corriente total que entrega la fuente de 50 V.",
+          "prompt_text": "En una red mixta, un resistor R1 = 15 Ω está en serie con el paralelo formado por R2 = 20 Ω y R3 = 20 Ω. La red se conecta a una fuente de Vs = 50 V. Calcula la corriente total IT que entrega la fuente.",
+          "circuit_config_json": {
+            "template": "mixed_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 2.0,
+            "nodes": [
+              { "id": "T0", "x": 50, "y": 50, "label": "+50V" },
+              { "id": "T1", "x": 180, "y": 50, "label": "A" },
+              { "id": "T2", "x": 310, "y": 50 },
+              { "id": "B0", "x": 50, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 310, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 50, "unit": "V", "current_amps": 2.0 },
+              { "id": "R1", "type": "resistor", "from": "T0", "to": "T1", "label": "R1", "value": 15, "unit": "Ω", "current_amps": 2.0 },
+              { "id": "WT", "type": "wire", "from": "T1", "to": "T2", "current_amps": 1.0 },
+              { "id": "R2", "type": "resistor", "from": "T1", "to": "B1", "label": "R2", "value": 20, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "R3", "type": "resistor", "from": "T2", "to": "B2", "label": "R3", "value": 20, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 1.0 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 2.0 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I_T = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
+          "solution_json": {
+            "target_base_si_value": 2.0,
+            "base_si_unit": "A",
+            "display_target_value": 2.0,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 2.0,
+            "resulting_power_watts": 100.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Dos resistencias iguales en paralelo de $20\\ \\Omega$ dan $10\\ \\Omega$. Suma en serie con $R_1$ para obtener $R_{eq} = 25\\ \\Omega$, y calcula $I_T = \\frac{V_s}{R_{eq}}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Resistencia del paralelo: $R_{23} = \\frac{20}{2} = 10\\ \\Omega$.\n2. Resistencia total: $R_{eq} = R_1 + R_{23} = 15 + 10 = 25\\ \\Omega$.\n3. Corriente total:\n$$I_T = \\frac{V_s}{R_{eq}} = \\frac{50\\text{ V}}{25\\ \\Omega} = 2.0\\text{ A} = 2000\\text{ mA}$$"
+        }
+      ]
+    },
+    {
+      "lesson_id": 4,
+      "sector_id": 2,
+      "node_order": 2,
+      "title": "Nivel 4: Divisores de Voltaje y Corriente",
+      "topic_tag": "dividers",
+      "xp_reward": 100,
+      "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Divisores de Voltaje y Corriente\nLos divisores son herramientas de análisis rápido que permiten calcular voltajes y corrientes en subcircuitos sin resolver el sistema completo:\n\n1. **Divisor de Voltaje (en Serie):** En una cadena serie alimentada por una tensión total $V_s$, la caída de voltaje en cualquier resistor $R_k$ es directamente proporcional a su valor:\n$$V_{R_k} = V_s \\cdot \\frac{R_k}{R_{eq}} = V_s \\cdot \\frac{R_k}{\\sum R_i}$$\n\n2. **Divisor de Corriente (en Paralelo):** Cuando una corriente total $I_s$ alimenta a dos resistores en paralelo, la corriente que pasa por una rama es **inversamente proporcional** a su resistencia (la corriente prefiere el camino de menor oposición):\n$$I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2}, \\qquad I_2 = I_s \\cdot \\frac{R_1}{R_1 + R_2}$$",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Divisor de Voltaje (2 resistencias):** $$V_{R_1} = V_s \\cdot \\frac{R_1}{R_1 + R_2}, \\qquad V_{R_2} = V_s \\cdot \\frac{R_2}{R_1 + R_2}$$\n* **Divisor de Corriente (2 resistencias):** $$I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2}, \\qquad I_2 = I_s \\cdot \\frac{R_1}{R_1 + R_2}$$\n* **Divisor de Corriente con Conductancias ($n$ ramas):** $$I_k = I_s \\cdot \\frac{G_k}{\\sum G_i} = I_s \\cdot \\frac{R_{eq}}{R_k}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Divisor de Voltaje con Carga",
+        "problem_statement": "Un divisor de voltaje alimentado por Vs = 10 V cuenta con una resistencia superior R1 = 2 kΩ (2000 Ω) y una inferior R2 = 3 kΩ (3000 Ω). Calcula el voltaje de salida Vout medido en bornes de R2.",
+        "circuit_config_json": {
+          "template": "voltage_divider_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 0.002,
+          "nodes": [
+            { "id": "T0", "x": 60, "y": 50, "label": "+10V" },
+            { "id": "T1", "x": 240, "y": 50 },
+            { "id": "M", "x": 240, "y": 120 },
+            { "id": "OUT", "x": 330, "y": 120, "label": "Salida" },
+            { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+            { "id": "B1", "x": 240, "y": 190 }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 10, "unit": "V", "current_amps": 0.002 },
+            { "id": "WT", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.002 },
+            { "id": "R1", "type": "resistor", "from": "T1", "to": "M", "label": "R1", "value": 2000, "unit": "Ω", "current_amps": 0.002 },
+            { "id": "R2", "type": "resistor", "from": "M", "to": "B1", "label": "R2", "value": 3000, "unit": "Ω", "current_amps": 0.002 },
+            { "id": "WOUT", "type": "wire", "from": "M", "to": "OUT", "current_amps": 0 },
+            { "id": "WB", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.002 }
+          ],
+          "annotations": [
+            { "type": "node_voltage", "node": "M", "label": "V_out = 6 V" },
+            { "type": "current_arrow", "target": "WT", "label": "I = 2 mA" }
+          ]
+        },
+        "steps_markdown": "1. **Datos:** $V_s = 10\\text{ V}$, $R_1 = 2000\\ \\Omega$, $R_2 = 3000\\ \\Omega$.\n2. **Suma de resistencias en serie:**\n$$R_{eq} = R_1 + R_2 = 2000 + 3000 = 5000\\ \\Omega = 5\\text{ k}\\Omega$$\n3. **Aplicamos la fórmula del divisor de tensión en $R_2$:**\n$$V_{\\text{out}} = V_{R_2} = V_s \\cdot \\frac{R_2}{R_1 + R_2} = 10\\text{ V} \\cdot \\frac{3000\\ \\Omega}{5000\\ \\Omega} = 10 \\times 0.6 = 6.0\\text{ V}$$\n4. **Verificación:** $V_{R_1} = 10 - 6 = 4\\text{ V}$, cumpliendo $V_s = 4 + 6 = 10\\text{ V}$.",
+        "final_result": "Vout = 6.0 V"
+      },
+      "challenges": [
+        {
+          "challenge_id": "U2-L4-C01",
+          "lesson_id": 4,
+          "step_order": 1,
+          "topic_tag": "dividers",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Divisor de voltaje resistivo: 24 V alimentan 1 kΩ y 3 kΩ en serie. ¿Cuál es el voltaje en la resistencia de 3 kΩ?",
+          "prompt_text": "Un divisor de voltaje con Vs = 24 V consta de R1 = 1 kΩ y R2 = 3 kΩ. ¿Cuál es el voltaje VR2 sobre la resistencia R2?",
+          "circuit_config_json": {
+            "template": "voltage_divider_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.006,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50, "label": "+24V" },
+              { "id": "T1", "x": 240, "y": 50 },
+              { "id": "M", "x": 240, "y": 120 },
+              { "id": "OUT", "x": 330, "y": 120, "label": "V_R2" },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 240, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 24, "unit": "V", "current_amps": 0.006 },
+              { "id": "WT", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.006 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "M", "label": "R1", "value": 1000, "unit": "Ω", "current_amps": 0.006 },
+              { "id": "R2", "type": "resistor", "from": "M", "to": "B1", "label": "R2", "value": 3000, "unit": "Ω", "current_amps": 0.006 },
+              { "id": "WOUT", "type": "wire", "from": "M", "to": "OUT", "current_amps": 0 },
+              { "id": "WB", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.006 }
+            ],
+            "annotations": [
+              { "type": "node_voltage", "node": "M", "label": "V_R2 = ?" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "18 V", "numeric_value": 18, "causes_overheat": false },
+            { "id": "opt_2", "label": "6 V", "numeric_value": 6, "causes_overheat": false },
+            { "id": "opt_3", "label": "12 V", "numeric_value": 12, "causes_overheat": false },
+            { "id": "opt_4", "label": "24 V", "numeric_value": 24, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 18,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.006,
+            "resulting_power_watts": 0.144
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica la regla del divisor de voltaje: $V_{R_2} = V_s \\cdot \\frac{R_2}{R_1 + R_2} = 24 \\cdot \\frac{3}{4}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n$$V_{R_2} = V_s \\cdot \\frac{R_2}{R_1 + R_2} = 24\\text{ V} \\times \\frac{3000\\ \\Omega}{4000\\ \\Omega} = 24 \\times 0.75 = 18.0\\text{ V}$$"
+        },
+        {
+          "challenge_id": "U2-L4-C02",
+          "lesson_id": 4,
+          "step_order": 2,
+          "topic_tag": "dividers",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Divisor de corriente: 30 mA entran al paralelo de 1 kΩ y 2 kΩ. ¿Cuánta corriente toma la rama de 1 kΩ?",
+          "prompt_text": "Una fuente de corriente continua Is = 30 mA alimenta en paralelo a dos ramas con R1 = 1 kΩ y R2 = 2 kΩ. ¿Cuánta corriente I1 circula por la rama de R1?",
+          "circuit_config_json": {
+            "template": "current_divider_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.03,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "A" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "Is", "value": 0.03, "unit": "A", "current_amps": 0.03 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.03 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.01 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "R1", "value": 1000, "unit": "Ω", "current_amps": 0.02 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "R2", "value": 2000, "unit": "Ω", "current_amps": 0.01 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.01 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.03 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I1 = ?" },
+              { "type": "current_arrow", "target": "R2", "label": "I2" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "20 mA", "numeric_value": 0.02, "causes_overheat": false },
+            { "id": "opt_2", "label": "10 mA", "numeric_value": 0.01, "causes_overheat": false },
+            { "id": "opt_3", "label": "15 mA", "numeric_value": 0.015, "causes_overheat": false },
+            { "id": "opt_4", "label": "30 mA", "numeric_value": 0.03, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 0.02,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.02,
+            "resulting_power_watts": 0.4
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** ¡Cuidado! En el divisor de corriente, la corriente de la rama $R_1$ lleva en el numerador la resistencia opuesta $R_2$: $I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando el divisor de corriente:\n$$I_1 = I_s \\cdot \\frac{R_2}{R_1 + R_2} = 30\\text{ mA} \\times \\frac{2000}{3000} = 30 \\times \\frac{2}{3} = 20.0\\text{ mA} = 0.02\\text{ A}$$"
+        },
+        {
+          "challenge_id": "U2-L4-C03",
+          "lesson_id": 4,
+          "step_order": 3,
+          "topic_tag": "dividers",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "División de 15 V entre 4 kΩ y 6 kΩ. Calcula el voltaje de salida con precisión.",
+          "prompt_text": "Un potenciómetro divide una tensión de Vs = 15 V. Si la resistencia superior es R1 = 4 kΩ y la inferior es R2 = 6 kΩ, calcula el voltaje de salida Vout medido en bornes de R2.",
+          "circuit_config_json": {
+            "template": "voltage_divider_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.0015,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50, "label": "+15V" },
+              { "id": "T1", "x": 240, "y": 50 },
+              { "id": "M", "x": 240, "y": 120 },
+              { "id": "OUT", "x": 330, "y": 120, "label": "V_out" },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 240, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "B0", "to": "T0", "label": "Vs", "value": 15, "unit": "V", "current_amps": 0.0015 },
+              { "id": "WT", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.0015 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "M", "label": "R1", "value": 4000, "unit": "Ω", "current_amps": 0.0015 },
+              { "id": "R2", "type": "resistor", "from": "M", "to": "B1", "label": "R2", "value": 6000, "unit": "Ω", "current_amps": 0.0015 },
+              { "id": "WOUT", "type": "wire", "from": "M", "to": "OUT", "current_amps": 0 },
+              { "id": "WB", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.0015 }
+            ],
+            "annotations": [
+              { "type": "node_voltage", "node": "M", "label": "V_out = ?" }
+            ]
+          },
+          "unit_options": ["V", "mV", "kV", "A", "Ω"],
+          "default_unit": "V",
+          "solution_json": {
+            "target_base_si_value": 9.0,
+            "base_si_unit": "V",
+            "display_target_value": 9.0,
+            "display_unit": "V",
+            "accepted_units": {
+              "V": 1,
+              "mV": 0.001,
+              "kV": 1000
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.0015,
+            "resulting_power_watts": 0.0225
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica $V_{\\text{out}} = V_s \\cdot \\frac{R_2}{R_1 + R_2}$. Con $R_1 + R_2 = 10\\text{ k}\\Omega$, calcula $15 \\times \\frac{6}{10}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n$$V_{\\text{out}} = 15\\text{ V} \\times \\frac{6\\text{ k}\\Omega}{4\\text{ k}\\Omega + 6\\text{ k}\\Omega} = 15 \\times \\frac{6}{10} = 9.0\\text{ V} = 9000\\text{ mV}$$"
+        },
+        {
+          "challenge_id": "U2-L4-C04",
+          "lesson_id": 4,
+          "step_order": 4,
+          "topic_tag": "dividers",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Una corriente total de 120 mA se divide entre 100 Ω y 300 Ω. ¿Cuánta corriente toma la resistencia mayor?",
+          "prompt_text": "Un nodo alimenta dos resistencias en paralelo con una corriente total Is = 120 mA. Si R1 = 100 Ω y R2 = 300 Ω, calcula la corriente I2 que fluye por la resistencia R2.",
+          "circuit_config_json": {
+            "template": "current_divider_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.12,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "A" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "Is", "value": 0.12, "unit": "A", "current_amps": 0.12 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.12 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.03 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "R1", "value": 100, "unit": "Ω", "current_amps": 0.09 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "R2", "value": 300, "unit": "Ω", "current_amps": 0.03 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.03 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.12 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R2", "label": "I2 = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.03,
+            "base_si_unit": "A",
+            "display_target_value": 30,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.03,
+            "resulting_power_watts": 0.27
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica el divisor de corriente: $I_2 = I_s \\cdot \\frac{R_1}{R_1 + R_2}$. Multiplica $120\\text{ mA} \\times \\frac{100}{400}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n$$I_2 = I_s \\cdot \\frac{R_1}{R_1 + R_2} = 120\\text{ mA} \\times \\frac{100\\ \\Omega}{100\\ \\Omega + 300\\ \\Omega} = 120 \\times 0.25 = 30.0\\text{ mA} = 0.03\\text{ A}$$"
+        }
+      ]
+    }
+  ]
+}

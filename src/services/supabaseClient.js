@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_URL : process?.env?.VITE_SUPABASE_URL
+const supabaseAnonKey = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_ANON_KEY : process?.env?.VITE_SUPABASE_ANON_KEY
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
@@ -86,15 +86,18 @@ export async function syncUserProfile(user) {
 }
 
 /**
- * Log a completed lesson attempt.
+ * Log a completed lesson attempt (Criteria 8 & 10).
  */
 export async function recordLessonAttempt({
   userId,
   lessonId,
   scorePercentage,
+  scorePoints,
+  correctCount = 0,
+  errorCount = 0,
   wattsEarned,
-  fusesLost,
-  durationSeconds
+  fusesLost = 0,
+  durationSeconds = 60
 }) {
   if (!isSupabaseConfigured || !supabase) {
     return null
@@ -107,7 +110,10 @@ export async function recordLessonAttempt({
         user_id: userId,
         lesson_id: lessonId,
         score_percentage: scorePercentage,
-        watts_earned: wattsEarned,
+        score_points: scorePoints ?? wattsEarned ?? 0,
+        correct_count: correctCount,
+        error_count: errorCount,
+        watts_earned: wattsEarned ?? scorePoints ?? 0,
         fuses_lost: fusesLost,
         duration_seconds: durationSeconds
       })

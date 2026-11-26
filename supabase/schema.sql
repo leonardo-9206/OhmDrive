@@ -1,6 +1,7 @@
 -- ==============================================================================
 -- OhmDrive - PostgreSQL 15 Relational Schema (3NF)
 -- Single Source of Truth: Docs nosotros/02_DATA_DICTIONARY.md
+-- Updated to Official Rubric (3 Units · 6 Levels · 24 Exercises in DC)
 -- ==============================================================================
 
 -- Enable UUID extension
@@ -43,7 +44,7 @@ CREATE TABLE users (
 );
 
 -- ------------------------------------------------------------------------------
--- 3. sectors
+-- 3. sectors (Rubric Criterion 2: 3 Units in DC)
 -- ------------------------------------------------------------------------------
 CREATE TABLE sectors (
     sector_id SERIAL PRIMARY KEY,
@@ -56,7 +57,7 @@ CREATE TABLE sectors (
 );
 
 -- ------------------------------------------------------------------------------
--- 4. lessons
+-- 4. lessons (Rubric Criterion 3: Theory, KaTeX Formulas & Solved Example JSON)
 -- ------------------------------------------------------------------------------
 CREATE TABLE lessons (
     lesson_id SERIAL PRIMARY KEY,
@@ -65,21 +66,24 @@ CREATE TABLE lessons (
     title VARCHAR(100) NOT NULL,
     topic_tag VARCHAR(50) NOT NULL,
     theory_markdown TEXT NOT NULL,
-    xp_reward INT NOT NULL DEFAULT 50 CHECK (xp_reward >= 0),
+    formulas_markdown TEXT,
+    solved_example_json JSONB,
+    xp_reward INT NOT NULL DEFAULT 100 CHECK (xp_reward >= 0),
     is_boss_level BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT uq_sector_node UNIQUE (sector_id, node_order)
 );
 
 -- ------------------------------------------------------------------------------
--- 5. challenges
+-- 5. challenges (Rubric Criteria 4, 5, 6 & 7: Multiple Choice + Numeric Input with Units and Hints)
 -- ------------------------------------------------------------------------------
 CREATE TABLE challenges (
     challenge_id VARCHAR(50) PRIMARY KEY,
     lesson_id INT NOT NULL REFERENCES lessons(lesson_id) ON DELETE CASCADE,
     step_order INT NOT NULL,
-    interaction_type VARCHAR(40) NOT NULL CHECK (interaction_type IN ('multiple_choice', 'multimeter_probe', 'component_slot', 'slider_tuning', 'superposition_toggle')),
+    interaction_type VARCHAR(40) NOT NULL CHECK (interaction_type IN ('multiple_choice', 'numeric_input', 'component_slot', 'multimeter_probe', 'slider_tuning', 'superposition_toggle')),
     difficulty VARCHAR(20) NOT NULL DEFAULT 'normal' CHECK (difficulty IN ('basic', 'normal', 'boss')),
     prompt_text TEXT NOT NULL,
+    hint_markdown TEXT,
     circuit_config_json JSONB NOT NULL,
     solution_json JSONB NOT NULL,
     explanation_markdown TEXT NOT NULL
@@ -98,25 +102,28 @@ CREATE TABLE codex_cards (
 );
 
 -- ------------------------------------------------------------------------------
--- 7. user_sector_progress
+-- 7. user_sector_progress (Rubric Criteria 9 & 10: All 3 units unlocked)
 -- ------------------------------------------------------------------------------
 CREATE TABLE user_sector_progress (
     progress_id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     sector_id INT NOT NULL REFERENCES sectors(sector_id) ON DELETE CASCADE,
-    is_unlocked BOOLEAN NOT NULL DEFAULT FALSE,
+    is_unlocked BOOLEAN NOT NULL DEFAULT TRUE,
     completed_nodes INT NOT NULL DEFAULT 0 CHECK (completed_nodes >= 0),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT uq_user_sector UNIQUE (user_id, sector_id)
 );
 
 -- ------------------------------------------------------------------------------
--- 8. user_lesson_attempts
+-- 8. user_lesson_attempts (Rubric Criterion 8: Correct count, Error count, Score points)
 -- ------------------------------------------------------------------------------
 CREATE TABLE user_lesson_attempts (
     attempt_id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     lesson_id INT NOT NULL REFERENCES lessons(lesson_id) ON DELETE CASCADE,
+    correct_count INT NOT NULL DEFAULT 0 CHECK (correct_count >= 0),
+    error_count INT NOT NULL DEFAULT 0 CHECK (error_count >= 0),
+    score_points INT NOT NULL DEFAULT 0 CHECK (score_points >= 0),
     score_percentage INT NOT NULL CHECK (score_percentage >= 0 AND score_percentage <= 100),
     watts_earned INT NOT NULL CHECK (watts_earned >= 0),
     fuses_lost INT NOT NULL DEFAULT 0 CHECK (fuses_lost >= 0),
@@ -174,14 +181,14 @@ ALTER TABLE user_lesson_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE practice_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_unlocked_cards ENABLE ROW LEVEL SECURITY;
 
--- Read policies for public catalogs (anyone can read sectors, lessons, challenges, cards)
+-- Read policies for public catalogs
 CREATE POLICY "Public read sectors" ON sectors FOR SELECT USING (true);
 CREATE POLICY "Public read lessons" ON lessons FOR SELECT USING (true);
 CREATE POLICY "Public read challenges" ON challenges FOR SELECT USING (true);
 CREATE POLICY "Public read codex_cards" ON codex_cards FOR SELECT USING (true);
 CREATE POLICY "Public read roles" ON roles FOR SELECT USING (true);
 
--- User table read for leaderboard (all users can view usernames and watts_xp)
+-- User table read for leaderboard
 CREATE POLICY "Public read leaderboard" ON users FOR SELECT USING (true);
 CREATE POLICY "User can insert themselves" ON users FOR INSERT WITH CHECK (true);
 CREATE POLICY "User can update own data" ON users FOR UPDATE USING (true);
@@ -193,7 +200,7 @@ CREATE POLICY "Practice sessions access" ON practice_sessions FOR ALL USING (tru
 CREATE POLICY "Unlocked cards access" ON user_unlocked_cards FOR ALL USING (true);
 
 -- ==============================================================================
--- SEED DATA (INITIAL SYLLABUS, ROLES & CARDS)
+-- SEED DATA (OFFICIAL 3 UNITS & 6 LEVELS OF THE RUBRIC)
 -- ==============================================================================
 
 -- 1. Roles
@@ -203,118 +210,166 @@ INSERT INTO roles (role_id, role_name) VALUES
     (3, 'admin')
 ON CONFLICT (role_id) DO NOTHING;
 
--- 2. Sectors (Official UAA Syllabus alignment)
+-- 2. Sectors (Rubric Criterion 2: Exactly 3 Units in DC)
 INSERT INTO sectors (sector_id, sector_order, slug, title, uaa_unit_ref, lore_description, accent_color_hex) VALUES
 (
     1,
     1,
     'distrito-ohm',
-    'Sector 1: Distrito Ohm',
-    'Unidad I: Leyes Experimentales y Circuitos Simples',
-    'Los generadores del Distrito Ohm han caído tras la sobretensión. Restablece el voltaje nominal calculando resistencias y corrientes antes de que el sector colapse.',
+    'Unidad 1: Distrito Ohm',
+    'Unidad I: Fundamentos y Potencia en CD',
+    'Los generadores del Distrito Ohm han caído tras la sobretensión. Restablece el voltaje nominal calculando resistencias, corrientes y disipación de potencia en corriente directa.',
     '#00F0FF'
 ),
 (
     2,
     2,
-    'nodos-kirchhoff',
-    'Sector 2: Nodos de Kirchhoff',
-    'Unidad I: Leyes Experimentales (Continuación)',
-    'Las subestaciones del norte presentan desbalances en sus bifurcaciones. Equilibra las mallas y ramas aplicando LCK y LVK con precisión milimétrica.',
+    'red-distribucion',
+    'Unidad 2: Red de Distribución',
+    'Unidad II: Redes Resistivas y Circuitos Divisores',
+    'Las subestaciones de distribución presentan desbalances. Domina las combinaciones serie, paralelo, mixtas y divisores de voltaje y corriente con exactitud milimétrica.',
     '#FFB800'
 ),
 (
     3,
     3,
-    'nucleo-thevenin',
-    'Sector 3: El Núcleo Thévenin',
-    'Unidad II: Técnicas Usadas en el Análisis de Circuitos',
-    'El mainframe de la ciudad es demasiado complejo para el análisis directo. Sintetiza las redes a sus circuitos equivalentes Thévenin y Norton.',
+    'nucleo-kirchhoff',
+    'Unidad 3: Núcleo Kirchhoff',
+    'Unidad III: Leyes de Kirchhoff y Análisis Sistemático',
+    'El núcleo de control requiere análisis nodal y de mallas. Aplica LCK, LVK y sistemas de ecuaciones lineales para equilibrar la red completa.',
     '#FF2A85'
+)
+ON CONFLICT (sector_id) DO UPDATE SET
+    title = EXCLUDED.title,
+    uaa_unit_ref = EXCLUDED.uaa_unit_ref,
+    lore_description = EXCLUDED.lore_description,
+    accent_color_hex = EXCLUDED.accent_color_hex;
+
+-- 3. Lessons (Rubric Criterion 2: Exactly 6 Levels in DC)
+INSERT INTO lessons (lesson_id, sector_id, node_order, title, topic_tag, theory_markdown, formulas_markdown, xp_reward, is_boss_level) VALUES
+(
+    1,
+    1,
+    1,
+    'Nivel 1: Voltaje, corriente y resistencia',
+    'v_i_r',
+    '# ⚡ Fundamentos Eléctricos en CD\nLa corriente eléctrica ($I$) es el flujo ordenado de carga por unidad de tiempo. La diferencia de potencial o voltaje ($V$) proporciona la energía necesaria para mover dicha carga, mientras que la resistencia ($R$) cuantifica la oposición natural del material a este movimiento.',
+    '### 📐 Fórmulas de Fundamentos\n* $$I = \frac{\Delta q}{\Delta t} \quad [\text{A} = \text{C/s}]$$\n* $$V = \frac{W}{q} \quad [\text{V} = \text{J/C}]$$\n* $$R = \rho \frac{L}{A} \quad [\Omega]$$',
+    100,
+    false
+),
+(
+    2,
+    1,
+    2,
+    'Nivel 2: Ley de Ohm y potencia',
+    'ohm_power',
+    '# ⚡ Ley de Ohm y Disipación de Potencia\nEn conductores óhmicos, la corriente es directamente proporcional al voltaje aplicado. La potencia disipada por Efecto Joule mide la tasa de energía convertida en calor.',
+    '### 📐 Fórmulas de Ley de Ohm y Potencia\n* $$V = I \cdot R \iff I = \frac{V}{R} \iff R = \frac{V}{I}$$\n* $$P = V \cdot I = I^2 R = \frac{V^2}{R} \quad [\text{Watts, W}]$$',
+    100,
+    false
+),
+(
+    3,
+    2,
+    1,
+    'Nivel 3: Serie y paralelo',
+    'series_parallel',
+    '# ⚡ Conexiones Serie y Paralelo\nEn serie, todos los elementos comparten la misma corriente ($I$). En paralelo, todos comparten la misma diferencia de potencial ($V$) entre sus nodos comunes.',
+    '### 📐 Fórmulas de Reducción\n* **Serie:** $$R_{eq} = R_1 + R_2 + \dots + R_n$$\n* **Paralelo:** $$\frac{1}{R_{eq}} = \sum \frac{1}{R_i} \iff R_{eq} = \frac{R_1 \cdot R_2}{R_1 + R_2}$$',
+    100,
+    false
 ),
 (
     4,
-    4,
-    'pulso-reactivo',
-    'Sector 4: Pulso Reactivo & CA',
-    'Unidades III, IV y V: RL/RC, Fasores y Potencia CA',
-    'La red alterna de alta frecuencia oscila peligrosamente. Domina los transitorios, desfases fasoriales y corrige el factor de potencia del generador central.',
-    '#00FF66'
+    2,
+    2,
+    'Nivel 4: Divisores de voltaje y corriente',
+    'dividers',
+    '# ⚡ Principio de División de Voltaje y Corriente\nEn circuitos serie el voltaje se divide proporcionalmente a cada resistencia. En ramas paralelas la corriente se reparte inversamente a la resistencia de cada camino.',
+    '### 📐 Fórmulas de Divisores\n* **Divisor de Voltaje:** $$V_x = V_s \frac{R_x}{R_{eq}}$$\n* **Divisor de Corriente:** $$I_1 = I_s \frac{R_2}{R_1 + R_2}$$',
+    100,
+    false
+),
+(
+    5,
+    3,
+    1,
+    'Nivel 5: Leyes de Kirchhoff',
+    'kirchhoff',
+    '# ⚡ Leyes Fundamentales de Kirchhoff\nLa LCK establece la conservación de la carga en cada nodo ($\sum I = 0$). La LVK establece la conservación de la energía en cada trayectoria cerrada ($\sum V = 0$).',
+    '### 📐 Ecuaciones de Kirchhoff\n* **LCK:** $$\sum I_{\text{entran}} = \sum I_{\text{salen}}$$\n* **LVK:** $$\sum V_{\text{elevaciones}} = \sum V_{\text{caídas}}$$',
+    100,
+    false
+),
+(
+    6,
+    3,
+    2,
+    'Nivel 6: Introducción a nodos y mallas',
+    'nodes_meshes',
+    '# ⚡ Métodos Sistemáticos: Nodos y Mallas\nEl análisis de nodos aplica LCK expresando corrientes en función de voltajes de nodo respecto a una referencia (GND). El análisis de mallas aplica LVK utilizando corrientes de lazo independientes.',
+    '### 📐 Planteamiento Sistemático\n* **Nodos:** $$\sum \frac{V_k - V_j}{R_{kj}} = \sum I_{\text{fuentes}}$$\n* **Mallas:** $$[R] [I] = [V]$$',
+    100,
+    true
 )
-ON CONFLICT (sector_id) DO NOTHING;
+ON CONFLICT (lesson_id) DO UPDATE SET
+    title = EXCLUDED.title,
+    topic_tag = EXCLUDED.topic_tag,
+    theory_markdown = EXCLUDED.theory_markdown,
+    formulas_markdown = EXCLUDED.formulas_markdown;
 
--- 3. Initial Codex Cards (Cheat-sheet formulas)
+-- 4. Initial Codex Cards (The 6 Essential Formulas in DC)
 INSERT INTO codex_cards (card_id, sector_id, code_slug, title, formula_latex, summary_text) VALUES
 (
     1,
     1,
-    'card-ohm-law',
-    'Ley de Ohm',
-    'V = I \cdot R',
-    'La corriente eléctrica es directamente proporcional al voltaje aplicado e inversamente proporcional a la resistencia del circuito.'
+    'card-v-i-r',
+    'Carga y Corriente en CD',
+    'I = \frac{\Delta q}{\Delta t}, \quad V = \frac{W}{q}',
+    'La corriente eléctrica representa la tasa de flujo de electrones en Amperes (Coulombs por segundo).'
 ),
 (
     2,
     1,
-    'card-dc-power',
-    'Potencia Eléctrica en CD',
-    'P = V \cdot I = I^2 R = \frac{V^2}{R}',
-    'La rapidez con la que se consume o disipa energía. No excedas la potencia nominal de las resistencias comerciales para evitar sobrecalentamiento.'
+    'card-ohm-power',
+    'Ley de Ohm y Potencia',
+    'V = I \cdot R, \quad P = V \cdot I = I^2 R = \frac{V^2}{R}',
+    'Relación fundamental entre potencial, corriente y resistencia; y la rapidez con la que se disipa energía en forma de calor.'
 ),
 (
     3,
     2,
-    'card-kcl',
-    'Ley de Corrientes de Kirchhoff (LCK)',
-    '\sum I_{\text{entran}} = \sum I_{\text{salen}}',
-    'Principio de conservación de la carga: la suma algebraica de las corrientes en cualquier nodo del circuito debe ser igual a cero.'
+    'card-series-parallel',
+    'Resistencia Equivalente Serie y Paralelo',
+    'R_{\text{serie}} = \sum R_i, \quad R_{\text{paralelo}} = \frac{R_1 R_2}{R_1 + R_2}',
+    'Reglas de simplificación para agrupaciones resistivas en serie (suma directa) y en paralelo (conductancias inversas).'
 ),
 (
     4,
     2,
-    'card-kvl',
-    'Ley de Voltajes de Kirchhoff (LVK)',
-    '\sum_{k=1}^n V_k = 0',
-    'Principio de conservación de la energía: la suma algebraica de las caídas y elevaciones de potencial a lo largo de cualquier lazo cerrado es cero.'
+    'card-dividers',
+    'Divisores de Voltaje y Corriente',
+    'V_x = V_s \frac{R_x}{R_{eq}}, \quad I_1 = I_s \frac{R_2}{R_1 + R_2}',
+    'Reparto proporcional de voltaje en ramas serie y reparto inversamente proporcional de corriente en ramas paralelas.'
 ),
 (
     5,
-    2,
-    'card-voltage-divider',
-    'Divisor de Voltaje',
-    'V_x = V_s \frac{R_x}{R_1 + R_2}',
-    'En un circuito serie, el voltaje se reparte de forma directamente proporcional a la magnitud de cada resistencia.'
+    3,
+    'card-kcl-kvl',
+    'Leyes de Kirchhoff (LCK y LVK)',
+    '\sum I_{\text{nodo}} = 0, \quad \sum V_{\text{lazo}} = 0',
+    'Conservación de la carga en los nodos de unión y conservación de la energía a lo largo de cualquier lazo cerrado.'
 ),
 (
     6,
-    2,
-    'card-current-divider',
-    'Divisor de Corriente',
-    'I_1 = I_s \frac{R_2}{R_1 + R_2}',
-    'En dos ramas en paralelo, la corriente se divide inversamente proporcional a la resistencia de cada rama.'
-),
-(
-    7,
     3,
-    'card-thevenin',
-    'Teorema de Thévenin',
-    'V_{th} = V_{oc}, \quad R_{th} = R_{eq}',
-    'Cualquier red lineal activa de dos terminales puede reemplazarse por una sola fuente de voltaje Vth en serie con una resistencia Rth.'
-),
-(
-    8,
-    4,
-    'card-rc-tau',
-    'Constante de Tiempo RC',
-    '\tau = R \cdot C',
-    'Tiempo característico de carga o descarga. Al cabo de 1 tau el capacitor alcanza el 63.2% de su voltaje final; a 5 tau se considera en estado estable (99.3%).'
-),
-(
-    9,
-    4,
-    'card-ac-power-triangle',
-    'Triángulo de Potencias CA',
-    'S = \sqrt{P^2 + Q^2}, \quad \text{FP} = \cos(\theta)',
-    'P es la potencia activa útil (Watts), Q la potencia reactiva oscilante (VAR), y S la potencia aparente total (VA).'
+    'card-nodes-meshes',
+    'Análisis de Nodos y Mallas',
+    '\frac{V_A - V_B}{R} = I, \quad R_{11} I_1 - R_{12} I_2 = V_{s1}',
+    'Técnicas matriciales sistemáticas para resolver redes de múltiples lazos y nodos con varias fuentes de alimentación.'
 )
-ON CONFLICT (card_id) DO NOTHING;
+ON CONFLICT (card_id) DO UPDATE SET
+    title = EXCLUDED.title,
+    formula_latex = EXCLUDED.formula_latex,
+    summary_text = EXCLUDED.summary_text;

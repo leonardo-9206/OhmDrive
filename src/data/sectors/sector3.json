@@ -1,0 +1,507 @@
+{
+  "sector_id": 3,
+  "sector_order": 3,
+  "slug": "nucleo-kirchhoff",
+  "title": "Sector 3: Núcleo Kirchhoff",
+  "uaa_unit_ref": "Unidad III: Leyes de Kirchhoff y Análisis Sistemático",
+  "lore_description": "El reactor central de Neo-Aguascalientes presenta topologías de múltiples mallas y nodos interconectados. Domina las Leyes de Kirchhoff y los métodos sistemáticos de nodos y mallas para balancear el flujo energético y evitar una desconexión crítica.",
+  "accent_color_hex": "#FF0055",
+  "lessons": [
+    {
+      "lesson_id": 5,
+      "sector_id": 3,
+      "node_order": 1,
+      "title": "Nivel 5: Leyes de Kirchhoff (LCK y LVK)",
+      "topic_tag": "kirchhoff",
+      "xp_reward": 100,
+      "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Leyes Fundamentales de Kirchhoff\nFormuladas por Gustav Kirchhoff en 1845, estas leyes son las herramientas maestras del análisis de circuitos:\n\n1. **Ley de Corrientes de Kirchhoff (LCK):** En cualquier nodo eléctrico, la suma algebraica de corrientes es cero. La corriente total que entra a un nodo es idéntica a la que sale (Conservación de la Carga):\n$$\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}} \\quad \\Longleftrightarrow \\quad \\sum_{k=1}^n I_k = 0$$\n\n2. **Ley de Voltajes de Kirchhoff (LVK):** A lo largo de cualquier lazo o trayectoria cerrada, la suma algebraica de diferencias de potencial es cero (Conservación de la Energía):\n$$\\sum_{k=1}^m V_k = 0 \\quad \\Longleftrightarrow \\quad \\sum V_{\\text{fuentes}} = \\sum V_{\\text{caídas}}$$",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Ley de Corrientes de Kirchhoff (LCK):** $$\\sum I_{\\text{entrantes}} = \\sum I_{\\text{salientes}}$$\n* **Ley de Voltajes de Kirchhoff (LVK):** $$\\sum_{k=1}^m V_k = 0 \\quad \\implies \\quad V_s = V_{R_1} + V_{R_2} + \\dots$$\n* **Ecuación de Lazo Horario Simple:** $$-V_s + I R_1 + I R_2 + \\dots = 0 \\implies I = \\frac{V_s}{\\sum R_i}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: LVK en un Lazo con Fuentes Opuestas",
+        "problem_statement": "Un lazo cerrado contiene dos fuentes en oposición: Vs1 = 12 V (elevando potencial) y Vs2 = 4 V (oponiéndose), junto a R1 = 100 Ω y R2 = 300 Ω. Aplica la LVK para calcular la corriente I que circula por el lazo.",
+        "circuit_config_json": {
+          "template": "kvl_loop_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 0.02,
+          "nodes": [
+            { "id": "N1", "x": 60, "y": 60, "label": "A" },
+            { "id": "N2", "x": 280, "y": 60, "label": "B" },
+            { "id": "N3", "x": 280, "y": 180, "label": "C" },
+            { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 0.02 },
+            { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 100, "unit": "Ω", "current_amps": 0.02 },
+            { "id": "VS2", "type": "voltage_source_dc", "from": "N3", "to": "N2", "label": "Vs2", "value": 4, "unit": "V", "current_amps": -0.02 },
+            { "id": "R2", "type": "resistor", "from": "N3", "to": "N4", "label": "R2", "value": 300, "unit": "Ω", "current_amps": 0.02 }
+          ],
+          "annotations": [
+            { "type": "current_arrow", "target": "R1", "label": "I = 20 mA" },
+            { "type": "mesh_current", "label": "LVK", "nodes": ["N1", "N2", "N3", "N4"] }
+          ]
+        },
+        "steps_markdown": "1. **Recorremos el lazo en sentido horario desde GND:**\n$$-V_{s1} + V_{R1} + V_{s2} + V_{R2} = 0$$\n2. **Sustituimos por Ley de Ohm ($V_R = I \\cdot R$):**\n$$-12 + I(100) + 4 + I(300) = 0$$\n3. **Agrupamos términos semejantes:**\n$$I(400) - 8 = 0 \\implies I(400) = 8\\text{ V}$$\n4. **Despejamos la corriente:**\n$$I = \\frac{8\\text{ V}}{400\\ \\Omega} = 0.02\\text{ A} = 20\\text{ mA}$$",
+        "final_result": "I = 20 mA (0.02 A)"
+      },
+      "challenges": [
+        {
+          "challenge_id": "U3-L5-C01",
+          "lesson_id": 5,
+          "step_order": 1,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Balance de corrientes en un nodo: entran 3.5 A y 2.0 A, y salen 1.5 A más una corriente Ix. ¿Cuánto vale Ix?",
+          "prompt_text": "En un nodo central convergen dos corrientes entrantes I1 = 3.5 A e I2 = 2.0 A, y dos salientes: I3 = 1.5 A y una corriente desconocida Ix. ¿Cuánto vale Ix según la LCK?",
+          "circuit_config_json": {
+            "template": "kcl_node_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 4.0,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "Nodo A" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "I1", "value": 3.5, "unit": "A", "current_amps": 3.5 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 3.5 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "I3", "value": 4, "unit": "Ω", "current_amps": 1.5 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 4.0 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "Ix", "value": 4, "unit": "Ω", "current_amps": 4.0 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 4.0 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 5.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "3.5 A" },
+              { "type": "current_arrow", "target": "R1", "label": "1.5 A" },
+              { "type": "current_arrow", "target": "R2", "label": "Ix = ?" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "4.0 A", "numeric_value": 4.0, "causes_overheat": false },
+            { "id": "opt_2", "label": "7.0 A", "numeric_value": 7.0, "causes_overheat": true },
+            { "id": "opt_3", "label": "3.0 A", "numeric_value": 3.0, "causes_overheat": false },
+            { "id": "opt_4", "label": "1.5 A", "numeric_value": 1.5, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 4.0,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 4.0,
+            "resulting_power_watts": 48.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Por la LCK: $\\sum I_{\\text{entran}} = \\sum I_{\\text{salen}}$. Suma $3.5 + 2.0 = 5.5\\text{ A}$. Luego resta $1.5\\text{ A}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la Ley de Corrientes de Kirchhoff (LCK):\n$$I_{\\text{entran}} = I_{\\text{salen}} \\implies 3.5\\text{ A} + 2.0\\text{ A} = 1.5\\text{ A} + I_x$$\n$$5.5\\text{ A} = 1.5\\text{ A} + I_x \\implies I_x = 5.5 - 1.5 = 4.0\\text{ A}$$"
+        },
+        {
+          "challenge_id": "U3-L5-C02",
+          "lesson_id": 5,
+          "step_order": 2,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "LVK en una malla cerrada: la fuente suministra 18 V y dos resistencias consumen 5 V y 7 V. ¿Cuánto cae en la tercera?",
+          "prompt_text": "En una malla cerrada, una fuente entrega Vs = 18 V a tres resistores en serie donde se miden caídas de VR1 = 5 V y VR2 = 7 V. Según la LVK, ¿cuál es la caída de tensión VR3 en el tercer resistor?",
+          "circuit_config_json": {
+            "template": "series_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.5,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+18V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 18, "unit": "V", "current_amps": 0.5 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "5V", "value": 10, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "7V", "value": 14, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "VR3", "value": 12, "unit": "Ω", "current_amps": 0.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "6 V", "numeric_value": 6, "causes_overheat": false },
+            { "id": "opt_2", "label": "12 V", "numeric_value": 12, "causes_overheat": false },
+            { "id": "opt_3", "label": "18 V", "numeric_value": 18, "causes_overheat": false },
+            { "id": "opt_4", "label": "30 V", "numeric_value": 30, "causes_overheat": true }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 6,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.5,
+            "resulting_power_watts": 3.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Por LVK la suma de caídas iguala al voltaje entregado: $18 = 5 + 7 + V_{R3}$. Resta $18 - 12$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPor Ley de Voltajes de Kirchhoff (LVK):\n$$V_s - V_{R_1} - V_{R_2} - V_{R_3} = 0 \\implies 18 - 5 - 7 - V_{R_3} = 0$$\n$$V_{R_3} = 18 - 12 = 6.0\\text{ V}$$"
+        },
+        {
+          "challenge_id": "U3-L5-C03",
+          "lesson_id": 5,
+          "step_order": 3,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Tres resistencias en serie de 200, 500 y 500 Ohms con 36 V. Aplica LVK para calcular la corriente.",
+          "prompt_text": "En un lazo cerrado, una fuente de Vs = 36 V alimenta tres resistencias en serie: R1 = 200 Ω, R2 = 500 Ω y R3 = 500 Ω. Aplica la LVK para calcular la corriente I que recorre el circuito.",
+          "circuit_config_json": {
+            "template": "series_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.03,
+            "nodes": [
+              { "id": "N1", "x": 60, "y": 60, "label": "+36V" },
+              { "id": "N2", "x": 280, "y": 60, "label": "A" },
+              { "id": "N3", "x": 280, "y": 180, "label": "B" },
+              { "id": "N4", "x": 60, "y": 180, "label": "GND", "is_ground": true }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "N4", "to": "N1", "label": "Vs", "value": 36, "unit": "V", "current_amps": 0.03 },
+              { "id": "R1", "type": "resistor", "from": "N1", "to": "N2", "label": "R1", "value": 200, "unit": "Ω", "current_amps": 0.03 },
+              { "id": "R2", "type": "resistor", "from": "N2", "to": "N3", "label": "R2", "value": 500, "unit": "Ω", "current_amps": 0.03 },
+              { "id": "R3", "type": "resistor", "from": "N3", "to": "N4", "label": "R3", "value": 500, "unit": "Ω", "current_amps": 0.03 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.03,
+            "base_si_unit": "A",
+            "display_target_value": 30,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.03,
+            "resulting_power_watts": 1.08
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** La suma total de resistencias es $200 + 500 + 500 = 1200\\ \\Omega$. Divide la tensión total $36\\text{ V}$ entre $1200\\ \\Omega$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\n1. Suma de resistencias del lazo: $R_{\\text{total}} = 200 + 500 + 500 = 1200\\ \\Omega$.\n2. Por LVK:\n$$I = \\frac{V_s}{R_{\\text{total}}} = \\frac{36\\text{ V}}{1200\\ \\Omega} = 0.03\\text{ A} = 30.0\\text{ mA}$$"
+        },
+        {
+          "challenge_id": "U3-L5-C04",
+          "lesson_id": 5,
+          "step_order": 4,
+          "topic_tag": "kirchhoff",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Al nodo entran 500 mA y salen dos ramas con 180 mA y 220 mA. ¿Cuánta corriente fluye por la tercera?",
+          "prompt_text": "A un nodo principal llega una corriente de entrada de I_in = 500 mA y salen tres ramas. Si la rama 1 conduce I1 = 180 mA y la rama 2 conduce I2 = 220 mA, calcula la corriente I3 de la tercera rama.",
+          "circuit_config_json": {
+            "template": "kcl_node_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 0.5,
+            "nodes": [
+              { "id": "T0", "x": 60, "y": 50 },
+              { "id": "T1", "x": 180, "y": 50, "label": "Nodo" },
+              { "id": "T2", "x": 300, "y": 50 },
+              { "id": "B0", "x": 60, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "B1", "x": 180, "y": 190 },
+              { "id": "B2", "x": 300, "y": 190 }
+            ],
+            "components": [
+              { "id": "IS1", "type": "current_source_dc", "from": "B0", "to": "T0", "label": "I_in", "value": 0.5, "unit": "A", "current_amps": 0.5 },
+              { "id": "WT1", "type": "wire", "from": "T0", "to": "T1", "current_amps": 0.5 },
+              { "id": "R1", "type": "resistor", "from": "T1", "to": "B1", "label": "I1", "value": 10, "unit": "Ω", "current_amps": 0.18 },
+              { "id": "WT2", "type": "wire", "from": "T1", "to": "T2", "current_amps": 0.32 },
+              { "id": "R2", "type": "resistor", "from": "T2", "to": "B2", "label": "I2", "value": 10, "unit": "Ω", "current_amps": 0.22 },
+              { "id": "WB2", "type": "wire", "from": "B2", "to": "B1", "current_amps": 0.22 },
+              { "id": "WB1", "type": "wire", "from": "B1", "to": "B0", "current_amps": 0.5 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "WT1", "label": "500 mA" },
+              { "type": "current_arrow", "target": "R1", "label": "180 mA" },
+              { "type": "current_arrow", "target": "R2", "label": "220 mA" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "mA",
+          "solution_json": {
+            "target_base_si_value": 0.1,
+            "base_si_unit": "A",
+            "display_target_value": 100,
+            "display_unit": "mA",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 0.1,
+            "resulting_power_watts": 1.2
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica la LCK en el nodo: $500\\text{ mA} = 180\\text{ mA} + 220\\text{ mA} + I_3$. Despeja $I_3$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPor LCK:\n$$I_{\\text{in}} = I_1 + I_2 + I_3 \\implies 500\\text{ mA} = (180 + 220)\\text{ mA} + I_3$$\n$$I_3 = 500 - 400 = 100.0\\text{ mA} = 0.1\\text{ A}$$"
+        }
+      ]
+    },
+    {
+      "lesson_id": 6,
+      "sector_id": 3,
+      "node_order": 2,
+      "title": "Nivel 6: Introducción a Nodos y Mallas",
+      "topic_tag": "nodes_meshes",
+      "xp_reward": 100,
+      "is_boss_level": false,
+      "theory_markdown": "# ⚡ Explicación Breve: Métodos Sistemáticos de Nodos y Mallas\nCuando un circuito contiene múltiples fuentes y lazos interconectados, los métodos de Nodos y Mallas permiten resolver sistemáticamente cualquier incógnita:\n\n1. **Método de Nodos (Tensiones de Nodo):** Basado en la LCK. Se elige un nodo de referencia (Tierra / GND = 0 V). Para cada nodo no de referencia ($N-1$ nodos) se plantea una ecuación de corrientes sumando los términos $\\frac{V_{\\text{nodo}} - V_{\\text{vecino}}}{R} = 0$.\n\n2. **Método de Mallas (Corrientes de Malla):** Basado en la LVK para circuitos planos. Se asigna una corriente de malla ficticia a cada lazo independiente ($M = B - N + 1$) y se plantea una suma de voltajes. Para dos mallas contiguas, el resistor central es atravesado por la diferencia neta de corrientes $(I_1 - I_2)$.",
+      "formulas_markdown": "### 📐 Fórmulas Necesarias\n* **Ecuación Nodal General (Nodo $A$):** $$\\sum \\frac{V_A - V_k}{R_k} = \\sum I_{\\text{fuentes entrantes}}$$\n* **Ecuación de Malla 1:** $$(R_1 + R_{\\text{común}}) I_1 - R_{\\text{común}} I_2 = \\sum V_{\\text{fuentes, malla 1}}$$\n* **Ecuación de Malla 2:** $$-R_{\\text{común}} I_1 + (R_2 + R_{\\text{común}}) I_2 = \\sum V_{\\text{fuentes, malla 2}}$$",
+      "solved_example_json": {
+        "title": "Ejemplo Resuelto: Voltaje de Nodo VA en Circuito de Dos Mallas",
+        "problem_statement": "En un circuito de dos mallas con nodo central A: una fuente Vs1 = 12 V se conecta a través de R1 = 2 Ω al nodo A. En el nodo A se conecta a tierra R3 = 4 Ω, y hacia la derecha R2 = 4 Ω conectada a una fuente Vs2 = 6 V (con su polo positivo hacia arriba y negativo a tierra). Determina la tensión de nodo VA.",
+        "circuit_config_json": {
+          "template": "two_mesh_dc",
+          "is_energized_initially": true,
+          "current_speed_amps": 2.25,
+          "nodes": [
+            { "id": "TL", "x": 40, "y": 50 },
+            { "id": "A", "x": 180, "y": 50, "label": "Nodo A" },
+            { "id": "TR", "x": 320, "y": 50 },
+            { "id": "BL", "x": 40, "y": 190 },
+            { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+            { "id": "BR", "x": 320, "y": 190 }
+          ],
+          "components": [
+            { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+            { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+            { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+            { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+            { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+            { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+            { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+          ],
+          "annotations": [
+            { "type": "node_voltage", "node": "A", "label": "V_A = 7.5 V" },
+            { "type": "current_arrow", "target": "R1", "label": "I1 = 2.25 A" },
+            { "type": "current_arrow", "target": "R3", "label": "I3 = 1.875 A" },
+            { "type": "current_arrow", "target": "R2", "label": "I2 = 0.375 A" }
+          ]
+        },
+        "steps_markdown": "1. **Planteamos la LCK en el nodo $A$ (suma de corrientes salientes = 0):**\n$$\\frac{V_A - 12}{2} + \\frac{V_A - 0}{4} + \\frac{V_A - 6}{4} = 0$$\n2. **Multiplicamos toda la ecuación por el mínimo común múltiplo (4):**\n$$2(V_A - 12) + V_A + (V_A - 6) = 0$$\n$$2V_A - 24 + V_A + V_A - 6 = 0$$\n3. **Reducimos y despejamos $V_A$:**\n$$4V_A - 30 = 0 \\implies 4V_A = 30 \\implies V_A = \\frac{30}{4} = 7.5\\text{ V}$$",
+        "final_result": "VA = 7.5 V"
+      },
+      "challenges": [
+        {
+          "challenge_id": "U3-L6-C01",
+          "lesson_id": 6,
+          "step_order": 1,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Al aplicar el método nodal a un circuito de N = 4 nodos con 1 nodo a tierra, ¿cuántas ecuaciones independientes se formulan?",
+          "prompt_text": "Al aplicar el método de tensiones nodales a un circuito que cuenta con N = 4 nodos esenciales, ¿cuántas ecuaciones de nodo linealmente independientes se deben formular si se selecciona 1 nodo como referencia (GND)?",
+          "circuit_config_json": {
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 1.0,
+            "nodes": [
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "Nodo 1" },
+              { "id": "TR", "x": 320, "y": 50, "label": "Nodo 2" },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 1.0 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.5 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.5 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 1.0 }
+            ],
+            "annotations": [
+              { "type": "node_voltage", "node": "A", "label": "V1" }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "N - 1 = 3 ecuaciones", "numeric_value": 3, "causes_overheat": false },
+            { "id": "opt_2", "label": "N = 4 ecuaciones", "numeric_value": 4, "causes_overheat": false },
+            { "id": "opt_3", "label": "N + 1 = 5 ecuaciones", "numeric_value": 5, "causes_overheat": false },
+            { "id": "opt_4", "label": "2 ecuaciones", "numeric_value": 2, "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "target_numeric_value": 3,
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 1.0,
+            "resulting_power_watts": 10.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Recuerda que al asignar el potencial de referencia (0 V) a un nodo, solo quedan $N - 1$ incógnitas de tensión por determinar.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nPara un circuito con $N$ nodos esenciales, fijar un nodo de referencia (tierra, $0\\text{ V}$) reduce las variables desconocidas a $N - 1$. Por lo tanto, se formulan exactamente $N - 1 = 4 - 1 = 3$ ecuaciones nodales independientes."
+        },
+        {
+          "challenge_id": "U3-L6-C02",
+          "lesson_id": 6,
+          "step_order": 2,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "multiple_choice",
+          "difficulty": "basic",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "En dos mallas con corrientes horarias I1 e I2, ¿cuál es la corriente neta que desciende por la rama central compartida?",
+          "prompt_text": "En un análisis de mallas con dos lazos adyacentes que comparten un resistor Rc, si la malla 1 tiene corriente de malla I1 (horaria) y la malla 2 tiene I2 (horaria), ¿cuál es la corriente neta que desciende por Rc?",
+          "circuit_config_json": {
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 1.0,
+            "nodes": [
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "Rc" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 1.0 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 1.0 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "Rc", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.5 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.5 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.5 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 1.0 }
+            ],
+            "annotations": [
+              { "type": "mesh_current", "label": "I1", "nodes": ["TL", "A", "BM", "BL"] },
+              { "type": "mesh_current", "label": "I2", "nodes": ["A", "TR", "BR", "BM"] }
+            ]
+          },
+          "options": [
+            { "id": "opt_1", "label": "I1 - I2", "causes_overheat": false },
+            { "id": "opt_2", "label": "I1 + I2", "causes_overheat": true },
+            { "id": "opt_3", "label": "I1 × I2", "causes_overheat": false },
+            { "id": "opt_4", "label": "I2 / I1", "causes_overheat": false }
+          ],
+          "solution_json": {
+            "correct_option_id": "opt_1",
+            "resulting_current_amps": 1.0,
+            "resulting_power_watts": 12.0
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Observa las direcciones relativas: la corriente de la malla 1 desciende por la rama central compartida, mientras que la corriente de la malla 2 asciende en sentido opuesto.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nLa corriente neta en la rama común es la superposición algebraica de las corrientes de malla. Como $I_1$ circula en sentido horario (hacia abajo en la rama común) e $I_2$ también circula en sentido horario (hacia arriba en la rama común), la corriente resultante hacia abajo es $I_{\\text{neta}} = I_1 - I_2$."
+        },
+        {
+          "challenge_id": "U3-L6-C03",
+          "lesson_id": 6,
+          "step_order": 3,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Con Vs1 = 12 V y VA = 7.5 V a través de R1 = 2 Ω, calcula la corriente I1 de la rama izquierda.",
+          "prompt_text": "En el circuito de dos mallas del ejemplo, con Vs1 = 12 V, R1 = 2 Ω y tensión de nodo VA = 7.5 V, calcula la corriente I1 que fluye desde la fuente Vs1 hacia el nodo A.",
+          "circuit_config_json": {
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 2.25,
+            "nodes": [
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "VA=7.5V" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R1", "label": "I1 = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
+          "solution_json": {
+            "target_base_si_value": 2.25,
+            "base_si_unit": "A",
+            "display_target_value": 2.25,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 2.25,
+            "resulting_power_watts": 10.125
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Aplica la Ley de Ohm a la rama izquierda: la caída de tensión sobre $R_1$ es $(V_{s1} - V_A)$. Divide $(12 - 7.5) / 2$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nCalculamos la caída de voltaje en $R_1$ y aplicamos la Ley de Ohm:\n$$I_1 = \\frac{V_{s1} - V_A}{R_1} = \\frac{12\\text{ V} - 7.5\\text{ V}}{2\\ \\Omega} = \\frac{4.5\\text{ V}}{2\\ \\Omega} = 2.25\\text{ A} = 2250\\text{ mA}$$"
+        },
+        {
+          "challenge_id": "U3-L6-C04",
+          "lesson_id": 6,
+          "step_order": 4,
+          "topic_tag": "nodes_meshes",
+          "interaction_type": "numeric_input",
+          "difficulty": "normal",
+          "kilo_emotion": "thinking",
+          "kilo_dialogue": "Para el mismo circuito con VA = 7.5 V, calcula la corriente que drena la resistencia central R3 a tierra.",
+          "prompt_text": "Para el mismo circuito con VA = 7.5 V, calcula la corriente I3 que fluye verticalmente por la resistencia central R3 = 4 Ω hacia la tierra (GND = 0 V).",
+          "circuit_config_json": {
+            "template": "two_mesh_dc",
+            "is_energized_initially": true,
+            "current_speed_amps": 1.875,
+            "nodes": [
+              { "id": "TL", "x": 40, "y": 50 },
+              { "id": "A", "x": 180, "y": 50, "label": "VA=7.5V" },
+              { "id": "TR", "x": 320, "y": 50 },
+              { "id": "BL", "x": 40, "y": 190 },
+              { "id": "BM", "x": 180, "y": 190, "label": "GND", "is_ground": true },
+              { "id": "BR", "x": 320, "y": 190 }
+            ],
+            "components": [
+              { "id": "VS1", "type": "voltage_source_dc", "from": "BL", "to": "TL", "label": "Vs1", "value": 12, "unit": "V", "current_amps": 2.25 },
+              { "id": "R1", "type": "resistor", "from": "TL", "to": "A", "label": "R1", "value": 2, "unit": "Ω", "current_amps": 2.25 },
+              { "id": "R3", "type": "resistor", "from": "A", "to": "BM", "label": "R3", "value": 4, "unit": "Ω", "current_amps": 1.875 },
+              { "id": "R2", "type": "resistor", "from": "A", "to": "TR", "label": "R2", "value": 4, "unit": "Ω", "current_amps": 0.375 },
+              { "id": "VS2", "type": "voltage_source_dc", "from": "BR", "to": "TR", "label": "Vs2", "value": 6, "unit": "V", "current_amps": -0.375 },
+              { "id": "WBR", "type": "wire", "from": "BR", "to": "BM", "current_amps": 0.375 },
+              { "id": "WBL", "type": "wire", "from": "BM", "to": "BL", "current_amps": 2.25 }
+            ],
+            "annotations": [
+              { "type": "current_arrow", "target": "R3", "label": "I3 = ?" }
+            ]
+          },
+          "unit_options": ["A", "mA", "V", "Ω", "W"],
+          "default_unit": "A",
+          "solution_json": {
+            "target_base_si_value": 1.875,
+            "base_si_unit": "A",
+            "display_target_value": 1.875,
+            "display_unit": "A",
+            "accepted_units": {
+              "A": 1,
+              "mA": 0.001
+            },
+            "tolerance_percent": 3.0,
+            "resulting_current_amps": 1.875,
+            "resulting_power_watts": 14.0625
+          },
+          "hint_markdown": "💡 **Pista de K-1L0:** Como el extremo inferior de $R_3$ está en $0\\text{ V}$, la corriente es directamente $I_3 = \\frac{V_A - 0}{R_3} = \\frac{7.5}{4}$.",
+          "explanation_markdown": "### ✅ Procedimiento Correcto\nAplicando la Ley de Ohm sobre la resistencia central conectada a tierra:\n$$I_3 = \\frac{V_A - V_{\\text{GND}}}{R_3} = \\frac{7.5\\text{ V} - 0\\text{ V}}{4\\ \\Omega} = 1.875\\text{ A} = 1875\\text{ mA}$$\nNota que por LCK en el nodo A:\n$$I_1 = I_2 + I_3 \\implies 2.25\\text{ A} = 0.375\\text{ A} + 1.875\\text{ A}$$"
+        }
+      ]
+    }
+  ]
+}

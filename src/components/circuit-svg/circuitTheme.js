@@ -35,7 +35,7 @@ export const BODY_LENGTH = {
 const FLOW_SLOW = 2.5
 const FLOW_FAST = 0.6
 const I_MIN = 0.001 // 1 mA o menos → animación lenta
-const I_MAX = 1 // 1 A o más → animación rápida
+const I_MAX = 10 // 10 A o más → animación rápida (el CyberLab llega a varios amperes)
 
 /**
  * Convierte la corriente (A) en duración de animación (s) usando escala logarítmica,
@@ -48,6 +48,17 @@ export function flowDurationForCurrent(amps) {
   const clamped = Math.min(Math.max(i, I_MIN), I_MAX)
   const t = (Math.log10(clamped) - Math.log10(I_MIN)) / (Math.log10(I_MAX) - Math.log10(I_MIN))
   return +(FLOW_SLOW - t * (FLOW_SLOW - FLOW_FAST)).toFixed(2)
+}
+
+/**
+ * Intensidad visual 0–1 según la corriente (misma escala logarítmica que el flujo):
+ * 1 mA o menos → 0 · 10 A o más → 1. Controla el brillo neón de LEDs, resistencias y cables.
+ */
+export function currentIntensity(amps) {
+  const i = Math.abs(Number(amps))
+  if (!Number.isFinite(i) || i <= 0) return 0
+  const clamped = Math.min(Math.max(i, I_MIN), I_MAX)
+  return +((Math.log10(clamped) - Math.log10(I_MIN)) / (Math.log10(I_MAX) - Math.log10(I_MIN))).toFixed(3)
 }
 
 /** Geometría de un segmento entre dos nodos. */

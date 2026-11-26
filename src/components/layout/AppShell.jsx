@@ -11,7 +11,7 @@ export default function AppShell() {
 
   return (
     <div className="bg-pcb-grid min-h-[100dvh] text-slate-100">
-      <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col border-x border-pcb-trace/40 bg-pcb-base/80">
+      <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col border-x border-pcb-trace/40 bg-pcb-base/80 md:max-w-5xl">
         {/* Top Status Header */}
         <header className="sticky top-0 z-30 flex items-center justify-between border-b border-pcb-trace bg-pcb-panel/90 px-4 py-3 backdrop-blur-md">
           <Link to="/" className="flex items-center gap-2">

@@ -7,16 +7,26 @@ import CyberLed from './CyberLed'
 import CyberSensor from './CyberSensor'
 import Ground from './Ground'
 import UnknownComponent from './UnknownComponent'
+import { CurrentArrowHead, MeshCurrent, NodeVoltageRing, NodeVoltageTag } from './Annotations'
 import {
   BODY_LENGTH,
   COLORS,
   VIEWBOX,
   centroid,
   flowDurationForCurrent,
+  currentIntensity,
   formatValue,
   labelAlreadyHasValue,
   segmentGeometry,
 } from './circuitTheme'
+import {
+  LINE_HEIGHT,
+  createLabelLayout,
+  measureBlock,
+  pointCandidates,
+  rotatedBodyBox,
+  sideCandidates,
+} from './labelLayout'
 import './circuitCanvas.css'
 
 /** Tipos con cuerpo dibujado sobre el segmento (todo lo demás = cable). */
@@ -36,21 +46,43 @@ const TYPE_COLORS = {
   cyber_led: COLORS.watt,
   cyber_sensor: COLORS.amp,
 }
+/** Medio ancho transversal (px) de cada cuerpo: sirve para separar las etiquetas. */
+const HALF_ACROSS = {
+  resistor: 9,
+  resistor_slot: 15,
+  voltage_source_dc: 22,
+  current_source_dc: 22,
+  cyber_led: 16,
+  cyber_sensor: 16,
+  unknown: 12,
+}
 
 const warnedTypes = new Set()
 
 /**
- * <CircuitCanvas /> — Motor SVG de circuitos de OhmDrive (US-04).
+ * <CircuitCanvas /> — Motor SVG de circuitos de OhmDrive (US-04 + US-08R).
  *
- * Lee un `circuit_config_json` (02_DATA_DICTIONARY.md §3) y dibuja nodos, cables,
+ * Lee un `circuit_config_json` (DATA_DICTIONARY.md §4) y dibuja nodos, cables,
  * fuentes, resistencias, slots, LEDs cyber y sensores con flujo de electrones animado.
+ *
+ * US-08R agrega (todo opcional y compatible con los JSON existentes):
+ * - `component.current_amps`: corriente propia de esa rama → velocidad del flujo por rama;
+ *   negativa = la corriente va de `to` hacia `from`; 0 = rama sin corriente.
+ * - `config.annotations`: flechas de corriente (I₁, I₂…), voltaje de nodo (V_A) y
+ *   corrientes de malla.
+ * - Colocación automática de etiquetas para que no se encimen en paralelos, mallas
+ *   y componentes en diagonal.
  *
  * @param {object}   config            circuit_config_json del reto
  * @param {boolean}  [isEnergized]     sobreescribe config.is_energized_initially
- * @param {number}   [currentAmps]     sobreescribe config.current_speed_amps (velocidad del flujo)
- * @param {object}   [fault]           { type: 'short' | 'overheat', componentId?: string }
+ * @param {number}   [currentAmps]     sobreescribe config.current_speed_amps (velocidad global)
+ * @param {object}   [fault]           { type: 'short' | 'overheat' | 'warning', componentId?: string }
+ *                                     'warning' = P ≥ 80 % de P_max (ámbar + ondas de calor).
+ *                                     Sin componentId, 'overheat'/'warning' se aplican al componente
+ *                                     con `max_watts` (o al primer slot / resistor / LED).
  * @param {object}   [slotValues]      { [slotComponentId]: number } valor insertado en un slot
  * @param {Function} [onComponentClick] (component) => void — hace tocables los componentes
+ * @param {boolean}  [showAnnotations=true] oculta flechas/V_A/mallas si se pasa false
  * @param {string}   [className]
  * @param {string}   [ariaLabel]
  */
@@ -61,6 +93,7 @@ export default function CircuitCanvas({
   fault = null,
   slotValues = {},
   onComponentClick,
+  showAnnotations = true,
   className = '',
   ariaLabel,
 }) {
@@ -73,12 +106,30 @@ export default function CircuitCanvas({
 
   const nodes = config?.nodes ?? []
   const components = config?.components ?? []
+  const annotations = showAnnotations ? config?.annotations ?? [] : []
   const energized = isEnergized ?? Boolean(config?.is_energized_initially)
-  const amps = currentAmps ?? config?.current_speed_amps ?? 0
+  const globalAmps = currentAmps ?? config?.current_speed_amps ?? 0
   const isShort = fault?.type === 'short'
-  const flowDuration = energized && !isShort ? flowDurationForCurrent(amps) : null
+  // US-13: 'overheat' / 'warning' sin componentId → se elige solo el componente que se calienta
+  const thermalTargetId = fault?.type === 'overheat' || fault?.type === 'warning' ? resolveThermalTarget(fault, components) : null
+  const thermalFor = (id) => (id && id === thermalTargetId ? fault.type : null)
 
-  const layout = useMemo(() => buildLayout(nodes, components), [nodes, components])
+  const layout = useMemo(
+    () => buildLayout(nodes, components, annotations, slotValues, thermalTargetId),
+    [nodes, components, annotations, slotValues, thermalTargetId],
+  )
+
+  /** Velocidad, sentido y brillo del flujo de una rama. */
+  function flowFor(component) {
+    if (!energized || isShort) return { duration: null, reversed: false, intensity: 0 }
+    const own = component.current_amps
+    const amps = own === undefined || own === null ? globalAmps : own
+    return {
+      duration: flowDurationForCurrent(amps),
+      reversed: Number(amps) < 0,
+      intensity: currentIntensity(amps),
+    }
+  }
 
   const summary =
     ariaLabel ??
@@ -115,27 +166,30 @@ export default function CircuitCanvas({
       <rect width={VIEWBOX.width} height={VIEWBOX.height} fill={COLORS.base} />
       <rect width={VIEWBOX.width} height={VIEWBOX.height} fill={`url(#${ids.grid})`} />
 
-      {/* 1. Cables y terminales (debajo de todo) */}
-      {layout.items.map(({ component, a, b, geom, bodyLength }) => {
-        if (!bodyLength) {
-          return (
-            <Wire
-              key={`w-${component.id}`}
-              from={a}
-              to={b}
-              isEnergized={energized}
-              flowDuration={flowDuration}
-              isShort={isShort}
-            />
-          )
-        }
-        const gap = Math.min(bodyLength, geom.length) / 2
-        const p1 = { x: geom.mid.x - geom.ux * gap, y: geom.mid.y - geom.uy * gap }
-        const p2 = { x: geom.mid.x + geom.ux * gap, y: geom.mid.y + geom.uy * gap }
+      {/* 0. Corrientes de malla (debajo de todo, son una guía) */}
+      {layout.meshes.map((m, i) => (
+        <MeshCurrent key={`mesh-${i}`} {...m} />
+      ))}
+
+      {/* 1. Cables y terminales */}
+      {layout.items.map(({ component, a, b, p1, p2 }) => {
+        const { duration, reversed, intensity } = flowFor(component)
+        const seg = (from, to, key) => (
+          <Wire
+            key={key}
+            from={reversed ? to : from}
+            to={reversed ? from : to}
+            isEnergized={energized}
+            flowDuration={duration}
+            isShort={isShort}
+            intensity={intensity}
+          />
+        )
+        if (!p1) return seg(a, b, `w-${component.id}`)
         return (
           <g key={`w-${component.id}`}>
-            <Wire from={a} to={p1} isEnergized={energized} flowDuration={flowDuration} isShort={isShort} />
-            <Wire from={p2} to={b} isEnergized={energized} flowDuration={flowDuration} isShort={isShort} />
+            {seg(a, p1, 'l1')}
+            {seg(p2, b, 'l2')}
           </g>
         )
       })}
@@ -145,12 +199,15 @@ export default function CircuitCanvas({
         .filter((it) => it.bodyLength)
         .map((it) => {
           const { component, geom } = it
-          const isFaulted = fault?.type === 'overheat' && fault.componentId === component.id
+          const heat = thermalFor(component.id)
+          const flow = flowFor(component)
           const tappable = typeof onComponentClick === 'function'
           const body = renderBody(component, {
             angle: geom.angle,
-            energized,
-            isFaulted,
+            energized: energized && !isShort && flow.duration !== null,
+            intensity: flow.intensity,
+            heat,
+            isFaulted: heat === 'overheat',
             isFilled: slotValues[component.id] !== undefined && slotValues[component.id] !== null,
             ids,
           })
@@ -182,39 +239,77 @@ export default function CircuitCanvas({
           )
         })}
 
-      {/* 3. Nodos, tierra y chispas */}
+      {/* 3. Nodos, tierra, V_A y chispas */}
       {layout.usedNodes.map((n) => (
         <g key={`n-${n.id}`}>
           {n.is_ground && <Ground x={n.x} y={n.y} />}
-          <circle r={3.5} cx={n.x} cy={n.y} fill={energized && !isShort ? COLORS.volt : COLORS.trace} />
+          {layout.voltageNodes.has(n.id) ? (
+            <NodeVoltageRing x={n.x} y={n.y} />
+          ) : (
+            <circle r={3.5} cx={n.x} cy={n.y} fill={energized && !isShort ? COLORS.volt : COLORS.trace} />
+          )}
           {isShort && (!fault.componentId || layout.faultNodes(fault.componentId).has(n.id)) && (
             <Spark x={n.x} y={n.y} />
           )}
         </g>
       ))}
 
-      {/* 4. Etiquetas (siempre derechas, encima de todo) */}
-      {layout.usedNodes
-        .filter((n) => !n.is_ground && n.label)
-        .map((n) => (
-          <NodeLabel key={`nl-${n.id}`} node={n} center={layout.center} />
-        ))}
-      {layout.items
-        .filter((it) => it.bodyLength)
-        .map((it) => (
-          <ComponentLabel
-            key={`cl-${it.component.id}`}
-            item={it}
-            center={layout.center}
-            slotValue={slotValues[it.component.id]}
-            isFaulted={fault?.type === 'overheat' && fault.componentId === it.component.id}
-          />
-        ))}
+      {/* 4. Flechas de corriente */}
+      {layout.arrows.map((a, i) => (
+        <CurrentArrowHead key={`arr-${i}`} {...a} />
+      ))}
+
+      {/* 5. Etiquetas (siempre derechas, encima de todo) */}
+      {layout.tags.map((t, i) => (
+        <NodeVoltageTag key={`tag-${i}`} box={t.box} text={t.text} />
+      ))}
+      {layout.labels.map((lbl, i) => (
+        <TextBlock key={`lbl-${i}`} {...lbl} thermal={thermalFor(lbl.componentId)} />
+      ))}
     </svg>
   )
 }
 
-function buildLayout(nodes, components) {
+const FONTS = {
+  sans10: { family: "'Inter', 'Plus Jakarta Sans', sans-serif", size: 10, weight: 600 },
+  mono10: { family: "'JetBrains Mono', monospace", size: 10, weight: 700 },
+  mono9: { family: "'JetBrains Mono', monospace", size: 9, weight: 700 },
+}
+
+function TextBlock({ box, lines, thermal }) {
+  const thermalColor = thermal === 'overheat' ? COLORS.short : thermal === 'warning' ? COLORS.amp : null
+  const x = box.anchor === 'start' ? box.x + 1 : box.anchor === 'end' ? box.x + box.w - 1 : box.x + box.w / 2
+  return (
+    <g pointerEvents="none">
+      {lines.map((ln, i) => {
+        const f = FONTS[ln.kind] ?? FONTS.sans10
+        return (
+          <text
+            key={i}
+            x={x}
+            y={box.y + LINE_HEIGHT * (i + 1) - 3}
+            textAnchor={box.anchor}
+            fontFamily={f.family}
+            fontSize={f.size}
+            fontWeight={f.weight}
+            fill={thermalColor && ln.colored ? thermalColor : ln.color}
+            stroke={COLORS.base}
+            strokeWidth={3}
+            paintOrder="stroke"
+          >
+            {ln.text}
+          </text>
+        )
+      })}
+    </g>
+  )
+}
+
+/**
+ * Calcula geometría, flechas y la posición de cada etiqueta.
+ * Orden de prioridad para colocar etiquetas: componentes → V_A → flechas → nodos.
+ */
+function buildLayout(nodes, components, annotations, slotValues, thermalTargetId = null) {
   const byId = Object.fromEntries(nodes.map((n) => [n.id, n]))
   const used = new Set()
   const items = []
@@ -233,15 +328,127 @@ function buildLayout(nodes, components) {
       warnedTypes.add(component.type)
       console.warn(`[CircuitCanvas] Tipo de componente no soportado: "${component.type}". Se dibuja como caja genérica.`)
     }
-    const bodyLength = isWire ? 0 : BODY_LENGTH[component.type] ?? BODY_LENGTH.unknown
-    items.push({ component, a, b, geom: segmentGeometry(a, b), bodyLength })
+    const geom = segmentGeometry(a, b)
+    const bodyLength = isWire ? 0 : Math.min(BODY_LENGTH[component.type] ?? BODY_LENGTH.unknown, geom.length)
+    const item = { component, a, b, geom, bodyLength }
+    if (bodyLength) {
+      const gap = bodyLength / 2
+      item.p1 = { x: geom.mid.x - geom.ux * gap, y: geom.mid.y - geom.uy * gap }
+      item.p2 = { x: geom.mid.x + geom.ux * gap, y: geom.mid.y + geom.uy * gap }
+      item.halfAcross = HALF_ACROSS[component.type] ?? HALF_ACROSS.unknown
+    }
+    items.push(item)
   }
 
   const usedNodes = nodes.filter((n) => used.has(n.id))
+  const center = centroid(usedNodes)
+  const itemById = Object.fromEntries(items.map((it) => [it.component.id, it]))
+
+  // ── Anotaciones ────────────────────────────────────────────────
+  const arrows = []
+  const arrowLabels = []
+  const voltageAnns = []
+  const meshes = []
+  for (const ann of annotations) {
+    if (ann.type === 'current_arrow') {
+      const it = itemById[ann.target]
+      if (!it) continue
+      const arrow = arrowPosition(it, ann)
+      arrows.push(arrow)
+      if (ann.label) arrowLabels.push({ arrow, text: ann.label })
+    } else if (ann.type === 'node_voltage') {
+      if (byId[ann.node]) voltageAnns.push({ node: byId[ann.node], text: ann.label ?? `V_${ann.node}` })
+    } else if (ann.type === 'mesh_current') {
+      const c = ann.center ?? (ann.nodes ? centroid(ann.nodes.map((id) => byId[id]).filter(Boolean)) : null)
+      if (c) meshes.push({ cx: c.x, cy: c.y, r: ann.radius ?? 22, label: ann.label, clockwise: ann.clockwise !== false })
+    }
+  }
+  const voltageNodes = new Set(voltageAnns.map((v) => v.node.id))
+
+  // ── Obstáculos para el layout de etiquetas ─────────────────────
+  const obstacles = []
+  for (const it of items) {
+    if (it.bodyLength) {
+      obstacles.push({ ...rotatedBodyBox(it.geom.mid, it.geom.ux, it.geom.uy, it.bodyLength, it.halfAcross * 2), weight: 5 })
+      if (it.component.id === thermalTargetId) {
+        // ondas de calor / humo: suben ~30px por encima del centro del componente
+        obstacles.push({ x: it.geom.mid.x - 14, y: it.geom.mid.y - 34, w: 28, h: 26, weight: 6 })
+      }
+    }
+  }
+  for (const n of usedNodes) {
+    obstacles.push({ x: n.x - 6, y: n.y - 6, w: 12, h: 12, weight: 5 })
+    if (n.is_ground) obstacles.push({ x: n.x - 11, y: n.y, w: 22, h: 23, weight: 5 })
+  }
+  for (const a of arrows) obstacles.push({ x: a.x - 7, y: a.y - 7, w: 14, h: 14, weight: 5 })
+  for (const m of meshes) obstacles.push({ x: m.cx - m.r - 2, y: m.cy - m.r - 2, w: m.r * 2 + 4, h: m.r * 2 + 4, weight: 1.5 })
+  const segments = items.map((it) => ({ a: it.a, b: it.b }))
+
+  const placer = createLabelLayout({ obstacles, segments })
+  for (const m of meshes) {
+    const w = m.label ? m.label.length * 6.8 + 4 : 0
+    if (w) placer.reserve({ x: m.cx - w / 2, y: m.cy - 8, w, h: 16 })
+  }
+
+  const labels = []
+
+  // 1) etiquetas de componentes
+  for (const it of items) {
+    if (!it.bodyLength) continue
+    const lines = componentLabelLines(it.component, slotValues[it.component.id])
+    if (!lines.length) continue
+    const { w, h } = measureBlock(lines)
+    const box = placer.place(sideCandidates(it.geom, it.halfAcross, { center }), w, h)
+    labels.push({ box, lines, componentId: it.component.id })
+  }
+
+  // 2) V_A
+  const tags = []
+  for (const v of voltageAnns) {
+    const w = v.text.length * 6.1 + 12
+    const h = 15
+    const box = placer.place(pointCandidates(v.node, 11, center), w, h)
+    tags.push({ box, text: v.text })
+  }
+
+  // 3) etiquetas de flechas de corriente
+  for (const al of arrowLabels) {
+    const lines = [{ text: al.text, kind: 'mono10', color: COLORS.amp }]
+    const { w, h } = measureBlock(lines)
+    const n1 = { x: -al.arrow.dy, y: al.arrow.dx }
+    const cands = []
+    for (const sgn of [1, -1]) {
+      for (const gap of [7, 13]) {
+        for (const along of [0, 8, -8]) {
+          cands.push({
+            x: al.arrow.x + n1.x * sgn * gap + al.arrow.dx * along,
+            y: al.arrow.y + n1.y * sgn * gap + al.arrow.dy * along,
+            dx: n1.x * sgn,
+            dy: n1.y * sgn,
+            penalty: gap * 0.3 + Math.abs(along) * 0.5,
+          })
+        }
+      }
+    }
+    labels.push({ box: placer.place(cands, w, h), lines })
+  }
+
+  // 4) etiquetas de nodos (A, B, +12V…) — la tierra ya tiene su símbolo
+  for (const n of usedNodes) {
+    if (n.is_ground || !n.label || voltageNodes.has(n.id)) continue
+    const lines = [{ text: n.label, kind: 'mono9', color: COLORS.textMuted }]
+    const { w, h } = measureBlock(lines)
+    labels.push({ box: placer.place(pointCandidates(n, 7, center), w, h), lines })
+  }
+
   return {
     items,
     usedNodes,
-    center: centroid(usedNodes),
+    labels,
+    tags,
+    arrows,
+    meshes,
+    voltageNodes,
     faultNodes: (componentId) => {
       const c = components.find((x) => x.id === componentId)
       return new Set(c ? [c.from, c.to] : [])
@@ -249,18 +456,91 @@ function buildLayout(nodes, components) {
   }
 }
 
-function renderBody(component, { angle, energized, isFaulted, isFilled, ids }) {
+/**
+ * Dónde va la flecha: sobre la terminal de entrada del componente (o a la mitad del
+ * cable). Sentido: from→to, invertido con `reverse: true` o si la rama trae
+ * current_amps negativo.
+ */
+function arrowPosition(it, ann) {
+  const { geom, a, p1, p2, b, component } = it
+  const negative = Number(component.current_amps) < 0
+  const reverse = Boolean(ann.reverse) !== negative
+  let x
+  let y
+  if (!p1) {
+    x = geom.mid.x
+    y = geom.mid.y
+  } else {
+    const lead1 = Math.hypot(p1.x - a.x, p1.y - a.y)
+    const lead2 = Math.hypot(b.x - p2.x, b.y - p2.y)
+    const useFirst = (lead1 >= 16 && !reverse) || lead2 < 16
+    const [s, e] = useFirst ? [a, p1] : [p2, b]
+    x = (s.x + e.x) / 2
+    y = (s.y + e.y) / 2
+  }
+  const sign = reverse ? -1 : 1
+  return { x, y, dx: geom.ux * sign, dy: geom.uy * sign }
+}
+
+function componentLabelLines(component, slotValue) {
+  const color = TYPE_COLORS[component.type] ?? COLORS.textMuted
+  const name = component.label || component.id
+  let valueText = null
+  if (component.type === 'resistor_slot') {
+    valueText = slotValue !== undefined && slotValue !== null ? formatValue(slotValue, component.unit) : null
+  } else if (component.type === 'cyber_led' || component.type === 'cyber_sensor') {
+    valueText = null // el LED se explica solo y el sensor ya muestra su display
+  } else if (!BODY_TYPES.has(component.type)) {
+    valueText = component.type
+  } else if (!labelAlreadyHasValue(name, component.unit)) {
+    valueText = component.value === null || component.value === undefined ? null : formatValue(component.value, component.unit)
+  }
+  const lines = [{ text: name, kind: 'sans10', color: COLORS.text }]
+  if (valueText) lines.push({ text: valueText, kind: 'mono10', color, colored: true })
+  return lines
+}
+
+/**
+ * Componente que se calienta cuando la falla térmica no dice cuál es:
+ * el que declara `max_watts` → el primer slot → el primer resistor → el primer LED.
+ */
+function resolveThermalTarget(fault, components) {
+  if (fault.componentId) return fault.componentId
+  const pick =
+    components.find((c) => c.max_watts !== undefined && c.max_watts !== null) ||
+    components.find((c) => c.type === 'resistor_slot') ||
+    components.find((c) => c.type === 'resistor') ||
+    components.find((c) => c.type === 'cyber_led')
+  return pick?.id ?? null
+}
+
+function renderBody(component, { angle, energized, intensity, heat, isFaulted, isFilled, ids }) {
+  const resistorProps = {
+    glowId: ids.glow,
+    strongGlowId: ids.strongGlow,
+    heat,
+    intensity: energized ? intensity : 0,
+    angle,
+  }
   switch (component.type) {
     case 'resistor':
-      return <Resistor glowId={ids.glow} isFaulted={isFaulted} />
+      return <Resistor {...resistorProps} />
     case 'resistor_slot':
-      return <Resistor isSlot isFilled={isFilled} glowId={ids.glow} isFaulted={isFaulted} />
+      return <Resistor isSlot isFilled={isFilled} {...resistorProps} />
     case 'voltage_source_dc':
       return <VoltageSource angle={angle} glowId={ids.glow} isFaulted={isFaulted} />
     case 'current_source_dc':
       return <CurrentSource glowId={ids.glow} isFaulted={isFaulted} />
     case 'cyber_led':
-      return <CyberLed isLit={energized} isFaulted={isFaulted} glowId={ids.glow} strongGlowId={ids.strongGlow} />
+      return (
+        <CyberLed
+          isLit={energized}
+          intensity={intensity}
+          isFaulted={isFaulted}
+          glowId={ids.glow}
+          strongGlowId={ids.strongGlow}
+        />
+      )
     case 'cyber_sensor':
       return (
         <CyberSensor
@@ -275,98 +555,6 @@ function renderBody(component, { angle, energized, isFaulted, isFilled, ids }) {
     default:
       return <UnknownComponent angle={angle} />
   }
-}
-
-const LABEL_FONT = "'Inter', 'Plus Jakarta Sans', sans-serif"
-const MONO_FONT = "'JetBrains Mono', monospace"
-
-/** Nombre + valor del componente, colocado hacia el lado libre del circuito. */
-function ComponentLabel({ item, center, slotValue, isFaulted }) {
-  const { component, geom } = item
-  const color = isFaulted ? COLORS.short : TYPE_COLORS[component.type] ?? COLORS.textMuted
-  const name = component.label || component.id
-
-  let valueText = null
-  if (component.type === 'resistor_slot') {
-    valueText = slotValue !== undefined && slotValue !== null ? formatValue(slotValue, component.unit) : null
-  } else if (component.type === 'cyber_led' || component.type === 'cyber_sensor') {
-    valueText = null // el LED se explica solo y el sensor ya muestra su display
-  } else if (!labelAlreadyHasValue(name, component.unit)) {
-    valueText = component.value === null || component.value === undefined ? null : formatValue(component.value, component.unit)
-  }
-  if (!BODY_TYPES.has(component.type)) valueText = component.type
-
-  const lines = [{ text: name, color: COLORS.text, font: LABEL_FONT, weight: 600 }]
-  if (valueText) lines.push({ text: valueText, color, font: MONO_FONT, weight: 700 })
-
-  const horizontal = Math.abs(geom.uy) < 0.5
-  const lineH = 12
-  let x
-  let y
-  let anchor
-  if (horizontal) {
-    anchor = 'middle'
-    x = geom.mid.x
-    const above = geom.mid.y <= center.y
-    y = above ? geom.mid.y - 22 - (lines.length - 1) * lineH : geom.mid.y + 30
-  } else {
-    const toRight = geom.mid.x <= center.x
-    anchor = toRight ? 'start' : 'end'
-    x = geom.mid.x + (toRight ? 30 : -30)
-    y = geom.mid.y - ((lines.length - 1) * lineH) / 2 + 3
-  }
-
-  return (
-    <g pointerEvents="none">
-      {lines.map((ln, i) => (
-        <text
-          key={i}
-          x={x}
-          y={y + i * lineH}
-          textAnchor={anchor}
-          fontFamily={ln.font}
-          fontSize={10}
-          fontWeight={ln.weight}
-          fill={ln.color}
-          stroke={COLORS.base}
-          strokeWidth={3}
-          paintOrder="stroke"
-        >
-          {ln.text}
-        </text>
-      ))}
-    </g>
-  )
-}
-
-/** Etiqueta de nodo (A, B, +12V…) empujada hacia afuera del circuito. */
-function NodeLabel({ node, center }) {
-  const dx = Math.sign(Math.round(node.x - center.x))
-  const dy = Math.sign(Math.round(node.y - center.y)) || -1
-  const anchor = dx > 0 ? 'start' : dx < 0 ? 'end' : 'middle'
-  let x = node.x + dx * 7
-  const y = node.y + dy * 9 + (dy > 0 ? 6 : 0)
-  // evita que etiquetas largas se salgan del viewBox
-  const approxWidth = node.label.length * 5.6
-  if (anchor === 'start') x = Math.min(x, VIEWBOX.width - 4 - approxWidth)
-  if (anchor === 'end') x = Math.max(x, 4 + approxWidth)
-  return (
-    <text
-      x={x}
-      y={y}
-      textAnchor={anchor}
-      fontFamily={MONO_FONT}
-      fontSize={9}
-      fontWeight={700}
-      fill={COLORS.textMuted}
-      stroke={COLORS.base}
-      strokeWidth={3}
-      paintOrder="stroke"
-      pointerEvents="none"
-    >
-      {node.label}
-    </text>
-  )
 }
 
 function Spark({ x, y }) {

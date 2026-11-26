@@ -18,7 +18,7 @@ export default function BottomNav() {
       aria-label="Navegación principal"
       className="fixed bottom-0 left-0 right-0 z-40 border-t border-pcb-trace bg-pcb-panel/95 backdrop-blur-md"
     >
-      <div className="mx-auto flex max-w-md items-center justify-around px-1 py-1.5">
+      <div className="mx-auto flex max-w-md items-center justify-around px-1 py-1.5 md:max-w-3xl">
         {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
