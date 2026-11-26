@@ -9,6 +9,8 @@ import {
   Lightbulb,
   RotateCcw,
   Sparkles,
+  Volume2,
+  VolumeX,
   X,
   XCircle,
   Zap,
@@ -16,6 +18,7 @@ import {
 import { getLessonById } from '../data/sectors'
 import { validateChallenge } from '../engine/challengeValidator'
 import { useGameStore } from '../store/useGameStore'
+import { playHint, playShock, playSuccess, playVictory } from '../utils/soundEngine'
 import { FormulaText, FuseBar, NeonButton } from '../components/ui'
 import KiloMascot from '../components/mascot/KiloMascot'
 import CircuitCanvas from '../components/circuit-svg/CircuitCanvas'
@@ -216,6 +219,8 @@ export default function LessonRunnerPage() {
   const currentFuses = useGameStore((s) => s.user.currentFuses)
   const consumeFuse = useGameStore((s) => s.consumeFuse)
   const recordLevelResults = useGameStore((s) => s.recordLevelResults)
+  const soundEnabled = useGameStore((s) => s.soundEnabled)
+  const toggleSound = useGameStore((s) => s.toggleSound)
 
   const lesson = lessonData?.lesson || null
   const sector = lessonData?.sector || null
@@ -315,6 +320,7 @@ export default function LessonRunnerPage() {
       const earned = attemptCount === 0 ? 25 : 15
       setCorrectCount((c) => c + 1)
       setScorePoints((p) => p + earned)
+      playSuccess()
       setMachineState(STATES.CIRCUIT_SUCCESS)
       return
     }
@@ -322,6 +328,7 @@ export default function LessonRunnerPage() {
     // First error -> HINT_RETRY (Criterion 7: show hint and allow another try)
     if (attemptCount === 0) {
       setAttemptCount(1)
+      playHint()
       setMachineState(STATES.HINT_RETRY)
       return
     }
@@ -330,6 +337,7 @@ export default function LessonRunnerPage() {
     setAttemptCount(2)
     setErrorCount((e) => e + 1)
     consumeFuse()
+    playShock()
     setMachineState(STATES.SHORT_CIRCUIT_ERROR)
   }
 
@@ -364,6 +372,7 @@ export default function LessonRunnerPage() {
         durationSeconds,
       })
     }
+    playVictory()
     setMachineState(STATES.LESSON_COMPLETED)
   }
 
@@ -432,6 +441,19 @@ export default function LessonRunnerPage() {
         </div>
 
         <FuseBar fuses={currentFuses} maxFuses={5} compact />
+        <button
+          type="button"
+          onClick={toggleSound}
+          aria-label={soundEnabled ? 'Silenciar efectos de sonido' : 'Activar efectos de sonido'}
+          className={[
+            'flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-colors',
+            soundEnabled
+              ? 'border-neon-volt/40 bg-neon-volt/10 text-neon-volt hover:bg-neon-volt/20'
+              : 'border-pcb-trace bg-pcb-elevated text-slate-500 hover:text-slate-300',
+          ].join(' ')}
+        >
+          {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+        </button>
       </header>
 
       {/* THEORY INTRO (3 Blocks: Explanation, Formulas, Solved Example) */}
