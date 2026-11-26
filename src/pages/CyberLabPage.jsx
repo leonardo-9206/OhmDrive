@@ -214,13 +214,13 @@ export default function CyberLabPage() {
         { id: 'N_R2_B', x: 280, y: 180, label: 'R2-' }
       ],
       components: [
-        { id: 'IS1', type: 'current_source_dc', from: 'N_IS_B', to: 'N_IS_T', label: `Is = ${currIs.toFixed(1)} A`, value: currIs, unit: 'A' },
-        { id: 'W1', type: 'wire', from: 'N_IS_T', to: 'N_R1_T' },
-        { id: 'W2', type: 'wire', from: 'N_R1_T', to: 'N_R2_T' },
-        { id: 'R1', type: 'resistor', from: 'N_R1_T', to: 'N_R1_B', label: `R1 = ${currR1} Ω (${formatEngineering(i1, 'A')})`, value: currR1, unit: 'Ω' },
-        { id: 'R2', type: 'resistor', from: 'N_R2_T', to: 'N_R2_B', label: `R2 = ${currR2} Ω (${formatEngineering(i2, 'A')})`, value: currR2, unit: 'Ω' },
-        { id: 'W3', type: 'wire', from: 'N_R2_B', to: 'N_R1_B' },
-        { id: 'W4', type: 'wire', from: 'N_R1_B', to: 'N_IS_B' }
+        { id: 'IS1', type: 'current_source_dc', from: 'N_IS_B', to: 'N_IS_T', label: `Is = ${currIs.toFixed(1)} A`, value: currIs, unit: 'A', current_amps: currIs },
+        { id: 'W1', type: 'wire', from: 'N_IS_T', to: 'N_R1_T', current_amps: currIs },
+        { id: 'W2', type: 'wire', from: 'N_R1_T', to: 'N_R2_T', current_amps: i2 },
+        { id: 'R1', type: 'resistor', from: 'N_R1_T', to: 'N_R1_B', label: `R1 = ${currR1} Ω (${formatEngineering(i1, 'A')})`, value: currR1, unit: 'Ω', current_amps: i1 },
+        { id: 'R2', type: 'resistor', from: 'N_R2_T', to: 'N_R2_B', label: `R2 = ${currR2} Ω (${formatEngineering(i2, 'A')})`, value: currR2, unit: 'Ω', current_amps: i2 },
+        { id: 'W3', type: 'wire', from: 'N_R2_B', to: 'N_R1_B', current_amps: i2 },
+        { id: 'W4', type: 'wire', from: 'N_R1_B', to: 'N_IS_B', current_amps: currIs }
       ]
     }
 
@@ -255,14 +255,14 @@ export default function CyberLabPage() {
         { id: 'N_PB3', x: 310, y: 180, label: 'R3-' }
       ],
       components: [
-        { id: 'VS1', type: 'voltage_source_dc', from: 'N_GND', to: 'N1', label: `Vs = ${mixVs}V`, value: mixVs, unit: 'V' },
-        { id: 'R1', type: 'resistor', from: 'N1', to: 'N_MID', label: `R1 = ${mixR1} Ω`, value: mixR1, unit: 'Ω' },
-        { id: 'W1', type: 'wire', from: 'N_MID', to: 'N_P2' },
-        { id: 'W2', type: 'wire', from: 'N_P2', to: 'N_P3' },
-        { id: 'R2', type: 'resistor', from: 'N_P2', to: 'N_PB2', label: `R2 = ${mixR2} Ω`, value: mixR2, unit: 'Ω' },
-        { id: 'R3', type: 'resistor', from: 'N_P3', to: 'N_PB3', label: `R3 = ${mixR3} Ω`, value: mixR3, unit: 'Ω' },
-        { id: 'W3', type: 'wire', from: 'N_PB3', to: 'N_PB2' },
-        { id: 'W4', type: 'wire', from: 'N_PB2', to: 'N_GND' }
+        { id: 'VS1', type: 'voltage_source_dc', from: 'N_GND', to: 'N1', label: `Vs = ${mixVs}V`, value: mixVs, unit: 'V', current_amps: iTotal },
+        { id: 'R1', type: 'resistor', from: 'N1', to: 'N_MID', label: `R1 = ${mixR1} Ω`, value: mixR1, unit: 'Ω', current_amps: iTotal },
+        { id: 'W1', type: 'wire', from: 'N_MID', to: 'N_P2', current_amps: iTotal },
+        { id: 'W2', type: 'wire', from: 'N_P2', to: 'N_P3', current_amps: iR3 },
+        { id: 'R2', type: 'resistor', from: 'N_P2', to: 'N_PB2', label: `R2 = ${mixR2} Ω`, value: mixR2, unit: 'Ω', current_amps: iR2 },
+        { id: 'R3', type: 'resistor', from: 'N_P3', to: 'N_PB3', label: `R3 = ${mixR3} Ω`, value: mixR3, unit: 'Ω', current_amps: iR3 },
+        { id: 'W3', type: 'wire', from: 'N_PB3', to: 'N_PB2', current_amps: iR3 },
+        { id: 'W4', type: 'wire', from: 'N_PB2', to: 'N_GND', current_amps: iTotal }
       ]
     }
 
@@ -276,7 +276,11 @@ export default function CyberLabPage() {
         return {
           circuitConfig: ohmData.circuitConfig,
           currentAmps: ohmData.current,
-          fault: ohmData.thermal.isOverheated ? { type: 'overheat' } : null,
+          fault: ohmData.thermal.isOverheated
+            ? { type: 'overheat', componentId: 'R1' }
+            : ohmData.thermal.status === 'warning'
+            ? { type: 'warning', componentId: 'R1' }
+            : null,
           kiloState: ohmData.kiloState,
           kiloMessage: ohmData.kiloMessage
         }
@@ -291,7 +295,7 @@ export default function CyberLabPage() {
       case 'current_divider':
         return {
           circuitConfig: currData.circuitConfig,
-          currentAmps: currData.currIs,
+          currentAmps: currIs,
           fault: null,
           kiloState: currData.kiloState,
           kiloMessage: currData.kiloMessage

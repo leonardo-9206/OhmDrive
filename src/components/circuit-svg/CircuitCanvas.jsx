@@ -14,6 +14,7 @@ import {
   VIEWBOX,
   centroid,
   flowDurationForCurrent,
+  currentIntensity,
   formatValue,
   labelAlreadyHasValue,
   segmentGeometry,
@@ -75,7 +76,10 @@ const warnedTypes = new Set()
  * @param {object}   config            circuit_config_json del reto
  * @param {boolean}  [isEnergized]     sobreescribe config.is_energized_initially
  * @param {number}   [currentAmps]     sobreescribe config.current_speed_amps (velocidad global)
- * @param {object}   [fault]           { type: 'short' | 'overheat', componentId?: string }
+ * @param {object}   [fault]           { type: 'short' | 'overheat' | 'warning', componentId?: string }
+ *                                     'warning' = P ≥ 80 % de P_max (ámbar + ondas de calor).
+ *                                     Sin componentId, 'overheat'/'warning' se aplican al componente
+ *                                     con `max_watts` (o al primer slot / resistor / LED).
  * @param {object}   [slotValues]      { [slotComponentId]: number } valor insertado en un slot
  * @param {Function} [onComponentClick] (component) => void — hace tocables los componentes
  * @param {boolean}  [showAnnotations=true] oculta flechas/V_A/mallas si se pasa false
@@ -106,18 +110,25 @@ export default function CircuitCanvas({
   const energized = isEnergized ?? Boolean(config?.is_energized_initially)
   const globalAmps = currentAmps ?? config?.current_speed_amps ?? 0
   const isShort = fault?.type === 'short'
+  // US-13: 'overheat' / 'warning' sin componentId → se elige solo el componente que se calienta
+  const thermalTargetId = fault?.type === 'overheat' || fault?.type === 'warning' ? resolveThermalTarget(fault, components) : null
+  const thermalFor = (id) => (id && id === thermalTargetId ? fault.type : null)
 
   const layout = useMemo(
-    () => buildLayout(nodes, components, annotations, slotValues),
-    [nodes, components, annotations, slotValues],
+    () => buildLayout(nodes, components, annotations, slotValues, thermalTargetId),
+    [nodes, components, annotations, slotValues, thermalTargetId],
   )
 
-  /** Velocidad y sentido del flujo de una rama. */
+  /** Velocidad, sentido y brillo del flujo de una rama. */
   function flowFor(component) {
-    if (!energized || isShort) return { duration: null, reversed: false }
+    if (!energized || isShort) return { duration: null, reversed: false, intensity: 0 }
     const own = component.current_amps
     const amps = own === undefined || own === null ? globalAmps : own
-    return { duration: flowDurationForCurrent(amps), reversed: Number(amps) < 0 }
+    return {
+      duration: flowDurationForCurrent(amps),
+      reversed: Number(amps) < 0,
+      intensity: currentIntensity(amps),
+    }
   }
 
   const summary =
@@ -162,7 +173,7 @@ export default function CircuitCanvas({
 
       {/* 1. Cables y terminales */}
       {layout.items.map(({ component, a, b, p1, p2 }) => {
-        const { duration, reversed } = flowFor(component)
+        const { duration, reversed, intensity } = flowFor(component)
         const seg = (from, to, key) => (
           <Wire
             key={key}
@@ -171,6 +182,7 @@ export default function CircuitCanvas({
             isEnergized={energized}
             flowDuration={duration}
             isShort={isShort}
+            intensity={intensity}
           />
         )
         if (!p1) return seg(a, b, `w-${component.id}`)
@@ -187,12 +199,15 @@ export default function CircuitCanvas({
         .filter((it) => it.bodyLength)
         .map((it) => {
           const { component, geom } = it
-          const isFaulted = fault?.type === 'overheat' && fault.componentId === component.id
+          const heat = thermalFor(component.id)
+          const flow = flowFor(component)
           const tappable = typeof onComponentClick === 'function'
           const body = renderBody(component, {
             angle: geom.angle,
-            energized: energized && !isShort && flowFor(component).duration !== null,
-            isFaulted,
+            energized: energized && !isShort && flow.duration !== null,
+            intensity: flow.intensity,
+            heat,
+            isFaulted: heat === 'overheat',
             isFilled: slotValues[component.id] !== undefined && slotValues[component.id] !== null,
             ids,
           })
@@ -249,7 +264,7 @@ export default function CircuitCanvas({
         <NodeVoltageTag key={`tag-${i}`} box={t.box} text={t.text} />
       ))}
       {layout.labels.map((lbl, i) => (
-        <TextBlock key={`lbl-${i}`} {...lbl} faulted={fault?.type === 'overheat' && fault.componentId === lbl.componentId} />
+        <TextBlock key={`lbl-${i}`} {...lbl} thermal={thermalFor(lbl.componentId)} />
       ))}
     </svg>
   )
@@ -261,7 +276,8 @@ const FONTS = {
   mono9: { family: "'JetBrains Mono', monospace", size: 9, weight: 700 },
 }
 
-function TextBlock({ box, lines, faulted }) {
+function TextBlock({ box, lines, thermal }) {
+  const thermalColor = thermal === 'overheat' ? COLORS.short : thermal === 'warning' ? COLORS.amp : null
   const x = box.anchor === 'start' ? box.x + 1 : box.anchor === 'end' ? box.x + box.w - 1 : box.x + box.w / 2
   return (
     <g pointerEvents="none">
@@ -276,7 +292,7 @@ function TextBlock({ box, lines, faulted }) {
             fontFamily={f.family}
             fontSize={f.size}
             fontWeight={f.weight}
-            fill={faulted && ln.colored ? COLORS.short : ln.color}
+            fill={thermalColor && ln.colored ? thermalColor : ln.color}
             stroke={COLORS.base}
             strokeWidth={3}
             paintOrder="stroke"
@@ -293,7 +309,7 @@ function TextBlock({ box, lines, faulted }) {
  * Calcula geometría, flechas y la posición de cada etiqueta.
  * Orden de prioridad para colocar etiquetas: componentes → V_A → flechas → nodos.
  */
-function buildLayout(nodes, components, annotations, slotValues) {
+function buildLayout(nodes, components, annotations, slotValues, thermalTargetId = null) {
   const byId = Object.fromEntries(nodes.map((n) => [n.id, n]))
   const used = new Set()
   const items = []
@@ -354,6 +370,10 @@ function buildLayout(nodes, components, annotations, slotValues) {
   for (const it of items) {
     if (it.bodyLength) {
       obstacles.push({ ...rotatedBodyBox(it.geom.mid, it.geom.ux, it.geom.uy, it.bodyLength, it.halfAcross * 2), weight: 5 })
+      if (it.component.id === thermalTargetId) {
+        // ondas de calor / humo: suben ~30px por encima del centro del componente
+        obstacles.push({ x: it.geom.mid.x - 14, y: it.geom.mid.y - 34, w: 28, h: 26, weight: 6 })
+      }
     }
   }
   for (const n of usedNodes) {
@@ -480,18 +500,47 @@ function componentLabelLines(component, slotValue) {
   return lines
 }
 
-function renderBody(component, { angle, energized, isFaulted, isFilled, ids }) {
+/**
+ * Componente que se calienta cuando la falla térmica no dice cuál es:
+ * el que declara `max_watts` → el primer slot → el primer resistor → el primer LED.
+ */
+function resolveThermalTarget(fault, components) {
+  if (fault.componentId) return fault.componentId
+  const pick =
+    components.find((c) => c.max_watts !== undefined && c.max_watts !== null) ||
+    components.find((c) => c.type === 'resistor_slot') ||
+    components.find((c) => c.type === 'resistor') ||
+    components.find((c) => c.type === 'cyber_led')
+  return pick?.id ?? null
+}
+
+function renderBody(component, { angle, energized, intensity, heat, isFaulted, isFilled, ids }) {
+  const resistorProps = {
+    glowId: ids.glow,
+    strongGlowId: ids.strongGlow,
+    heat,
+    intensity: energized ? intensity : 0,
+    angle,
+  }
   switch (component.type) {
     case 'resistor':
-      return <Resistor glowId={ids.glow} isFaulted={isFaulted} />
+      return <Resistor {...resistorProps} />
     case 'resistor_slot':
-      return <Resistor isSlot isFilled={isFilled} glowId={ids.glow} isFaulted={isFaulted} />
+      return <Resistor isSlot isFilled={isFilled} {...resistorProps} />
     case 'voltage_source_dc':
       return <VoltageSource angle={angle} glowId={ids.glow} isFaulted={isFaulted} />
     case 'current_source_dc':
       return <CurrentSource glowId={ids.glow} isFaulted={isFaulted} />
     case 'cyber_led':
-      return <CyberLed isLit={energized} isFaulted={isFaulted} glowId={ids.glow} strongGlowId={ids.strongGlow} />
+      return (
+        <CyberLed
+          isLit={energized}
+          intensity={intensity}
+          isFaulted={isFaulted}
+          glowId={ids.glow}
+          strongGlowId={ids.strongGlow}
+        />
+      )
     case 'cyber_sensor':
       return (
         <CyberSensor
