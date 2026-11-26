@@ -1,0 +1,11 @@
+{
+  "appId": "edu.uaa.ohmdrive",
+  "appName": "OhmDrive",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#090D16"
+  }
+}

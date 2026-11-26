@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#111827" />
+      <stop offset="100%" stop-color="#090D16" />
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Cyber-PCB Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <rect x="18" y="18" width="476" height="476" rx="96" fill="none" stroke="#1E293B" stroke-width="6" />
+
+  <!-- Subtle PCB Traces -->
+  <path d="M56 140 H110 L135 165 M456 140 H402 L377 165 M56 380 H118 L145 353 M456 380 H394 L367 353" stroke="#1E293B" stroke-width="6" fill="none" stroke-linecap="round" />
+  <circle cx="56" cy="140" r="8" fill="#00F0FF" opacity="0.55" />
+  <circle cx="456" cy="140" r="8" fill="#FFB800" opacity="0.55" />
+  <circle cx="56" cy="380" r="8" fill="#00FF66" opacity="0.55" />
+  <circle cx="456" cy="380" r="8" fill="#FF2A85" opacity="0.55" />
+
+  <!-- Kilo Multimeter Probe Ears (Left: Red +, Right: Dark COM) -->
+  <path d="M168 176 L138 74 L208 134 Z" fill="#FF334B" stroke="#090D16" stroke-width="8" stroke-linejoin="round" />
+  <path d="M148 96 L158 130" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.7" />
+  <path d="M344 176 L374 74 L304 134 Z" fill="#334155" stroke="#00F0FF" stroke-width="6" stroke-linejoin="round" />
+
+  <!-- Kilo Geometric Helmet Head -->
+  <path d="M132 220 C132 146 184 126 256 126 C328 126 380 146 380 220 L368 312 C362 352 316 386 256 386 C196 386 150 352 144 312 Z" fill="#111827" stroke="#00F0FF" stroke-width="10" filter="url(#glow)" />
+
+  <!-- Panoramic LED Visor -->
+  <rect x="156" y="196" width="200" height="96" rx="44" fill="#090D16" stroke="#334155" stroke-width="6" />
+
+  <!-- Expressive Cyan LED Eyes -->
+  <ellipse cx="212" cy="244" rx="22" ry="26" fill="#00F0FF" filter="url(#glow)" />
+  <ellipse cx="300" cy="244" rx="22" ry="26" fill="#00F0FF" filter="url(#glow)" />
+  <circle cx="206" cy="234" r="6" fill="#FFFFFF" />
+  <circle cx="294" cy="234" r="6" fill="#FFFFFF" />
+
+  <!-- Ohm Emblem Badge on Chin/Chest -->
+  <circle cx="256" cy="346" r="24" fill="#090D16" stroke="#00FF66" stroke-width="5" />
+  <text x="256" y="356" text-anchor="middle" font-family="monospace" font-weight="700" font-size="30" fill="#00FF66">Ω</text>
+
+  <!-- Bottom Lightning Accent -->
+  <text x="256" y="454" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="36" letter-spacing="4" fill="#00F0FF">OHMDRIVE</text>
+</svg>

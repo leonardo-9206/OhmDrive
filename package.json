@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:engine": "node src/engine/circuitSolver.test.js",
+    "test:validator": "node src/engine/challengeValidator.test.js",
     "test:store": "node src/store/useGameStore.test.js"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vite-plugin-pwa": "^2.0.0"
   }
 }
