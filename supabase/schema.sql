@@ -165,6 +165,7 @@ CREATE INDEX idx_lessons_sector ON lessons(sector_id, node_order);
 CREATE INDEX idx_challenges_lesson ON challenges(lesson_id, step_order);
 CREATE INDEX idx_attempts_user ON user_lesson_attempts(user_id);
 CREATE INDEX idx_practice_user ON practice_sessions(user_id);
+CREATE INDEX idx_practice_time_attack ON practice_sessions(practice_mode, watts_earned DESC, correct_answers DESC);
 CREATE INDEX idx_progress_user ON user_sector_progress(user_id);
 
 -- ==============================================================================
@@ -373,3 +374,25 @@ ON CONFLICT (card_id) DO UPDATE SET
     title = EXCLUDED.title,
     formula_latex = EXCLUDED.formula_latex,
     summary_text = EXCLUDED.summary_text;
+
+-- ==============================================================================
+-- REALTIME PUBLICATION (LEADERBOARD LIVE UPDATES)
+-- ==============================================================================
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_publication_tables
+            WHERE pubname = 'supabase_realtime' AND tablename = 'users'
+        ) THEN
+            ALTER PUBLICATION supabase_realtime ADD TABLE users;
+        END IF;
+
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_publication_tables
+            WHERE pubname = 'supabase_realtime' AND tablename = 'practice_sessions'
+        ) THEN
+            ALTER PUBLICATION supabase_realtime ADD TABLE practice_sessions;
+        END IF;
+    END IF;
+END $$;
