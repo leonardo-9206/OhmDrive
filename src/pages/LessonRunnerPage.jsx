@@ -78,6 +78,16 @@ function RichEngineeringText({ content, className = '' }) {
             </h2>
           )
         }
+        // US-18: viñetas Markdown ("* texto" / "- texto") se mostraban con el asterisco crudo
+        const bullet = line.match(/^[*-]\s+(.*)$/)
+        if (bullet) {
+          return (
+            <div key={idx} className="flex gap-2">
+              <span aria-hidden="true" className="select-none text-neon-volt">•</span>
+              <div className="min-w-0 flex-1">{renderInlineBold(bullet[1], idx)}</div>
+            </div>
+          )
+        }
         return <div key={idx}>{renderInlineBold(line, idx)}</div>
       })}
     </div>
@@ -119,7 +129,7 @@ function TheoryIntroView({ lesson, sector, onStart }) {
           <KiloMascot state="idle" size="sm" />
           <div className="min-w-0 flex-1">
             <div className="font-mono text-[11px] uppercase tracking-wider text-neon-volt">
-              Unidad {sector.sector_order} · Nivel {lesson.node_order}
+              Unidad {sector.sector_order} · Nivel {lesson.lesson_id}
             </div>
             <h1 className="mt-0.5 font-display text-lg font-bold text-white md:text-xl">
               {lesson.title}
@@ -414,11 +424,16 @@ export default function LessonRunnerPage() {
           <X className="h-4 w-4" />
         </Link>
 
-        <div className="flex-1">
-          <div className="mb-1 flex items-center justify-between font-mono text-[10px] text-slate-400">
-            <span>{lesson.title}</span>
-            <span>
-              Ejercicio {Math.min(challengeIdx + 1, challenges.length)} / {challenges.length}
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center justify-between gap-2 font-mono text-[10px] text-slate-400">
+            {/* US-18: en 360px el título completo se partía en 4 líneas; el título completo ya está en la tarjeta */}
+            <span className="min-w-0 truncate" title={lesson.title}>
+              <span className="md:hidden">{String(lesson.title).split(':')[0]}</span>
+              <span className="hidden md:inline">{lesson.title}</span>
+            </span>
+            <span className="shrink-0">
+              <span className="hidden sm:inline">Ejercicio </span>
+              {Math.min(challengeIdx + 1, challenges.length)} / {challenges.length}
             </span>
           </div>
           <div className="h-2.5 w-full overflow-hidden rounded-full bg-pcb-elevated">
