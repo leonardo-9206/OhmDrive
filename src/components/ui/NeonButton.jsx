@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { playClick } from '../../utils/soundEngine'
 
 const VARIANT_STYLES = {
   volt: 'bg-neon-volt text-pcb-base border-cyan-700 shadow-neon-volt hover:brightness-110',
@@ -37,6 +38,7 @@ export default function NeonButton({
   icon = null,
   className = '',
   type = 'button',
+  onClick,
   children,
   ...props
 }) {
@@ -44,10 +46,17 @@ export default function NeonButton({
   const variantClasses = VARIANT_STYLES[variant] || VARIANT_STYLES.volt
   const sizeClasses = SIZE_STYLES[size] || SIZE_STYLES.md
 
+  const handleClick = (e) => {
+    if (isDisabled) return
+    playClick()
+    onClick?.(e)
+  }
+
   return (
     <motion.button
       type={type}
       disabled={isDisabled}
+      onClick={handleClick}
       whileHover={isDisabled ? undefined : { scale: 1.01 }}
       className={[
         'inline-flex items-center justify-center gap-2 rounded-xl border-b-4 font-display font-bold uppercase tracking-wide transition-all duration-100 select-none',

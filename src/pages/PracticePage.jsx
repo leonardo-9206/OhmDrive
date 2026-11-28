@@ -19,6 +19,7 @@ import { sectorsList, getAllLessons } from '../data/sectors'
 import { validateChallenge } from '../engine/challengeValidator'
 import { useGameStore } from '../store/useGameStore'
 import { recordPracticeSession } from '../services/supabaseClient'
+import { playHint, playShock, playSuccess } from '../utils/soundEngine'
 import { FormulaText, NeonButton, NumericUnitInput } from '../components/ui'
 import KiloMascot from '../components/mascot/KiloMascot'
 import CircuitCanvas from '../components/circuit-svg/CircuitCanvas'
@@ -259,6 +260,7 @@ export default function PracticePage() {
       setCurrentStreak(nextStreak)
       setBestStreak((b) => Math.max(b, nextStreak))
       setWattsEarned((w) => w + baseWatts + streakBonus)
+      playSuccess()
       setFeedbackState(FEEDBACK.CORRECT)
       return
     }
@@ -266,12 +268,14 @@ export default function PracticePage() {
     // In Entrenamiento Libre, allow 1 hint + retry before revealing full solution
     if (practiceMode === 'topic_drill' && attemptCount === 0) {
       setAttemptCount(1)
+      playHint()
       setFeedbackState(FEEDBACK.HINT)
       return
     }
 
     setQuestionsSolved((q) => q + 1)
     setCurrentStreak(0)
+    playShock()
     setFeedbackState(FEEDBACK.WRONG)
   }
 
