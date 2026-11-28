@@ -19,6 +19,7 @@ import { sectorsList, getAllLessons } from '../data/sectors'
 import { validateChallenge } from '../engine/challengeValidator'
 import { useGameStore } from '../store/useGameStore'
 import { recordPracticeSession } from '../services/supabaseClient'
+import { playHint, playShock, playSuccess } from '../utils/soundEngine'
 import { FormulaText, NeonButton, NumericUnitInput } from '../components/ui'
 import KiloMascot from '../components/mascot/KiloMascot'
 import CircuitCanvas from '../components/circuit-svg/CircuitCanvas'
@@ -259,6 +260,7 @@ export default function PracticePage() {
       setCurrentStreak(nextStreak)
       setBestStreak((b) => Math.max(b, nextStreak))
       setWattsEarned((w) => w + baseWatts + streakBonus)
+      playSuccess()
       setFeedbackState(FEEDBACK.CORRECT)
       return
     }
@@ -266,12 +268,14 @@ export default function PracticePage() {
     // In Entrenamiento Libre, allow 1 hint + retry before revealing full solution
     if (practiceMode === 'topic_drill' && attemptCount === 0) {
       setAttemptCount(1)
+      playHint()
       setFeedbackState(FEEDBACK.HINT)
       return
     }
 
     setQuestionsSolved((q) => q + 1)
     setCurrentStreak(0)
+    playShock()
     setFeedbackState(FEEDBACK.WRONG)
   }
 
@@ -424,10 +428,11 @@ export default function PracticePage() {
                   ].join(' ')}
                 >
                   <div className="min-w-0">
-                    <div className="truncate font-display text-sm font-bold text-white">
+                    {/* US-18: en 360px el truncate cortaba "Nivel 1: Voltaje, Corriente y Resi…" */}
+                    <div className="font-display text-sm font-bold leading-snug text-white">
                       {topic.label}
                     </div>
-                    <div className="mt-0.5 truncate font-mono text-[11px] text-slate-400">
+                    <div className="mt-0.5 font-mono text-[11px] text-slate-400">
                       {topic.subtitle}
                     </div>
                   </div>

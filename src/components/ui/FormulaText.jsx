@@ -1,5 +1,73 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import katex from 'katex'
+
+/** Escala mínima para fórmulas en bloque: por debajo de esto se deja el scroll horizontal. */
+const MIN_DISPLAY_SCALE = 0.6
+
+/**
+ * Fórmula en bloque que se encoge sola para caber en el ancho disponible (US-18).
+ * En celulares de 360px varias fórmulas ($$...$$) medían más que su tarjeta y había que
+ * deslizarlas de lado. KaTeX mide todo en `em`, así que basta con bajar el font-size
+ * del contenedor interno. Si aun al 60 % no cabe, se conserva el overflow-x-auto.
+ */
+function FitDisplayMath({ html, className }) {
+  const boxRef = useRef(null)
+  useFitToWidth(boxRef, html, (box) => box.clientWidth)
+  return (
+    <div ref={boxRef} className={className}>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  )
+}
+
+/**
+ * Fórmula en línea ($...$) que no puede partirse: si es más ancha que el párrafo
+ * (ej. "I = Δq/Δt = 72 C / 12 s = 6.0 A = 6000 mA" en 360px), se encoge igual que las de bloque.
+ */
+function FitInlineMath({ html, className }) {
+  const boxRef = useRef(null)
+  useFitToWidth(boxRef, html, blockAncestorWidth)
+  return (
+    <span ref={boxRef} className={className}>
+      <span className="inline-block" dangerouslySetInnerHTML={{ __html: html }} />
+    </span>
+  )
+}
+
+/** Ancho de contenido del primer ancestro que no sea inline (los <span> inline miden 0). */
+function blockAncestorWidth(box) {
+  let el = box.parentElement
+  while (el && getComputedStyle(el).display === 'inline') el = el.parentElement
+  if (!el) return 0
+  const cs = getComputedStyle(el)
+  return el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+}
+
+function useFitToWidth(boxRef, html, getAvailable) {
+  useLayoutEffect(() => {
+    const box = boxRef.current
+    if (!box) return undefined
+    const fit = () => {
+      const inner = box.firstElementChild
+      if (!inner) return
+      inner.style.fontSize = ''
+      const natural = Math.max(inner.scrollWidth, inner.offsetWidth)
+      const available = getAvailable(box)
+      if (available > 0 && natural > available) {
+        inner.style.fontSize = `${Math.max(MIN_DISPLAY_SCALE, (available - 2) / natural)}em`
+      }
+    }
+    fit()
+    let target = box.parentElement ?? box
+    while (target.parentElement && getComputedStyle(target).display === 'inline') target = target.parentElement
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : null
+    observer?.observe(target)
+    document.fonts?.ready?.then(fit).catch(() => {})
+    return () => observer?.disconnect()
+    // getAvailable es estable por componente
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [html])
+}
 
 /**
  * Renders a single LaTeX expression safely with KaTeX.
@@ -83,16 +151,17 @@ export default function FormulaText({
   }, [pureFormulaHtml, text])
 
   if (pureFormulaHtml !== null) {
-    const Tag = isDisplay ? 'div' : 'span'
+    if (isDisplay) {
+      return (
+        <FitDisplayMath
+          html={pureFormulaHtml}
+          className={['text-slate-100 my-2 overflow-x-auto py-1 text-center', className].filter(Boolean).join(' ')}
+        />
+      )
+    }
     return (
-      <Tag
-        className={[
-          'text-slate-100',
-          isDisplay ? 'my-2 overflow-x-auto py-1 text-center' : 'inline-block align-middle',
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+      <span
+        className={['text-slate-100 inline-block align-middle', className].filter(Boolean).join(' ')}
         dangerouslySetInnerHTML={{ __html: pureFormulaHtml }}
       />
     )
@@ -107,20 +176,10 @@ export default function FormulaText({
           }
           const html = renderKatexHtml(seg.value, seg.type === 'display')
           if (seg.type === 'display') {
-            return (
-              <div
-                key={idx}
-                className="my-2 overflow-x-auto py-1 text-center"
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
-            )
+            return <FitDisplayMath key={idx} html={html} className="my-2 overflow-x-auto py-1 text-center" />
           }
           return (
-            <span
-              key={idx}
-              className="mx-0.5 inline-block align-middle"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+            <FitInlineMath key={idx} html={html} className="mx-0.5 inline-block max-w-full align-middle" />
           )
         })}
       </span>

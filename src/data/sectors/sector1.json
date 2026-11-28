@@ -53,7 +53,7 @@
           "difficulty": "basic",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "¡Iniciemos la calibración de la red! Una fuente entrega 180 Joules de trabajo para impulsar 15 Coulombs de carga. ¿Qué tensión genera?",
-          "prompt_text": "Una fuente de corriente directa suministra \\Delta w = 180\\text{ J} de energía para mover \\Delta q = 15\\text{ C} de carga entre sus bornes. ¿Cuál es el voltaje V de la fuente?",
+          "prompt_text": "Una fuente de corriente directa suministra $\\Delta w = 180\\text{ J}$ de energía para mover $\\Delta q = 15\\text{ C}$ de carga entre sus bornes. ¿Cuál es el voltaje V de la fuente?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
@@ -143,7 +143,7 @@
           "difficulty": "normal",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "¡Tu turno de calcular con precisión! Ingresa el valor numérico y selecciona la unidad correcta.",
-          "prompt_text": "A través del cableado principal circulan \\Delta q = 72\\text{ C} de carga en un lapso de \\Delta t = 12\\text{ s}. Calcula la corriente eléctrica neta I que recorre el conductor.",
+          "prompt_text": "A través del cableado principal circulan $\\Delta q = 72\\text{ C}$ de carga en un lapso de $\\Delta t = 12\\text{ s}$. Calcula la corriente eléctrica neta I que recorre el conductor.",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
@@ -191,7 +191,7 @@
           "difficulty": "normal",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "Sensor calibrado a 250 mA por 40 segundos. ¿Cuánta carga acumulada pasó por la sección?",
-          "prompt_text": "Un sensor amperímetro en la línea de enlace registra una corriente continua constante de I = 250\\text{ mA} durante un tiempo de \\Delta t = 40\\text{ s}. ¿Cuánta carga eléctrica total \\Delta q cruzó por el sensor?",
+          "prompt_text": "Un sensor amperímetro en la línea de enlace registra una corriente continua constante de $I = 250\\text{ mA}$ durante un tiempo de $\\Delta t = 40\\text{ s}$. ¿Cuánta carga eléctrica total $\\Delta q$ cruzó por el sensor?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
@@ -277,7 +277,7 @@
           "difficulty": "basic",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "¡Apliquemos la Ley de Ohm! Si conocemos la caída de potencial y la resistencia, ¿cuánta corriente fluye?",
-          "prompt_text": "Un resistor de R = 250\\ \\Omega tiene una caída de voltaje medida de V = 50\\text{ V}. ¿Cuál es la corriente eléctrica I que circula por él?",
+          "prompt_text": "Un resistor de $R = 250\\ \\Omega$ tiene una caída de voltaje medida de $V = 50\\text{ V}$. ¿Cuál es la corriente eléctrica I que circula por él?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
@@ -323,7 +323,7 @@
           "difficulty": "basic",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "¡Cálculo de potencia! Una carga automotriz consume 2.5 A a 12 V. ¿Cuántos Watts disipa?",
-          "prompt_text": "Un dispositivo electrónico opera conectado a una batería de V = 12\\text{ V} demandando una corriente constante de I = 2.5\\text{ A}. ¿Cuánta potencia eléctrica P disipa?",
+          "prompt_text": "Un dispositivo electrónico opera conectado a una batería de $V = 12\\text{ V}$ demandando una corriente constante de $I = 2.5\\text{ A}$. ¿Cuánta potencia eléctrica P disipa?",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,
@@ -417,7 +417,7 @@
           "difficulty": "normal",
           "kilo_emotion": "thinking",
           "kilo_dialogue": "Disipación de calor por Efecto Joule. Con 400 mA sobre 50 Ohms, calcula los Watts que se desprenden.",
-          "prompt_text": "Un resistor de potencia R = 50\\ \\Omega conduce una corriente continua de I = 400\\text{ mA}. Calcula la potencia eléctrica P disipada en forma de calor.",
+          "prompt_text": "Un resistor de potencia $R = 50\\ \\Omega$ conduce una corriente continua de $I = 400\\text{ mA}$. Calcula la potencia eléctrica P disipada en forma de calor.",
           "circuit_config_json": {
             "template": "single_loop_dc",
             "is_energized_initially": true,

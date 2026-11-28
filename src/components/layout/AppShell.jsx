@@ -1,13 +1,24 @@
 import { Outlet, Link } from 'react-router-dom'
-import { Zap, Flame, ShieldAlert } from 'lucide-react'
+import { Zap, Flame, ShieldAlert, Volume2, VolumeX } from 'lucide-react'
 import BottomNav from './BottomNav'
 import { useGameStore } from '../../store/useGameStore'
+import { playClick } from '../../utils/soundEngine'
 
 /**
  * Main mobile-first application shell with top status bar and persistent BottomNav.
  */
 export default function AppShell() {
   const user = useGameStore((state) => state.user)
+  const soundEnabled = useGameStore((state) => state.soundEnabled)
+  const toggleSound = useGameStore((state) => state.toggleSound)
+
+  const handleToggleSound = () => {
+    const nextEnabled = !soundEnabled
+    toggleSound()
+    if (nextEnabled) {
+      setTimeout(() => playClick(), 0)
+    }
+  }
 
   return (
     <div className="bg-pcb-grid min-h-[100dvh] text-slate-100">
@@ -36,6 +47,20 @@ export default function AppShell() {
               <ShieldAlert className="h-3.5 w-3.5" />
               <span>{user?.currentFuses ?? 5}/5</span>
             </div>
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              aria-label={soundEnabled ? 'Silenciar efectos de sonido' : 'Activar efectos de sonido'}
+              title={soundEnabled ? 'Sonido activado' : 'Sonido silenciado'}
+              className={[
+                'flex h-7 w-7 items-center justify-center rounded-lg border transition-colors',
+                soundEnabled
+                  ? 'border-neon-volt/40 bg-neon-volt/10 text-neon-volt hover:bg-neon-volt/20'
+                  : 'border-pcb-trace bg-pcb-elevated text-slate-500 hover:text-slate-300',
+              ].join(' ')}
+            >
+              {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+            </button>
           </div>
         </header>
 
