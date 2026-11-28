@@ -428,10 +428,11 @@ export default function PracticePage() {
                   ].join(' ')}
                 >
                   <div className="min-w-0">
-                    <div className="truncate font-display text-sm font-bold text-white">
+                    {/* US-18: en 360px el truncate cortaba "Nivel 1: Voltaje, Corriente y Resi…" */}
+                    <div className="font-display text-sm font-bold leading-snug text-white">
                       {topic.label}
                     </div>
-                    <div className="mt-0.5 truncate font-mono text-[11px] text-slate-400">
+                    <div className="mt-0.5 font-mono text-[11px] text-slate-400">
                       {topic.subtitle}
                     </div>
                   </div>
