@@ -9,11 +9,16 @@ import { BODY_LENGTH, COLORS } from './circuitTheme'
  * - Encendido (circuito energizado): relleno verde neón + halo pulsante.
  * - Falla (sobrecarga): rojo plasma parpadeando.
  */
-export default function CyberLed({ isLit = false, isFaulted = false, glowId, strongGlowId }) {
+export default function CyberLed({ isLit = false, isFaulted = false, intensity = 1, glowId, strongGlowId }) {
   const L = BODY_LENGTH.cyber_led
   const half = L / 2
   const color = isFaulted ? COLORS.short : isLit ? COLORS.watt : COLORS.trace
   const tri = `${-half + 8},-10 ${-half + 8},10 ${half - 10},0`
+  // brillo proporcional a la corriente (US-13): con poca corriente apenas se enciende
+  const glow = Math.min(Math.max(intensity, 0), 1)
+  const haloR = 10 + glow * 10
+  const haloOpacity = 0.15 + glow * 0.55
+  const fillOpacity = 0.35 + glow * 0.6
 
   return (
     <g className={isFaulted ? 'ohm-fault-flash' : undefined}>
@@ -21,9 +26,9 @@ export default function CyberLed({ isLit = false, isFaulted = false, glowId, str
       <rect x={-half} y={-13} width={L} height={26} fill={COLORS.base} />
       {isLit && !isFaulted && (
         <circle
-          r={16}
+          r={haloR}
           fill={COLORS.watt}
-          opacity={0.45}
+          opacity={haloOpacity}
           className="ohm-led-halo"
           filter={strongGlowId ? `url(#${strongGlowId})` : undefined}
         />
@@ -33,7 +38,7 @@ export default function CyberLed({ isLit = false, isFaulted = false, glowId, str
       <polygon
         points={tri}
         fill={isLit || isFaulted ? color : 'none'}
-        fillOpacity={isLit || isFaulted ? 0.85 : 0}
+        fillOpacity={isFaulted ? 0.85 : isLit ? fillOpacity : 0}
         stroke={color}
         strokeWidth={2.25}
         strokeLinejoin="round"

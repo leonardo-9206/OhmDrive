@@ -49,7 +49,6 @@ function GalleryCard({ challenge }) {
   const [fault, setFault] = useState(null)
   const [lastTap, setLastTap] = useState(null)
   const slot = cfg.components.find((c) => c.type === 'resistor_slot')
-  const firstBody = cfg.components.find((c) => c.type !== 'wire')
   const correct = challenge.options?.find((o) => o.id === challenge.solution_json?.correct_option_id)
   const [slotFilled, setSlotFilled] = useState(false)
 
@@ -76,12 +75,11 @@ function GalleryCard({ challenge }) {
         <Toggle active={fault?.type === 'short'} onClick={() => setFault((f) => (f?.type === 'short' ? null : { type: 'short' }))}>
           Corto
         </Toggle>
-        <Toggle
-          active={fault?.type === 'overheat'}
-          onClick={() =>
-            setFault((f) => (f?.type === 'overheat' ? null : { type: 'overheat', componentId: (slot || firstBody)?.id }))
-          }
-        >
+        {/* sin componentId: el canvas elige solo qué componente se calienta (US-13) */}
+        <Toggle active={fault?.type === 'warning'} onClick={() => setFault((f) => (f?.type === 'warning' ? null : { type: 'warning' }))}>
+          Calor
+        </Toggle>
+        <Toggle active={fault?.type === 'overheat'} onClick={() => setFault((f) => (f?.type === 'overheat' ? null : { type: 'overheat' }))}>
           Sobrecarga
         </Toggle>
         {lastTap && <span className="self-center font-mono text-[10px] text-slate-400">tap: {lastTap}</span>}

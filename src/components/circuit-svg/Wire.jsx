@@ -11,7 +11,7 @@ import { COLORS } from './circuitTheme'
  * @param {number|null} flowDuration  segundos por ciclo (ver flowDurationForCurrent)
  * @param {boolean} isShort           destello rojo de cortocircuito
  */
-export default function Wire({ from, to, isEnergized = false, flowDuration = null, isShort = false }) {
+export default function Wire({ from, to, isEnergized = false, flowDuration = null, isShort = false, intensity = 1 }) {
   const showFlow = isEnergized && !isShort && flowDuration
   return (
     <g>
@@ -35,6 +35,7 @@ export default function Wire({ from, to, isEnergized = false, flowDuration = nul
           strokeWidth={2.5}
           strokeLinecap="round"
           strokeDasharray="6 10"
+          opacity={0.45 + 0.55 * Math.min(Math.max(intensity, 0), 1)}
           className="ohm-flow"
           style={{ animationDuration: `${flowDuration}s` }}
         />

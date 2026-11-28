@@ -51,6 +51,34 @@
   100% { opacity: 0; transform: scale(1.8); }
 }
 
+/* Estado térmico (US-13): resplandor pulsante, ondas de calor y humo */
+.ohm-heat-pulse {
+  animation: ohm-heat-pulse 0.9s ease-in-out infinite;
+}
+@keyframes ohm-heat-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+.ohm-heat-rise {
+  animation: ohm-heat-rise 1.1s ease-out infinite;
+}
+@keyframes ohm-heat-rise {
+  0% { opacity: 0; transform: translateY(4px); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+.ohm-smoke {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ohm-smoke 1.4s ease-out infinite;
+}
+@keyframes ohm-smoke {
+  0% { opacity: 0.6; transform: translateY(0) scale(0.6); }
+  100% { opacity: 0; transform: translateY(-14px) scale(1.6); }
+}
+
 .ohm-tappable {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -68,7 +96,10 @@
   .ohm-slot-pulse,
   .ohm-fault-flash,
   .ohm-led-halo,
-  .ohm-spark {
+  .ohm-spark,
+  .ohm-heat-pulse,
+  .ohm-heat-rise,
+  .ohm-smoke {
     animation: none;
   }
 }
